@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { items } from "./lib/items";
 import { Item } from "./lib/types";
 import { motion, AnimatePresence } from "framer-motion";
+import TaggedImage from "@/src/components/TaggedImage";
 
 const typeIcon: Record<Item["type"], string> = {
     상품: "🛒",
@@ -16,6 +17,7 @@ const categories = ["전체", "상품", "음식", "레시피"] as const;
 export default function Page() {
     const [activeCategory, setActiveCategory] = useState<(typeof categories)[number]>("전체");
     const [showSidebarText, setShowSidebarText] = useState(false);
+    const [selectedItem, setSelectedItem] = useState<Item | null>(null);
 
     const filteredItems =
         activeCategory === "전체"
@@ -56,6 +58,30 @@ export default function Page() {
                             그것 또한 내 위시리스트야
                         </motion.div>
                     )}
+
+                    {selectedItem && selectedItem.type === "상품" && (
+                        <motion.div
+                            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+                            onClick={() => setSelectedItem(null)}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                        >
+                            <motion.div
+                                className="bg-white p-3 rounded-2xl w-[90%] max-w-md relative shadow-xl"
+                                onClick={(e) => e.stopPropagation()}
+                                initial={{ scale: 0.5, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0.8, opacity: 0 }}
+                                transition={{ duration: 0.3, ease: "easeOut" }}
+                            >
+                                <TaggedImage
+                                    image={selectedItem.image}
+                                    tags={selectedItem.tags ?? []}
+                                />
+                            </motion.div>
+                        </motion.div>
+                    )}
                 </AnimatePresence>
 
                 <div className="relative w-full">
@@ -71,20 +97,28 @@ export default function Page() {
 
                         {/* 아이템 리스트 */}
                         <div className="p-6">
-                            <div className="grid gap-2 grid-cols-[repeat(auto-fit,minmax(0,1fr))]
-                            max-[1024px]:grid-cols-3 max-[640px]:grid-cols-2 lg:grid-cols-4">
+                            <div className="
+                                grid gap-2 grid-cols-[repeat(auto-fit,minmax(0,1fr))]
+                                max-[1024px]:grid-cols-3 max-[640px]:grid-cols-2 lg:grid-cols-4"
+                            >
                                 {filteredItems.map((item) => (
                                     <div
                                         key={item.id}
                                         className="
-                                        flex flex-col items-center justify-center
-                                        border-2 border-gray-200 rounded-2xl bg-white text-center
-                                        shadow-md transition hover:shadow-lg hover:scale-[1.02]"
+                                            flex flex-col items-center justify-center
+                                            border-2 border-gray-200 rounded-2xl bg-white text-center
+                                            shadow-md transition hover:shadow-lg hover:scale-[1.02]"
                                     >
-                                        <div className="text-2xl">{typeIcon[item.type]}</div>
-                                        <div className="mt-1 line-clamp-2 text-xs font-medium">
-                                            {item.title}
-                                        </div>
+                                        {"image" in item && item.image ? (
+                                            <img
+                                                src={item.image}
+                                                alt={item.title}
+                                                className="w-full h-full aspect-square object-cover rounded-lg cursor-pointer"
+                                                onClick={() => setSelectedItem(item)}
+                                            />
+                                        ) : (
+                                            <div className="text-2xl">{typeIcon[item.type]}</div>
+                                        )}
                                     </div>
                                 ))}
                             </div>
