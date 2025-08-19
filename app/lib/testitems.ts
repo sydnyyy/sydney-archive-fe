@@ -1,0 +1,30 @@
+import { Item } from "./types";
+
+export const items: Item[] = [
+    { id: 1, type: "상품",  title: "예쁜 가방", image: "https://picsum.photos/seed/bag/600/400", link: "https://example.com/bag" },
+    { id: 2, type: "음식",  title: "김밥천국(강남)", description: "가성비 최고 김밥/라면", location: "서울 강남구" },
+    { id: 3, type: "레시피", title: "김치찌개", description: "돼지고기+김치 보글보글" },
+    { id: 4, type: "상품",  title: "무선 헤드폰", image: "https://picsum.photos/seed/headphone/600/400", link: "https://example.com/headphone" },
+    { id: 5, type: "음식",  title: "을지로 골뱅이", description: "맥주와 찰떡", location: "서울 중구" },
+    { id: 6, type: "레시피", title: "크렘브륄레", description: "겉바속촉 디저트" },
+    { id: 7, type: "상품",  title: "원목 선반", image: "https://picsum.photos/seed/shelf/600/400", link: "https://example.com/shelf" },
+    { id: 8, type: "음식",  title: "마라탕 맛집", description: "얼얼하지만 중독", location: "서울 마포구" },
+    { id: 9, type: "레시피", title: "오일파스타", description: "알리오 올리오" },
+    { id:10, type: "상품",  title: "캠핑 랜턴", image: "https://picsum.photos/seed/lantern/600/400", link: "https://example.com/lantern" },
+    { id:11, type: "음식",  title: "수제버거", description: "두툼한 패티", location: "부산 해운대" },
+    { id:12, type: "레시피", title: "카레라이스", description: "한 냄비로 끝" },
+    { id:13, type: "레시피", title: "크렘브륄레", description: "겉바속촉 디저트" },
+    { id:14, type: "상품",  title: "원목 선반", image: "https://picsum.photos/seed/shelf/600/400", link: "https://example.com/shelf" },
+    { id:15, type: "음식",  title: "마라탕 맛집", description: "얼얼하지만 중독", location: "서울 마포구" },
+    { id:16, type: "레시피", title: "오일파스타", description: "알리오 올리오" },
+    { id:17, type: "상품",  title: "캠핑 랜턴", image: "https://picsum.photos/seed/lantern/600/400", link: "https://example.com/lantern" },
+    { id:18, type: "음식",  title: "수제버거", description: "두툼한 패티", location: "부산 해운대" },
+    { id:19, type: "레시피", title: "카레라이스", description: "한 냄비로 끝" },
+    { id:20, type: "레시피", title: "크렘브륄레", description: "겉바속촉 디저트" },
+    { id:21, type: "상품",  title: "원목 선반", image: "https://picsum.photos/seed/shelf/600/400", link: "https://example.com/shelf" },
+    { id:22, type: "음식",  title: "마라탕 맛집", description: "얼얼하지만 중독", location: "서울 마포구" },
+    { id:23, type: "레시피", title: "오일파스타", description: "알리오 올리오" },
+    { id:24, type: "상품",  title: "캠핑 랜턴", image: "https://picsum.photos/seed/lantern/600/400", link: "https://example.com/lantern" },
+    { id:25, type: "음식",  title: "수제버거", description: "두툼한 패티", location: "부산 해운대" },
+    { id:26, type: "레시피", title: "카레라이스", description: "한 냄비로 끝" }
+];
