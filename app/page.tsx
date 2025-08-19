@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { items } from "./lib/testitems";
+import { items } from "./lib/items";
 import { Item } from "./lib/types";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -47,7 +47,7 @@ export default function Page() {
                             exit={{ opacity: 0, y: 10 }}
                             transition={{ duration: 1.7, ease: "easeOut" }}
                             className="
-                            fixed top-55 left-1/2 -translate-x-[610px] mr-10 w-65
+                            fixed top-57 left-1/2 -translate-x-[610px] mr-10 w-65
                             text-sm text-gray-700 leading-relaxed text-right"
                         >
                             내 위시리스트야<br />
@@ -58,10 +58,9 @@ export default function Page() {
                     )}
                 </AnimatePresence>
 
-                <div className="flex justify-center">
+                <div className="relative w-full">
                     {/* 메인 (문구 + 아이템 리스트) */}
-                    <div className="w-full max-w-4xl">
-
+                    <div className="w-full max-w-2xl mx-auto">
                         {/* 원래 문구 (스크롤되면서 사라짐) */}
                         <div className="p-6 text-gray-700 leading-relaxed text-sm text-right">
                             내 위시리스트야<br />
@@ -72,15 +71,15 @@ export default function Page() {
 
                         {/* 아이템 리스트 */}
                         <div className="p-6">
-                            <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3 lg:grid-cols-4">
+                            <div className="grid gap-2 grid-cols-[repeat(auto-fit,minmax(0,1fr))]
+                            max-[1024px]:grid-cols-3 max-[640px]:grid-cols-2 lg:grid-cols-4">
                                 {filteredItems.map((item) => (
                                     <div
                                         key={item.id}
                                         className="
-                                        flex h-35 w-35 flex-col items-center justify-center
-                                        border-2 border-gray-200
-                                        rounded-4xl bg-white p-2 text-center
-                                        shadow-md hover:shadow-lg hover:bg-gray-50 transition"
+                                        flex flex-col items-center justify-center
+                                        border-2 border-gray-200 rounded-2xl bg-white text-center
+                                        shadow-md transition hover:shadow-lg hover:scale-[1.02]"
                                     >
                                         <div className="text-2xl">{typeIcon[item.type]}</div>
                                         <div className="mt-1 line-clamp-2 text-xs font-medium">
@@ -93,7 +92,7 @@ export default function Page() {
                     </div>
 
                     {/* 탭 메뉴 (스크롤해도 고정) */}
-                    <aside className="sticky top-49 self-start flex flex-col">
+                    <aside className="fixed right-107 top-52 flex flex-col space-y-1">
                         {categories.map((cat) => (
                             <button
                                 key={cat}
