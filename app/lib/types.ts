@@ -6,10 +6,22 @@ export interface BaseItem {
     title: string;
 }
 
+export type Tag = {
+    x: string;
+    y: string;
+    icon: string;
+    label: string;
+    link: string;
+    labelX?: string;
+    labelY?: string;
+    color?: string;
+    bgColor?: string;
+};
+
 export interface ProductItem extends BaseItem {
     type: "상품";
     image: string;
-    link: string;
+    tags?: Tag[];
 }
 
 export interface FoodItem extends BaseItem {
