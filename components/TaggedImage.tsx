@@ -1,6 +1,7 @@
 "use client";
 
-import type { Tag } from "@/app/lib/types";
+import { motion } from "framer-motion";
+import type { Tag } from "@/lib/types";
 
 interface TaggedImageProps {
     image: string;
@@ -15,13 +16,35 @@ export default function TaggedImage({ image, tags }: TaggedImageProps) {
                  className="w-full h-auto object-contain"
             />
             {tags.map((tag, idx) => (
-                <a
+                <motion.a
                     key={idx}
                     className="absolute tag flex flex-col items-center"
                     href={tag.link}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{ left: tag.x, top: tag.y }}
+                    animate={{
+                        y: [0, -3, 0],
+                        rotate: [0, 2, -2, 0],
+                    }}
+                    transition={{
+                        duration: 4.5,
+                        repeat: Infinity,
+                        repeatType: "mirror",
+                        ease: "easeInOut",
+                    }}
+                    whileHover={{
+                        scale: 1.2,
+                        y: 0,
+                        transition: {
+                            duration: 0.1,
+                            ease: "easeOut",
+                        },
+                    }}
+                    whileTap={{
+                        scale: 0.95,
+                        transition: { duration: 0.1 },
+                    }}
                 >
                     <img
                         src={tag.icon}
@@ -39,7 +62,7 @@ export default function TaggedImage({ image, tags }: TaggedImageProps) {
                     >
                         {tag.label}
                     </span>
-                </a>
+                </motion.a>
             ))}
         </div>
     );
