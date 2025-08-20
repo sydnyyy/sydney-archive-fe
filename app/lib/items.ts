@@ -15,14 +15,14 @@ export const items: Item[] = [
                 bgColor: "rgba(0,0,0,0.2)"
             },
             {
-                x: "78%", y: "17%",
+                x: "48%", y: "54%",
                 icon: "/tags/tag_four_leaf_colver.svg",
                 label: "미니 파우치",
                 link: "https://hottracks.kyobobook.co.kr/ht/gift/detail/2310058469765",
-                labelX: "19%",
-                labelY: "98%",
+                labelX: "48%",
+                labelY: "72%",
                 color: "black",
-                bgColor: "rgba(255,255,255,0.4)"
+                bgColor: "rgba(255,255,255,0.3)"
             },
         ],
     },
@@ -47,12 +47,12 @@ export const items: Item[] = [
         type: "상품",  title: "키링", image: "/items/IMG_3.jpeg",
         tags: [
             {
-                x: "52%", y: "23%",
+                x: "55%", y: "25%",
                 icon: "/tags/tag_red_pin.svg",
                 label: "플레이인더박스",
                 link: "https://map.naver.com/p/search/%ED%94%8C%EB%A0%88%EC%9D%B4%EC%9D%B8%EB%8D%94%EB%B0%95%EC%8A%A4/place/1216420426?placePath=/home?entry=pll&from=map&fromPanelNum=2&timestamp=202508200142&locale=ko&svcName=map_pcv5&searchText=%ED%94%8C%EB%A0%88%EC%9D%B4%EC%9D%B8%EB%8D%94%EB%B0%95%EC%8A%A4&fromNxList=true&searchType=place&c=15.00,0,0,0,dh",
-                labelX: "42%",
-                labelY: "79%",
+                labelX: "49%",
+                labelY: "49%",
                 color: "white",
                 bgColor: "rgba(0,0,0,0.2)"
             }
