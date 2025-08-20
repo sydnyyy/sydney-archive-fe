@@ -50,7 +50,7 @@ export default function Page() {
                             transition={{ duration: 1.7, ease: "easeOut" }}
                             className="
                             fixed top-57 left-1/2 -translate-x-[610px] mr-10 w-65
-                            text-sm text-gray-700 leading-relaxed text-right"
+                            text-sm text-gray-400 leading-relaxed text-right"
                         >
                             내 위시리스트야<br />
                             네가 경험했으면 하는 내 위시리스트<br />
@@ -87,8 +87,8 @@ export default function Page() {
                 <div className="relative w-full">
                     {/* 메인 (문구 + 아이템 리스트) */}
                     <div className="w-full max-w-2xl mx-auto">
-                        {/* 원래 문구 (스크롤되면서 사라짐) */}
-                        <div className="p-6 text-gray-700 leading-relaxed text-sm text-right">
+                        {/* 메인 문구 (스크롤되면서 사라짐) */}
+                        <div className="p-6 text-gray-500 leading-relaxed text-sm text-right">
                             내 위시리스트야<br />
                             네가 경험했으면 하는 내 위시리스트<br />
                             네가 소소한 행복에도 잘 살아갔으면 좋겠어<br />
