@@ -1,6 +1,6 @@
-import { Item } from "./types";
+import { ProductItem } from "./types";
 
-export const items: Item[] = [
+export const productItems: ProductItem[] = [
     { id: 1,
         type: "상품",  title: "미니 파우치", image: "/items/IMG_1.jpeg",
         tags: [
@@ -26,9 +26,7 @@ export const items: Item[] = [
             },
         ],
     },
-    { id: 2, type: "음식",  title: "김밥천국", description: "가성비 최고 김밥/라면", location: "서울 강남구" },
-    { id: 3, type: "레시피", title: "김치찌개", description: "돼지고기+김치 보글보글" },
-    { id: 4,
+    { id: 2,
         type: "상품",  title: "러쉬고체향수", image: "/items/IMG_2.jpeg",
         tags: [
             {
@@ -43,7 +41,7 @@ export const items: Item[] = [
             }
         ]
     },
-    { id: 5,
+    { id: 3,
         type: "상품",  title: "키링", image: "/items/IMG_3.jpeg",
         tags: [
             {
