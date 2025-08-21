@@ -29,6 +29,7 @@ export type FoodFormat = "음식점" | "레시피";
 export interface FoodItem extends BaseItem {
     type: "음식";
     format: FoodFormat;
+    link?: string; // 음식점 포맷에서 사용
     description?: string; // 음식점 포맷에서 사용
     location?: string;  // 음식점 포맷에서 사용
 

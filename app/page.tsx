@@ -182,18 +182,64 @@ export default function Page() {
                                     <div
                                         key={item.id}
                                         className="
-                                        flex flex-col items-center justify-center
-                                        text-center transition hover:scale-[1.02]"
+                                            flex flex-col items-center justify-center
+                                            text-center transition hover:scale-[1.02]"
                                     >
-                                        {"image" in item && item.image ? (
+                                        {/* 음식점이면 카드 플립 */}
+                                        {item.type === "음식" && "format" in item && item.format === "음식점" ? (
+                                            <div className="
+                                                relative w-full aspect-square perspective-[1000px]
+                                                cursor-pointer"
+                                            >
+                                                <motion.div
+                                                    className="
+                                                        relative w-full h-full preserve-3d rounded-2xl
+                                                    "
+                                                    whileHover={{ rotateY: 180 }}
+                                                    transition={{ duration: 0.6, ease: "easeInOut" }}
+                                                >
+                                                    {/* 앞면 */}
+                                                    <div className="
+                                                        absolute inset-0 backface-hidden rounded-2xl overflow-hidden
+                                                    ">
+                                                        <img
+                                                            src={item.image}
+                                                            alt={item.title}
+                                                            className="w-full h-full object-cover"
+                                                        />
+                                                    </div>
+
+                                                    {/* 뒷면 */}
+                                                    <a
+                                                        href={item.link}
+                                                        target="-_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="
+                                                        absolute inset-0 flex flex-col items-center justify-center
+                                                        rounded-2xl backface-hidden rotate-y-180
+                                                        bg-white border-2 border-gray-200 shadow-md p-2
+                                                    ">
+                                                        <h3 className="text-[15px] text-shadow-md font-semibold text-gray-700 mb-2">
+                                                            {item.title}
+                                                        </h3>
+                                                        {item.description && (
+                                                            <p className="text-[13px] font-semibold text-gray-500 mb-2">{item.description}</p>
+                                                        )}
+                                                        {item.location && (
+                                                            <p className="text-[13px] font-semibold text-gray-500 mb-0.5">📍 {item.location}</p>
+                                                        )}
+                                                        <p className="text-xs text-gray-400">클릭 시 상세 페이지 이동</p>
+                                                    </a>
+                                                </motion.div>
+                                            </div>
+                                        ) : (
+                                            // 나머지 (상품 + 레시피) → 기존 모달
                                             <img
                                                 src={item.image}
                                                 alt={item.title}
                                                 className="w-full h-full aspect-square object-cover rounded-lg cursor-pointer"
                                                 onClick={() => setSelectedItem(item)}
                                             />
-                                        ) : (
-                                            <div className="text-2xl">{typeIcon[item.type]}</div>
                                         )}
                                     </div>
                                 ))}
