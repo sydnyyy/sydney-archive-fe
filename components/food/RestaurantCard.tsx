@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Item } from "@/lib/types";
+import { ITEM_TYPE, FOOD_FORMAT } from "@/lib/types";
 
 interface ItemCardProps {
     item: Item;
@@ -7,7 +8,7 @@ interface ItemCardProps {
 }
 
 export default function RestaurantCard({ item, onSelect }: ItemCardProps) {
-    if (item.type === "음식" && "format" in item && item.format === "음식점") {
+    if (item.type === ITEM_TYPE.FOOD && "format" in item && item.format === FOOD_FORMAT.RESTAURANT) {
         return (
             <div className="relative w-full aspect-square perspective-[1000px] cursor-pointer">
                 <motion.div

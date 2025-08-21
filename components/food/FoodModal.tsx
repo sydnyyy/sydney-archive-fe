@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Item } from "@/lib/types";
+import { FOOD_FORMAT } from "@/lib/types";
 
 interface FoodModalProps {
     selectedItem: Item;
@@ -41,7 +42,7 @@ export default function FoodModal({ selectedItem, onClose }: FoodModalProps) {
                     <h2 className="text-xl font-bold mb-2 text-black">{selectedItem.title}</h2>
 
                     {/* 음식점 */}
-                    {"format" in selectedItem && selectedItem.format === "음식점" && (
+                    {"format" in selectedItem && selectedItem.format === FOOD_FORMAT.RESTAURANT && (
                         <>
                             {"description" in selectedItem && (
                                 <p className="text-sm text-gray-700 mb-2">{selectedItem.description}</p>
@@ -53,7 +54,7 @@ export default function FoodModal({ selectedItem, onClose }: FoodModalProps) {
                     )}
 
                     {/* 레시피 */}
-                    {"format" in selectedItem && selectedItem.format === "레시피" && (
+                    {"format" in selectedItem && selectedItem.format === FOOD_FORMAT.RECIPE && (
                         <>
                             {"cookTime" in selectedItem && (
                                 <p className="text-sm text-gray-600 mb-3">⏱️ {selectedItem.cookTime}</p>

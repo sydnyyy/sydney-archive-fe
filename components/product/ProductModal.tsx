@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import TaggedImage from "@/components/common/TaggedImage";
 import { Item } from "@/lib/types";
+import { ITEM_TYPE } from "@/lib/types";
 
 interface ProductModalProps {
     selectedItem: Item;
@@ -26,7 +27,7 @@ export default function ProductModal({ selectedItem, onClose }: ProductModalProp
             >
                 <TaggedImage
                     image={selectedItem.image}
-                    tags={selectedItem.type === "상품" ? selectedItem.tags ?? [] : []}
+                    tags={selectedItem.type === ITEM_TYPE.PRODUCT ? selectedItem.tags ?? [] : []}
                 />
             </motion.div>
         </motion.div>

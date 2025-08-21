@@ -1,4 +1,16 @@
-export type ItemType = "상품" | "음식";
+export const ITEM_TYPE = {
+    PRODUCT: "상품",
+    FOOD: "음식",
+} as const;
+
+export type ItemType = typeof ITEM_TYPE[keyof typeof ITEM_TYPE];
+
+export const FOOD_FORMAT = {
+    RESTAURANT: "음식점",
+    RECIPE: "레시피",
+} as const;
+
+export type FoodFormat = typeof FOOD_FORMAT[keyof typeof FOOD_FORMAT];
 
 export interface BaseItem {
     id: number;
@@ -20,14 +32,12 @@ export type Tag = {
 };
 
 export interface ProductItem extends BaseItem {
-    type: "상품";
+    type: typeof ITEM_TYPE.PRODUCT;
     tags?: Tag[];
 }
 
-export type FoodFormat = "음식점" | "레시피";
-
 export interface FoodItem extends BaseItem {
-    type: "음식";
+    type: typeof ITEM_TYPE.FOOD;
     format: FoodFormat;
     link?: string; // 음식점 포맷에서 사용
     description?: string; // 음식점 포맷에서 사용

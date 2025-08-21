@@ -5,6 +5,7 @@ import { productItems } from "@/lib/productItems";
 import { foodItems } from "@/lib/foodItems";
 import { Item } from "@/lib/types";
 import { motion, AnimatePresence } from "framer-motion";
+import { ITEM_TYPE } from "@/lib/types";
 
 import CategoryTabs from "@/components/common/CategoryTabs";
 import ProductModal from "@/components/product/ProductModal";
@@ -12,21 +13,21 @@ import FoodModal from "@/components/food/FoodModal";
 import RestaurantCard from "@/components/food/RestaurantCard";
 
 const categories = [
-    { label: "상품", icon: "🎁" },
-    { label: "음식", icon: "🍕" },
+    { label: ITEM_TYPE.PRODUCT, icon: "🎁" },
+    { label: ITEM_TYPE.FOOD, icon: "🍕" },
 ] as const;
 
 type CategoryLabel = typeof categories[number]["label"];
 
 export default function Page() {
-    const [activeCategory, setActiveCategory] = useState<CategoryLabel>("상품");
+    const [activeCategory, setActiveCategory] = useState<CategoryLabel>(ITEM_TYPE.PRODUCT);
     const [showSidebarText, setShowSidebarText] = useState(false);
     const [selectedItem, setSelectedItem] = useState<Item | null>(null);
 
     let filteredItems: Item[];
-    if (activeCategory === "상품") {
+    if (activeCategory === ITEM_TYPE.PRODUCT) {
         filteredItems = productItems;
-    } else if (activeCategory === "음식") {
+    } else if (activeCategory === ITEM_TYPE.FOOD) {
         filteredItems = foodItems
     } else {
         filteredItems = [...productItems, ...foodItems];
@@ -62,12 +63,12 @@ export default function Page() {
                         </motion.div>
                     )}
 
-                    {selectedItem && selectedItem.type === "상품" && (
+                    {selectedItem && selectedItem.type === ITEM_TYPE.PRODUCT && (
                         <ProductModal selectedItem={selectedItem} onClose={() => setSelectedItem(null)} />
                     )}
 
                     {/* 음식 모달 */}
-                    {selectedItem && selectedItem.type === "음식" && (
+                    {selectedItem && selectedItem.type === ITEM_TYPE.FOOD && (
                         <FoodModal selectedItem={selectedItem} onClose={() => setSelectedItem(null)} />
                     )}
                 </AnimatePresence>
