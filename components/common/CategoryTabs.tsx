@@ -9,7 +9,7 @@ interface CategoryTabsProps {
 
 export default function CategoryTabs({ categories, activeCategory, setActiveCategory }: CategoryTabsProps) {
     return (
-        <aside className="fixed right-107 top-52 flex flex-col space-y-1">
+        <aside className="flex flex-col space-y-1">
             {categories.map((cat) => (
                 <button
                     key={cat.label}
