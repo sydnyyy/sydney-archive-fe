@@ -7,15 +7,15 @@ import { Item } from "@/lib/types";
 import { motion, AnimatePresence } from "framer-motion";
 import TaggedImage from "@/components/TaggedImage";
 
-const typeIcon: Record<Item["type"], string> = {
-    상품: "🛒",
-    음식: "🍽️",
-};
+const categories = [
+    { label: "상품", icon: "🎁" },
+    { label: "음식", icon: "🍕" },
+] as const;
 
-const categories = ["상품", "음식"] as const;
+type CategoryLabel = typeof categories[number]["label"];
 
 export default function Page() {
-    const [activeCategory, setActiveCategory] = useState<(typeof categories)[number]>("상품");
+    const [activeCategory, setActiveCategory] = useState<CategoryLabel>("상품");
     const [showSidebarText, setShowSidebarText] = useState(false);
     const [selectedItem, setSelectedItem] = useState<Item | null>(null);
 
@@ -251,20 +251,20 @@ export default function Page() {
                     <aside className="fixed right-107 top-52 flex flex-col space-y-1">
                         {categories.map((cat) => (
                             <button
-                                key={cat}
-                                onClick={() => setActiveCategory(cat)}
+                                key={cat.label}
+                                onClick={() => setActiveCategory(cat.label)}
                                 className={`
-                                w-18 whitespace-nowrap px-4 py-3 text-sm font-medium 
-                                border transition-colors duration-200
-                                rounded-xl
+                                    w-18 py-2 text-sm font-medium whitespace-nowrap
+                                    border transition-colors duration-200
+                                    rounded-xl flex items-center justify-center
                   
                                     ${
-                                    activeCategory === cat
+                                    activeCategory === cat.label
                                         ? "bg-white text-sky-600 border-gray-300 opacity-100"
                                         : "bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200 opacity-50"
                                 }`}
                             >
-                                {cat}
+                                <span style={{ fontSize: "19px" }}>{cat.icon}</span>
                             </button>
                         ))}
                     </aside>
