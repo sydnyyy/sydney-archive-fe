@@ -114,7 +114,7 @@ const ChatWidget: React.FC = () => {
                 sendAt: new Date().toISOString(),
             };
             stompClientRef.current.publish({
-                destination: "/app/chat.send", // 서버 @MessageMapping 주소
+                destination: "/app/chat.send",
                 body: JSON.stringify(chatMessage),
             });
             setMessages((prev) => [...prev, chatMessage]); // 내 메시지 UI 반영
@@ -201,7 +201,11 @@ const ChatWidget: React.FC = () => {
                     </div>
 
                     {/* 입력 영역 */}
-                    <div
+                    <form
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            sendMessage();
+                        }}
                         style={{
                             display: "flex",
                             padding: "10px",
@@ -212,9 +216,6 @@ const ChatWidget: React.FC = () => {
                             type="text"
                             value={inputMessage}
                             onChange={(e) => setInputMessage(e.target.value)}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter") sendMessage();
-                            }}
                             style={{
                                 flex: 1,
                                 padding: "10px",
@@ -225,7 +226,7 @@ const ChatWidget: React.FC = () => {
                             placeholder="메시지 입력..."
                         />
                         <button
-                            onClick={sendMessage}
+                            type="submit"
                             style={{
                                 marginLeft: "10px",
                                 padding: "10px 15px",
@@ -238,7 +239,7 @@ const ChatWidget: React.FC = () => {
                         >
                             전송
                         </button>
-                    </div>
+                    </form>
                 </div>
             )}
         </>
