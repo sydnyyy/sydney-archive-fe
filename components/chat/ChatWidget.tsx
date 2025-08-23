@@ -216,6 +216,7 @@ const ChatWidget: React.FC = () => {
                                 padding: "10px",
                                 borderRadius: "20px",
                                 border: "1px solid #ccc",
+                                color: 'black'
                             }}
                             placeholder="메시지 입력..."
                         />
