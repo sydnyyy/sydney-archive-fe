@@ -175,6 +175,10 @@ const ChatWidget: React.FC = () => {
                             gap: "10px",
                         }}
                     >
+                        <div style={{ paddingBottom: '14px', textAlign: 'center', color: '#6c757d', fontSize: '14px', borderBottom: '1px solid #eee' }}>
+                            궁금한 점이 있으신가요? 문의하실 내용을 남겨주세요!
+                        </div>
+
                         {messages.map((msg, index) => (
                             <div
                                 key={index}
