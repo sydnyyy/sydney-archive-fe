@@ -161,6 +161,7 @@ const ChatWidget: React.FC = () => {
                         flexDirection: "column",
                         backgroundColor: "white",
                         zIndex: 1000,
+                        fontFamily: "'Poor Story', cursive",
                     }}
                 >
                     {/* 메시지 영역 */}
@@ -168,7 +169,7 @@ const ChatWidget: React.FC = () => {
                         style={{
                             flex: 1,
                             overflowY: "auto",
-                            padding: "10px",
+                            padding: "14px",
                             display: "flex",
                             flexDirection: "column",
                             gap: "10px",
@@ -180,12 +181,12 @@ const ChatWidget: React.FC = () => {
                                 style={{
                                     maxWidth: "80%",
                                     padding: "8px 12px",
-                                    borderRadius: "18px",
+                                    borderRadius: "15px",
                                     wordWrap: "break-word",
                                     alignSelf:
                                         msg.clientId === clientId ? "flex-end" : "flex-start",
                                     backgroundColor:
-                                        msg.clientId === clientId ? "#3f51b5" : "#e0e0e0",
+                                        msg.clientId === clientId ? "#4599E6" : "#D1DADE",
                                     color: msg.clientId === clientId ? "white" : "black",
                                 }}
                             >
@@ -225,7 +226,7 @@ const ChatWidget: React.FC = () => {
                                 padding: "10px 15px",
                                 borderRadius: "20px",
                                 border: "none",
-                                backgroundColor: "#3f51b5",
+                                backgroundColor: "#4599E6",
                                 color: "white",
                                 cursor: "pointer",
                             }}
