@@ -12,6 +12,8 @@ import ProductModal from "@/components/product/ProductModal";
 import FoodModal from "@/components/food/FoodModal";
 import RestaurantCard from "@/components/food/RestaurantCard";
 
+import ChatWidget from "@/components/chat/ChatWidget";
+
 const categories = [
     { label: ITEM_TYPE.PRODUCT, icon: "🎁" },
     { label: ITEM_TYPE.FOOD, icon: "🍕" },
@@ -138,6 +140,9 @@ export default function Page() {
                     setActiveCategory={setActiveCategory}
                 />
             </div>
+
+            {/* 관리자 문의하기 위젯 */}
+            <ChatWidget />
         </div>
     );
 }
