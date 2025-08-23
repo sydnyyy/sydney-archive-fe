@@ -176,7 +176,8 @@ const ChatWidget: React.FC = () => {
                         }}
                     >
                         <div style={{ paddingBottom: '14px', textAlign: 'center', color: '#6c757d', fontSize: '14px', borderBottom: '1px solid #eee' }}>
-                            궁금한 점이 있으신가요? 문의하실 내용을 남겨주세요!
+                            궁금한 점이 있으신가요? 문의하실 내용을 남겨주세요!<br />
+                            아이템을 클릭하면 아이템에 대한 상담을 시작합니다 🤗
                         </div>
 
                         {messages.map((msg, index) => (
