@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { productItems } from "@/lib/productItems";
 import { foodItems } from "@/lib/foodItems";
 import { Item } from "@/lib/types";
@@ -11,7 +11,7 @@ import CategoryTabs from "@/components/common/CategoryTabs";
 import ProductModal from "@/components/product/ProductModal";
 import FoodModal from "@/components/food/FoodModal";
 import RestaurantCard from "@/components/food/RestaurantCard";
-import ChatWidget from "@/components/chat/ChatWidget";
+import ChatWidget, { ChatWidgetRef } from "@/components/chat/ChatWidget";
 
 const categories = [
     { label: ITEM_TYPE.PRODUCT, icon: "🎁" },
@@ -24,6 +24,22 @@ export default function Page() {
     const [activeCategory, setActiveCategory] = useState<CategoryLabel>(ITEM_TYPE.PRODUCT);
     const [showSidebarText, setShowSidebarText] = useState(false);
     const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+    const [tabRightPosition, setTabRightPosition] = useState<string>('');
+    const chatRef = useRef<ChatWidgetRef>(null);
+
+    const handleProductClick = (item: Item) => {
+        setSelectedItem(item);
+        if (chatRef.current?.isOpen()) {
+            chatRef.current?.startItemChat(item.title);
+        }
+    };
+
+    const handleRecipeClick = (item: Item) => {
+        setSelectedItem(item);
+        if (chatRef.current?.isOpen()) {
+            chatRef.current?.startItemChat(item.title);
+        }
+    };
 
     let filteredItems: Item[];
     if (activeCategory === ITEM_TYPE.PRODUCT) {
@@ -33,8 +49,6 @@ export default function Page() {
     } else {
         filteredItems = [...productItems, ...foodItems];
     }
-
-    const [tabRightPosition, setTabRightPosition] = useState<string>('');
 
     // 스크롤 감지 (사이드 문구)
     useEffect(() => {
@@ -121,7 +135,7 @@ export default function Page() {
                                         text-center transition hover:scale-[1.02]"
                                 >
                                     {item.type === ITEM_TYPE.PRODUCT && (
-                                        <div onClick={() => setSelectedItem(item)}>
+                                        <div onClick={() => handleProductClick(item)}>
                                             <img
                                                 src={item.image}
                                                 alt={item.title}
@@ -135,7 +149,7 @@ export default function Page() {
                                     )}
 
                                     {item.type === ITEM_TYPE.FOOD && item.format === FOOD_FORMAT.RECIPE && (
-                                        <div onClick={() => setSelectedItem(item)}>
+                                        <div onClick={() => handleRecipeClick(item)}>
                                             <img
                                                 src={item.image}
                                                 alt={item.title}
@@ -163,7 +177,7 @@ export default function Page() {
             </div>
 
             {/* 관리자 문의하기 위젯 */}
-            <ChatWidget />
+            <ChatWidget ref={chatRef} />
         </div>
     );
 }

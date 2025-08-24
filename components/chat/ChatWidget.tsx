@@ -1,6 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Client } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
+"use client";
+
+import React, {
+    useState,
+    useEffect,
+    useRef,
+    forwardRef,
+    useImperativeHandle,
+} from "react";
+import { Client } from "@stomp/stompjs";
+import SockJS from "sockjs-client";
 import { v4 as uuidv4 } from "uuid";
 import { CLIENT_ID_KEY } from "@/constants/auth/storageKeys";
 
@@ -38,12 +46,18 @@ interface ChatMessage {
     clientId: string;
     content: string;
     sendAt: string;
+    type?: "user" | "system";
 }
 
-const ChatWidget: React.FC = () => {
+export interface ChatWidgetRef {
+    startItemChat: (itemName: string) => void;
+    isOpen: () => boolean;
+}
+
+const ChatWidget = forwardRef<ChatWidgetRef>((props, ref) => {
     const [isChatOpen, setIsChatOpen] = useState(false);
     const [messages, setMessages] = useState<ChatMessage[]>([]);
-    const [inputMessage, setInputMessage] = useState<string>('');
+    const [inputMessage, setInputMessage] = useState<string>("");
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const stompClientRef = useRef<Client | null>(null);
@@ -58,19 +72,17 @@ const ChatWidget: React.FC = () => {
 
     // STOMP 연결 함수
     const connectStomp = (id: string) => {
-        if (stompClientRef.current) return; // 이미 연결되어 있으면 무시
+        if (stompClientRef.current) return;
 
         const client = new Client({
-            webSocketFactory: () => new SockJS(`http://localhost:8080/ws?clientId=${id}`),
+            webSocketFactory: () =>
+                new SockJS(`http://localhost:8080/ws?clientId=${id}`),
             reconnectDelay: 5000,
             onConnect: () => {
                 console.log("🟢 STOMP 연결 성공");
                 client.subscribe(`/user/queue/chat.messages`, (message) => {
-
-                    console.log("Raw STOMP message received:", message);
-
                     const chatMessage: ChatMessage = JSON.parse(message.body);
-                    if (chatMessage.clientId === 'wishlist-admin') {
+                    if (chatMessage.clientId === "wishlist-admin") {
                         setMessages((prev) => [...prev, chatMessage]);
                     }
                 });
@@ -84,13 +96,27 @@ const ChatWidget: React.FC = () => {
         stompClientRef.current = client;
     };
 
-    // 채팅 버튼 클릭 → 연결 시도
-    const handleChatButtonClick = () => {
-        setIsChatOpen((prev) => !prev);
-        if (!stompClientRef.current && !isChatOpen && clientId) {
-            connectStomp(clientId);
-        }
+    // 시스템 메시지 추가 함수
+    const addSystemMessage = (content: string) => {
+        const systemMessage: ChatMessage = {
+            clientId: "system",
+            content,
+            sendAt: new Date().toISOString(),
+            type: "system",
+        };
+        setMessages((prev) => [...prev, systemMessage]);
     };
+
+    // 특정 아이템 상담 시작 문구
+    useImperativeHandle(ref, () => ({
+        startItemChat(itemName: string) {
+            setIsChatOpen(true);
+            if (clientId) {
+                connectStomp(clientId);
+            }
+            addSystemMessage(`${itemName} 아이템 상담을 시작합니다 🤗`);
+        }, isOpen: () => isChatOpen,
+    }));
 
     // 언마운트 시 연결 해제
     useEffect(() => {
@@ -100,24 +126,25 @@ const ChatWidget: React.FC = () => {
         };
     }, []);
 
-    // 메시지 스크롤을 최신 메시지로 이동
+    // 메시지 스크롤 최신화
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
-    // 메시지 전송
+    // 일반 메시지 전송
     const sendMessage = () => {
         if (stompClientRef.current && inputMessage.trim() !== "" && clientId) {
             const chatMessage: ChatMessage = {
                 clientId: clientId,
                 content: inputMessage,
                 sendAt: new Date().toISOString(),
+                type: "user",
             };
             stompClientRef.current.publish({
                 destination: "/app/chat.send",
                 body: JSON.stringify(chatMessage),
             });
-            setMessages((prev) => [...prev, chatMessage]); // 내 메시지 UI 반영
+            setMessages((prev) => [...prev, chatMessage]);
             setInputMessage("");
         }
     };
@@ -141,9 +168,13 @@ const ChatWidget: React.FC = () => {
                     alignItems: "center",
                     zIndex: 1000,
                 }}
-                onClick={handleChatButtonClick}
+                onClick={() => setIsChatOpen((prev) => !prev)}
             >
-                <img src="/wishlist_logo.svg" alt="Chat Icon" style={{ width: "40px", height: "40px" }} />
+                <img
+                    src="/wishlist_logo.svg"
+                    alt="Chat Icon"
+                    style={{ width: "40px", height: "40px" }}
+                />
             </div>
 
             {/* 채팅창 */}
@@ -175,29 +206,56 @@ const ChatWidget: React.FC = () => {
                             gap: "10px",
                         }}
                     >
-                        <div style={{ paddingBottom: '14px', textAlign: 'center', color: '#6c757d', fontSize: '14px', borderBottom: '1px solid #eee' }}>
+                        <div
+                            style={{
+                                paddingBottom: "14px",
+                                textAlign: "center",
+                                color: "#6c757d",
+                                fontSize: "14px",
+                                borderBottom: "1px solid #eee",
+                            }}
+                        >
                             궁금한 점이 있으신가요? 문의하실 내용을 남겨주세요!<br />
                             아이템을 클릭하면 아이템에 대한 상담을 시작합니다 🤗
                         </div>
 
-                        {messages.map((msg, index) => (
-                            <div
-                                key={index}
-                                style={{
-                                    maxWidth: "80%",
-                                    padding: "8px 12px",
-                                    borderRadius: "15px",
-                                    wordWrap: "break-word",
-                                    alignSelf:
-                                        msg.clientId === clientId ? "flex-end" : "flex-start",
-                                    backgroundColor:
-                                        msg.clientId === clientId ? "#4599E6" : "#D1DADE",
-                                    color: msg.clientId === clientId ? "white" : "black",
-                                }}
-                            >
-                                {msg.content}
-                            </div>
-                        ))}
+                        {messages.map((msg, index) =>
+                            msg.type === "system" ? (
+                                <div
+                                    key={index}
+                                    style={{
+                                        textAlign: "center",
+                                        fontSize: "14px",
+                                        padding: "8px 12px",
+                                        backgroundColor: "#EAF4FF",
+                                        color: "#4599E6",
+                                        borderRadius: "12px",
+                                        margin: "4px auto",
+                                        maxWidth: "85%",
+                                        fontWeight: 500,
+                                    }}
+                                >
+                                    {msg.content}
+                                </div>
+                            ) : (
+                                <div
+                                    key={index}
+                                    style={{
+                                        maxWidth: "80%",
+                                        padding: "8px 12px",
+                                        borderRadius: "15px",
+                                        wordWrap: "break-word",
+                                        alignSelf:
+                                            msg.clientId === clientId ? "flex-end" : "flex-start",
+                                        backgroundColor:
+                                            msg.clientId === clientId ? "#4599E6" : "#D1DADE",
+                                        color: msg.clientId === clientId ? "white" : "black",
+                                    }}
+                                >
+                                    {msg.content}
+                                </div>
+                            )
+                        )}
                         <div ref={messagesEndRef} />
                     </div>
 
@@ -222,7 +280,7 @@ const ChatWidget: React.FC = () => {
                                 padding: "10px",
                                 borderRadius: "20px",
                                 border: "1px solid #ccc",
-                                color: 'black'
+                                color: "black",
                             }}
                             placeholder="메시지 입력..."
                         />
@@ -245,6 +303,6 @@ const ChatWidget: React.FC = () => {
             )}
         </>
     );
-};
+});
 
 export default ChatWidget;
