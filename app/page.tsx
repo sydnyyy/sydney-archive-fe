@@ -5,13 +5,12 @@ import { productItems } from "@/lib/productItems";
 import { foodItems } from "@/lib/foodItems";
 import { Item } from "@/lib/types";
 import { motion, AnimatePresence } from "framer-motion";
-import { ITEM_TYPE } from "@/lib/types";
+import { ITEM_TYPE, FOOD_FORMAT } from "@/lib/types";
 
 import CategoryTabs from "@/components/common/CategoryTabs";
 import ProductModal from "@/components/product/ProductModal";
 import FoodModal from "@/components/food/FoodModal";
 import RestaurantCard from "@/components/food/RestaurantCard";
-
 import ChatWidget from "@/components/chat/ChatWidget";
 
 const categories = [
@@ -121,7 +120,29 @@ export default function Page() {
                                         flex flex-col items-center justify-center
                                         text-center transition hover:scale-[1.02]"
                                 >
-                                    <RestaurantCard item={item} onSelect={(item) => setSelectedItem(item)} />
+                                    {item.type === ITEM_TYPE.PRODUCT && (
+                                        <div onClick={() => setSelectedItem(item)}>
+                                            <img
+                                                src={item.image}
+                                                alt={item.title}
+                                                className="rounded-xl shadow-md cursor-pointer"
+                                            />
+                                        </div>
+                                    )}
+
+                                    {item.type === ITEM_TYPE.FOOD && item.format === FOOD_FORMAT.RESTAURANT && (
+                                        <RestaurantCard item={item} onSelect={(item) => setSelectedItem(item)} />
+                                    )}
+
+                                    {item.type === ITEM_TYPE.FOOD && item.format === FOOD_FORMAT.RECIPE && (
+                                        <div onClick={() => setSelectedItem(item)}>
+                                            <img
+                                                src={item.image}
+                                                alt={item.title}
+                                                className="rounded-xl shadow-md cursor-pointer"
+                                            />
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                         </div>
