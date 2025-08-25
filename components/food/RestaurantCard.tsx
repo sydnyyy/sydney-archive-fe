@@ -1,13 +1,13 @@
 import { motion } from "framer-motion";
-import { Item } from "@/lib/types";
+import { FoodItem } from "@/lib/types";
 import { ITEM_TYPE, FOOD_FORMAT } from "@/lib/types";
 
-interface ItemCardProps {
-    item: Item;
-    onSelect: (item: Item) => void;
+interface RestaurantCardProps {
+    item: FoodItem;
+    onSelect: (item: FoodItem) => void;
 }
 
-export default function RestaurantCard({ item, onSelect }: ItemCardProps) {
+export default function RestaurantCard({ item, onSelect }: RestaurantCardProps) {
     if (item.type === ITEM_TYPE.FOOD && "format" in item && item.format === FOOD_FORMAT.RESTAURANT) {
         return (
             <div className="relative w-full aspect-square perspective-[1000px] cursor-pointer">
@@ -22,19 +22,22 @@ export default function RestaurantCard({ item, onSelect }: ItemCardProps) {
                     </div>
 
                     {/* 뒷면 */}
-                    <a
-                        href={item.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="absolute inset-0 flex flex-col items-center justify-center
-                      rounded-2xl backface-hidden rotate-y-180
-                      bg-white border-2 border-gray-200 shadow-md p-2"
+                    <div
+                        className="
+                            absolute inset-0 flex flex-col items-center justify-center
+                            rounded-2xl backface-hidden rotate-y-180
+                            bg-white border-2 border-gray-200 shadow-md p-2
+                            "
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onSelect(item);
+                        }}
                     >
                         <h3 className="text-[15px] font-semibold text-gray-700 mb-2">{item.title}</h3>
                         {item.description && <p className="text-[13px] text-gray-500 mb-2">{item.description}</p>}
                         {item.location && <p className="text-[13px] text-gray-500">📍 {item.location}</p>}
                         <p className="text-xs text-gray-400">클릭 시 상세 페이지 이동</p>
-                    </a>
+                    </div>
                 </motion.div>
             </div>
         );

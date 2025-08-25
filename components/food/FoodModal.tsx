@@ -19,7 +19,11 @@ export default function FoodModal({ selectedItem, onClose }: FoodModalProps) {
             exit={{ opacity: 0 }}
         >
             <motion.div
-                className="bg-white p-4 rounded-2xl w-[90%] max-w-xl relative shadow-2xl flex flex-row gap-7"
+                className={`
+                bg-white p-3 rounded-2xl relative shadow-2xl flex flex-row gap-7
+                 ${"format" in selectedItem && selectedItem.format === FOOD_FORMAT.RESTAURANT
+                    ? "w-[80%] max-w-sm" : "w-[90%] max-w-xl"}
+                 `}
                 onClick={(e) => e.stopPropagation()}
                 initial={{ scale: 0.5, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -28,7 +32,14 @@ export default function FoodModal({ selectedItem, onClose }: FoodModalProps) {
             >
                 {/* 왼쪽: 이미지 */}
                 {selectedItem.image && (
-                    <div className="flex-shrink-0 w-60 h-60 bg-gray-100 rounded-xl overflow-hidden">
+                    <div
+                        className={`
+                        flex-shrink-0 bg-gray-100 rounded-xl overflow-hidden
+                        ${"format" in selectedItem && selectedItem.format === FOOD_FORMAT.RESTAURANT
+                            ? "w-40 h-40" 
+                            : "w-60 h-60"}
+                        `}
+                    >
                         <img
                             src={selectedItem.image}
                             alt={selectedItem.title}
@@ -39,7 +50,15 @@ export default function FoodModal({ selectedItem, onClose }: FoodModalProps) {
 
                 {/* 오른쪽: 텍스트 */}
                 <div className="flex-1 flex flex-col justify-start text-left mt-1">
-                    <h2 className="text-xl font-bold mb-2 text-black">{selectedItem.title}</h2>
+                    <h2
+                        className={`font-bold mb-2 text-black ${
+                            "format" in selectedItem && selectedItem.format === FOOD_FORMAT.RESTAURANT
+                                ? "text-lg"
+                                : "text-xl"
+                        }`}
+                    >
+                        {selectedItem.title}
+                    </h2>
 
                     {/* 음식점 */}
                     {"format" in selectedItem && selectedItem.format === FOOD_FORMAT.RESTAURANT && (
@@ -48,7 +67,21 @@ export default function FoodModal({ selectedItem, onClose }: FoodModalProps) {
                                 <p className="text-sm text-gray-700 mb-2">{selectedItem.description}</p>
                             )}
                             {"location" in selectedItem && (
-                                <p className="text-sm text-gray-600 mb-3">📍 {selectedItem.location}</p>
+                                <p className="text-sm text-gray-600 mb-3">
+                                    📍{" "}
+                                    {selectedItem.link ? (
+                                        <a
+                                            href={selectedItem.link}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-blue-800 hover:underline"
+                                        >
+                                            {selectedItem.location}
+                                        </a>
+                                    ) : (
+                                        selectedItem.location
+                                    )}
+                                </p>
                             )}
                         </>
                     )}
