@@ -27,17 +27,16 @@ export default function Page() {
     const [tabRightPosition, setTabRightPosition] = useState<string>('');
     const chatRef = useRef<ChatWidgetRef>(null);
 
-    const handleProductClick = (item: Item) => {
+    const handleItemClick = (item: Item) => {
         setSelectedItem(item);
-        if (chatRef.current?.isOpen()) {
-            chatRef.current?.startItemChat(item.title);
-        }
-    };
 
-    const handleRecipeClick = (item: Item) => {
-        setSelectedItem(item);
         if (chatRef.current?.isOpen()) {
             chatRef.current?.startItemChat(item.title);
+            return;
+        }
+
+        if (item.type === ITEM_TYPE.FOOD && item.format === FOOD_FORMAT.RESTAURANT && item.link) {
+            window.open(item.link, "_blank");
         }
     };
 
@@ -135,7 +134,7 @@ export default function Page() {
                                         text-center transition hover:scale-[1.02]"
                                 >
                                     {item.type === ITEM_TYPE.PRODUCT && (
-                                        <div onClick={() => handleProductClick(item)}>
+                                        <div onClick={() => handleItemClick(item)}>
                                             <img
                                                 src={item.image}
                                                 alt={item.title}
@@ -145,11 +144,11 @@ export default function Page() {
                                     )}
 
                                     {item.type === ITEM_TYPE.FOOD && item.format === FOOD_FORMAT.RESTAURANT && (
-                                        <RestaurantCard item={item} onSelect={(item) => setSelectedItem(item)} />
+                                        <RestaurantCard item={item} onSelect={(item) => handleItemClick(item)} />
                                     )}
 
                                     {item.type === ITEM_TYPE.FOOD && item.format === FOOD_FORMAT.RECIPE && (
-                                        <div onClick={() => handleRecipeClick(item)}>
+                                        <div onClick={() => handleItemClick(item)}>
                                             <img
                                                 src={item.image}
                                                 alt={item.title}
