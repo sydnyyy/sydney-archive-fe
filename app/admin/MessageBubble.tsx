@@ -10,13 +10,22 @@ export default function MessageBubble({ msg, adminId }: Props) {
     const isAdmin = msg.sender === adminId;
 
     return (
-        <div
-            className={`p-3 rounded max-w-xs
-            ${
-                isAdmin ? "bg-blue-400 text-white self-end ml-auto" : "bg-gray-200"
-            }`}
-        >
-            {msg.content}
+        <div className="mb-3">
+            {isAdmin ? (
+                <div className="flex items-end justify-end">
+                    <span className="text-xs text-gray-500 mr-1">{msg.sendAt}</span>
+                    <div className="px-3 py-2 rounded-2xl bg-blue-400 text-white">
+                        {msg.content}
+                    </div>
+                </div>
+            ) : (
+                <div className="flex items-end justify-start">
+                    <div className="px-3 py-2 rounded-2xl bg-gray-200 text-black">
+                        {msg.content}
+                    </div>
+                    <span className="text-xs text-gray-500 ml-1">{msg.sendAt}</span>
+                </div>
+            )}
         </div>
     );
 }

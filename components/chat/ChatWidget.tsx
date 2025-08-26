@@ -241,25 +241,50 @@ const ChatWidget = forwardRef<ChatWidgetRef>((props, ref) => {
                                 <div
                                     key={index}
                                     style={{
+                                        display: "flex",
+                                        alignItems: "flex-end",
+                                        justifyContent:
+                                            msg.sender === clientId ? "flex-end" : "flex-start",
+                                        gap: "4px",
                                         maxWidth: "80%",
-                                        padding: "8px 12px",
-                                        borderRadius: "15px",
-                                        wordWrap: "break-word",
-                                        alignSelf:
-                                            msg.sender === clientId || msg.type === "USER" && msg.sender === clientId
-                                                ? "flex-end"
-                                                : "flex-start",
-                                        backgroundColor:
-                                            msg.sender === clientId || msg.type === "USER" && msg.sender === clientId
-                                                ? "#4599E6"
-                                                : "#D1DADE",
-                                        color:
-                                            msg.sender === clientId || msg.type === "USER" && msg.sender === clientId
-                                                ? "white"
-                                                : "black",
+                                        marginLeft: msg.sender === clientId ? "auto" : undefined,
+                                        marginRight: msg.sender === clientId ? undefined : "auto",
                                     }}
                                 >
-                                    {msg.content}
+                                    {msg.sender === clientId && (
+                                        <span
+                                            style={{
+                                                fontSize: "12px",
+                                                color: "#6c757d",
+                                            }}
+                                        >
+                                            {msg.sendAt.slice(11, 16)}
+                                        </span>
+                                    )}
+
+                                    <div
+                                        style={{
+                                            padding: "8px 12px",
+                                            borderRadius: "15px",
+                                            wordWrap: "break-word",
+                                            backgroundColor:
+                                                msg.sender === clientId ? "#4599E6" : "#D1DADE",
+                                            color: msg.sender === clientId ? "white" : "black",
+                                        }}
+                                    >
+                                        {msg.content}
+                                    </div>
+
+                                    {msg.sender !== clientId && (
+                                        <span
+                                            style={{
+                                                fontSize: "12px",
+                                                color: "#6c757d",
+                                            }}
+                                        >
+                                            {msg.sendAt.slice(11, 16)}
+                                        </span>
+                                    )}
                                 </div>
                             )
                         )}
