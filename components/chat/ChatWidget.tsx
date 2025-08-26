@@ -11,6 +11,7 @@ import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import { v4 as uuidv4 } from "uuid";
 import { CLIENT_ID_KEY } from "@/constants/auth/storageKeys";
+import { ChatMessage } from "@/types/chat";
 
 export function getOrCreateId(
     storage: Storage,
@@ -42,13 +43,6 @@ function getBrowserName(): string {
     return "unknown";
 }
 
-interface ChatMessage {
-    clientId: string;
-    content: string;
-    sendAt: string;
-    type?: "user" | "system";
-}
-
 export interface ChatWidgetRef {
     startItemChat: (itemName: string) => void;
     isOpen: () => boolean;
@@ -72,6 +66,8 @@ const ChatWidget = forwardRef<ChatWidgetRef>((props, ref) => {
 
     // STOMP 연결 함수
     const connectStomp = (id: string) => {
+        if (!id || stompClientRef.current) return;
+
         if (stompClientRef.current) return;
 
         const client = new Client({
@@ -82,7 +78,7 @@ const ChatWidget = forwardRef<ChatWidgetRef>((props, ref) => {
                 console.log("🟢 STOMP 연결 성공");
                 client.subscribe(`/user/queue/chat.messages`, (message) => {
                     const chatMessage: ChatMessage = JSON.parse(message.body);
-                    if (chatMessage.clientId === "wishlist-admin") {
+                    if (chatMessage.sender === "wishlist-admin") {
                         setMessages((prev) => [...prev, chatMessage]);
                     }
                 });
@@ -98,11 +94,14 @@ const ChatWidget = forwardRef<ChatWidgetRef>((props, ref) => {
 
     // 시스템 메시지 추가 함수
     const addSystemMessage = (content: string) => {
+        if (!clientId) return;
+
         const systemMessage: ChatMessage = {
-            clientId: "system",
+            sender: "system",
+            receiver: clientId,
             content,
             sendAt: new Date().toISOString(),
-            type: "system",
+            type: "SYSTEM",
         };
         setMessages((prev) => [...prev, systemMessage]);
     };
@@ -135,10 +134,11 @@ const ChatWidget = forwardRef<ChatWidgetRef>((props, ref) => {
     const sendMessage = () => {
         if (stompClientRef.current && inputMessage.trim() !== "" && clientId) {
             const chatMessage: ChatMessage = {
-                clientId: clientId,
+                sender: clientId,
+                receiver: "wishlist-admin",
                 content: inputMessage,
                 sendAt: new Date().toISOString(),
-                type: "user",
+                type: "USER",
             };
             stompClientRef.current.publish({
                 destination: "/app/chat.send",
@@ -220,7 +220,7 @@ const ChatWidget = forwardRef<ChatWidgetRef>((props, ref) => {
                         </div>
 
                         {messages.map((msg, index) =>
-                            msg.type === "system" ? (
+                            msg.type === "SYSTEM" ? (
                                 <div
                                     key={index}
                                     style={{
@@ -246,10 +246,17 @@ const ChatWidget = forwardRef<ChatWidgetRef>((props, ref) => {
                                         borderRadius: "15px",
                                         wordWrap: "break-word",
                                         alignSelf:
-                                            msg.clientId === clientId ? "flex-end" : "flex-start",
+                                            msg.sender === clientId || msg.type === "USER" && msg.sender === clientId
+                                                ? "flex-end"
+                                                : "flex-start",
                                         backgroundColor:
-                                            msg.clientId === clientId ? "#4599E6" : "#D1DADE",
-                                        color: msg.clientId === clientId ? "white" : "black",
+                                            msg.sender === clientId || msg.type === "USER" && msg.sender === clientId
+                                                ? "#4599E6"
+                                                : "#D1DADE",
+                                        color:
+                                            msg.sender === clientId || msg.type === "USER" && msg.sender === clientId
+                                                ? "white"
+                                                : "black",
                                     }}
                                 >
                                     {msg.content}
