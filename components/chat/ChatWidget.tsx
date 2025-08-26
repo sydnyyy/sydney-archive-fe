@@ -12,6 +12,7 @@ import SockJS from "sockjs-client";
 import { v4 as uuidv4 } from "uuid";
 import { CLIENT_ID_KEY } from "@/constants/auth/storageKeys";
 import { ChatMessage } from "@/types/chat";
+import { formatKST } from "@/utils/data";
 
 export function getOrCreateId(
     storage: Storage,
@@ -258,7 +259,7 @@ const ChatWidget = forwardRef<ChatWidgetRef>((props, ref) => {
                                                 color: "#6c757d",
                                             }}
                                         >
-                                            {msg.sendAt.slice(11, 16)}
+                                            {formatKST(msg.sendAt).slice(13, 19)}
                                         </span>
                                     )}
 
@@ -282,7 +283,7 @@ const ChatWidget = forwardRef<ChatWidgetRef>((props, ref) => {
                                                 color: "#6c757d",
                                             }}
                                         >
-                                            {msg.sendAt.slice(11, 16)}
+                                            {formatKST(msg.sendAt).slice(13, 19)}
                                         </span>
                                     )}
                                 </div>
