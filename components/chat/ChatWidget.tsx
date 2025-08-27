@@ -53,17 +53,23 @@ const ChatWidget = forwardRef<ChatWidgetRef>((props, ref) => {
     const [isChatOpen, setIsChatOpen] = useState(false);
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [inputMessage, setInputMessage] = useState<string>("");
+    const [clientId, setClientId] = useState<string | null>(null);
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const stompClientRef = useRef<Client | null>(null);
 
-    const [clientId, setClientId] = useState<string | null>(null);
     useEffect(() => {
         if (typeof window !== "undefined") {
             const id = getOrCreateId(localStorage, CLIENT_ID_KEY, 8, getBrowserName());
             setClientId(id);
         }
     }, []);
+
+    useEffect(() => {
+        if (isChatOpen && clientId) {
+            connectStomp(clientId);
+        }
+    }, [isChatOpen, clientId]);
 
     // STOMP 연결 함수
     const connectStomp = (id: string) => {
@@ -111,9 +117,6 @@ const ChatWidget = forwardRef<ChatWidgetRef>((props, ref) => {
     useImperativeHandle(ref, () => ({
         startItemChat(itemName: string) {
             setIsChatOpen(true);
-            if (clientId) {
-                connectStomp(clientId);
-            }
             addSystemMessage(`${itemName} 아이템 상담을 시작합니다 🤗`);
         }, isOpen: () => isChatOpen,
     }));
