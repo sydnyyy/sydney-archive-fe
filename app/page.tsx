@@ -27,17 +27,50 @@ export default function Page() {
     const [tabRightPosition, setTabRightPosition] = useState<string>('');
     const chatRef = useRef<ChatWidgetRef>(null);
 
+    const [currentChatItem, setCurrentChatItem] = useState<Item | null>(null);
+    const [nextChatItem, setNextChatItem] = useState<Item | null>(null);
+
     const handleItemClick = (item: Item) => {
         setSelectedItem(item);
 
         if (chatRef.current?.isOpen()) {
-            chatRef.current?.startItemChat(item.title);
+            if (!currentChatItem) {
+                setCurrentChatItem(item);
+                chatRef.current.startItemChat(item.title);
+            } else if (currentChatItem.id !== item.id) {
+                setNextChatItem(item);
+                chatRef.current.addChatMessageWithOptions({
+                    content: `${currentChatItem.title} 상담을 종료하시겠습니까?`,
+                    options: [
+                        { label: "예", value: "yes" },
+                        { label: "아니오", value: "no" },
+                    ],
+                });
+            }
             return;
         }
 
         if (item.type === ITEM_TYPE.FOOD && item.format === FOOD_FORMAT.RESTAURANT && item.link) {
             window.open(item.link, "_blank");
         }
+    };
+
+    const handleChatOptionSelect = (choice: "yes" | "no") => {
+        chatRef.current?.removeLastOptionMessage?.();
+
+        if (!currentChatItem || !nextChatItem) return;
+
+        if (choice === "yes") {
+            chatRef.current?.addSystemMessage?.(`${currentChatItem.title} 상담을 종료합니다.`);
+
+            setTimeout(() => {
+                setCurrentChatItem(nextChatItem);
+                chatRef.current?.startItemChat(nextChatItem.title);
+            }, 500);
+        }
+
+        // 다음 아이템 초기화
+        setNextChatItem(null);
     };
 
     let filteredItems: Item[];
@@ -176,7 +209,7 @@ export default function Page() {
             </div>
 
             {/* 관리자 문의하기 위젯 */}
-            <ChatWidget ref={chatRef} />
+            <ChatWidget ref={chatRef} onOptionSelect={handleChatOptionSelect} />
         </div>
     );
 }

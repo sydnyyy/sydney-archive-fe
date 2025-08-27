@@ -46,10 +46,17 @@ function getBrowserName(): string {
 
 export interface ChatWidgetRef {
     startItemChat: (itemName: string) => void;
+    addChatMessageWithOptions: (message: { content: string; options: { label: string; value: string }[] }) => void;
     isOpen: () => boolean;
+    removeLastOptionMessage: () => void;
+    addSystemMessage: (content: string) => void;
 }
 
-const ChatWidget = forwardRef<ChatWidgetRef>((props, ref) => {
+interface ChatWidgetProps {
+    onOptionSelect?: (value: "yes" | "no") => void;
+}
+
+const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect }, ref) => {
     const [isChatOpen, setIsChatOpen] = useState(false);
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [inputMessage, setInputMessage] = useState<string>("");
@@ -74,8 +81,6 @@ const ChatWidget = forwardRef<ChatWidgetRef>((props, ref) => {
     // STOMP 연결 함수
     const connectStomp = (id: string) => {
         if (!id || stompClientRef.current) return;
-
-        if (stompClientRef.current) return;
 
         const client = new Client({
             webSocketFactory: () =>
@@ -125,7 +130,25 @@ const ChatWidget = forwardRef<ChatWidgetRef>((props, ref) => {
         startItemChat(itemName: string) {
             setIsChatOpen(true);
             addSystemMessage(`${itemName} 아이템 상담을 시작합니다 🤗`);
-        }, isOpen: () => isChatOpen,
+        },
+        addChatMessageWithOptions(message: { content: string; options: { label: string; value: string }[] }) {
+            setIsChatOpen(true);
+            setMessages(prev => [
+                ...prev,
+                {
+                    ...message,
+                    sender: "system",
+                    receiver: clientId,
+                    type: "SYSTEM",
+                    sendAt: new Date().toISOString()
+                } as ChatMessage,
+            ]);
+        },
+        isOpen: () => isChatOpen,
+        removeLastOptionMessage() {
+            setMessages(prev => prev.filter(msg => !msg.options));
+        },
+        addSystemMessage,
     }));
 
     // 언마운트 시 연결 해제
@@ -158,6 +181,10 @@ const ChatWidget = forwardRef<ChatWidgetRef>((props, ref) => {
             setMessages((prev) => [...prev, chatMessage]);
             setInputMessage("");
         }
+    };
+
+    const handleOptionClick = (value: "yes" | "no") => {
+        if (onOptionSelect) onOptionSelect(value);
     };
 
     return (
@@ -247,6 +274,29 @@ const ChatWidget = forwardRef<ChatWidgetRef>((props, ref) => {
                                     }}
                                 >
                                     {msg.content}
+
+                                    {/* options 렌더링 */}
+                                    {msg.options?.length ? (
+                                        <div style={{ marginTop: "8px", display: "flex", justifyContent: "center", gap: "6px" }}>
+                                            {msg.options.map((opt) => (
+                                                <button
+                                                    key={opt.value}
+                                                    onClick={() => handleOptionClick(opt.value as "yes" | "no")}
+                                                    style={{
+                                                        padding: "6px 12px",
+                                                        borderRadius: "12px",
+                                                        border: "1px solid #4599E6",
+                                                        backgroundColor: "white",
+                                                        color: "#4599E6",
+                                                        cursor: "pointer",
+                                                    }}
+                                                >
+                                                    {opt.label}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    ) : null}
+
                                 </div>
                             ) : (
                                 <div
