@@ -5,12 +5,12 @@ import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import ChatRoomList from "@/app/admin/ChatRoomList";
 import ChatWindow from "@/app/admin/ChatWindow";
-import { ChatMessage } from "@/types/chat";
+import { ChatMessage, ChatRoom } from "@/types/chat";
 
 export default function AdminPage() {
     const [messages, setMessages] = useState<ChatMessage[]>([]);
+    const [chatRooms, setChatRooms] = useState<Record<string, ChatRoom>>({});
     const [selectedClient, setSelectedClient] = useState<string | null>(null);
-    const [clients, setClients] = useState<string[]>([]);
     const stompClientRef = useRef<Client | null>(null);
 
     const adminId = "wishlist-admin";
@@ -24,11 +24,22 @@ export default function AdminPage() {
 
                 client.subscribe("/topic/admin.chat", (message) => {
                     const chatMessage: ChatMessage = JSON.parse(message.body);
+
                     setMessages((prev) => [...prev, chatMessage]);
 
-                    setClients((prev) =>
-                        prev.includes(chatMessage.sender) ? prev : [...prev, chatMessage.sender]
-                    );
+                    const clientId =
+                        chatMessage.type === "SYSTEM"
+                            ? chatMessage.receiver
+                            : chatMessage.sender;
+
+                    setChatRooms((prev) => ({
+                        ...prev,
+                        [clientId]: prev[clientId] || {
+                            clientId,
+                            lastMessage: null,
+                            unreadCount: 0,
+                        },
+                    }));
                 });
             },
         });
@@ -64,7 +75,7 @@ export default function AdminPage() {
     return (
         <div className="flex h-screen">
             <ChatRoomList
-                clients={clients}
+                chatRooms={Object.values(chatRooms)}
                 selectedClient={selectedClient}
                 onSelect={setSelectedClient}
             />

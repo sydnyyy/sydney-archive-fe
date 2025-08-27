@@ -111,6 +111,13 @@ const ChatWidget = forwardRef<ChatWidgetRef>((props, ref) => {
             type: "SYSTEM",
         };
         setMessages((prev) => [...prev, systemMessage]);
+
+        if (stompClientRef.current) {
+            stompClientRef.current.publish({
+                destination: "/app/chat.send",
+                body: JSON.stringify(systemMessage),
+            });
+        }
     };
 
     // 특정 아이템 상담 시작 문구

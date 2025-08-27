@@ -1,25 +1,26 @@
 import React from "react";
+import { ChatRoom } from "@/types/chat";
 
 interface ChatRoomListProps {
-    clients: string[];
+    chatRooms: ChatRoom[];
     selectedClient: string | null;
     onSelect: (clientId: string) => void;
 }
 
-export default function ChatRoomList({ clients, selectedClient, onSelect }: ChatRoomListProps) {
+export default function ChatRoomList({ chatRooms, selectedClient, onSelect }: ChatRoomListProps) {
     return (
         <div className="w-1/4 bg-gray-100 p-4 border-r">
             <h2 className="font-bold mb-2">채팅방 목록</h2>
             <ul>
-                {[...new Set(clients)].map((cid, idx) => (
+                {chatRooms.map((room) => (
                     <li
-                        key={`${cid}-${idx}`}
-                        onClick={() => onSelect(cid)}
+                        key={room.clientId}
+                        onClick={() => onSelect(room.clientId)}
                         className={`cursor-pointer p-2 rounded ${
-                            cid === selectedClient ? "bg-blue-200" : "hover:bg-gray-200"
+                            room.clientId === selectedClient ? "bg-blue-200" : "hover:bg-gray-200"
                         }`}
                     >
-                        {cid}
+                        {room.clientId}
                     </li>
                 ))}
             </ul>

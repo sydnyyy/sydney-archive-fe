@@ -5,3 +5,7 @@ export interface ChatMessage {
     sendAt: string;
     type: "USER" | "ADMIN" | "SYSTEM";
 }
+
+export interface ChatRoom {
+    clientId: string;
+}
