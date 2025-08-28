@@ -9,40 +9,10 @@ import React, {
 } from "react";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
-import { v4 as uuidv4 } from "uuid";
 import { CLIENT_ID_KEY } from "@/constants/auth/storageKeys";
 import { ChatMessage } from "@/types/chat";
 import { formatKST } from "@/utils/data";
-
-export function getOrCreateId(
-    storage: Storage,
-    key: string,
-    length: number = 8,
-    prefix?: string
-): string {
-    let id = storage.getItem(key);
-
-    if (!id) {
-        const randomPart = uuidv4().replace(/-/g, "").slice(0, length);
-        id = prefix ? `${prefix}_${randomPart}` : randomPart;
-        storage.setItem(key, id);
-    }
-    return id;
-}
-
-function getBrowserName(): string {
-    const ua = navigator.userAgent.toLowerCase();
-    if (ua.includes("chrome") && !ua.includes("edg") && !ua.includes("opr")) {
-        return "chrome";
-    } else if (ua.includes("safari") && !ua.includes("chrome")) {
-        return "safari";
-    } else if (ua.includes("firefox")) {
-        return "firefox";
-    } else if (ua.includes("edg")) {
-        return "edge";
-    }
-    return "unknown";
-}
+import { getOrCreateId } from "@/utils/clientId";
 
 export interface ChatWidgetRef {
     startItemChat: (itemName: string) => void;
@@ -67,7 +37,7 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
 
     useEffect(() => {
         if (typeof window !== "undefined") {
-            const id = getOrCreateId(localStorage, CLIENT_ID_KEY, 8, getBrowserName());
+            const id = getOrCreateId(localStorage, CLIENT_ID_KEY, 8);
             setClientId(id);
         }
     }, []);
