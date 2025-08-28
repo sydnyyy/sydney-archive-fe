@@ -11,6 +11,8 @@ import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 import { v4 as uuidv4 } from "uuid";
 import { CLIENT_ID_KEY } from "@/constants/auth/storageKeys";
+import { ChatMessage } from "@/types/chat";
+import { formatKST } from "@/utils/data";
 
 export function getOrCreateId(
     storage: Storage,
@@ -42,27 +44,27 @@ function getBrowserName(): string {
     return "unknown";
 }
 
-interface ChatMessage {
-    clientId: string;
-    content: string;
-    sendAt: string;
-    type?: "user" | "system";
-}
-
 export interface ChatWidgetRef {
     startItemChat: (itemName: string) => void;
+    addChatMessageWithOptions: (message: { content: string; options: { label: string; value: string }[] }) => void;
     isOpen: () => boolean;
+    removeLastOptionMessage: () => void;
+    addSystemMessage: (content: string) => void;
 }
 
-const ChatWidget = forwardRef<ChatWidgetRef>((props, ref) => {
+interface ChatWidgetProps {
+    onOptionSelect?: (value: "yes" | "no") => void;
+}
+
+const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect }, ref) => {
     const [isChatOpen, setIsChatOpen] = useState(false);
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [inputMessage, setInputMessage] = useState<string>("");
+    const [clientId, setClientId] = useState<string | null>(null);
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const stompClientRef = useRef<Client | null>(null);
 
-    const [clientId, setClientId] = useState<string | null>(null);
     useEffect(() => {
         if (typeof window !== "undefined") {
             const id = getOrCreateId(localStorage, CLIENT_ID_KEY, 8, getBrowserName());
@@ -70,9 +72,15 @@ const ChatWidget = forwardRef<ChatWidgetRef>((props, ref) => {
         }
     }, []);
 
+    useEffect(() => {
+        if (isChatOpen && clientId) {
+            connectStomp(clientId);
+        }
+    }, [isChatOpen, clientId]);
+
     // STOMP 연결 함수
     const connectStomp = (id: string) => {
-        if (stompClientRef.current) return;
+        if (!id || stompClientRef.current) return;
 
         const client = new Client({
             webSocketFactory: () =>
@@ -82,7 +90,7 @@ const ChatWidget = forwardRef<ChatWidgetRef>((props, ref) => {
                 console.log("🟢 STOMP 연결 성공");
                 client.subscribe(`/user/queue/chat.messages`, (message) => {
                     const chatMessage: ChatMessage = JSON.parse(message.body);
-                    if (chatMessage.clientId === "wishlist-admin") {
+                    if (chatMessage.sender === "wishlist-admin") {
                         setMessages((prev) => [...prev, chatMessage]);
                     }
                 });
@@ -98,24 +106,49 @@ const ChatWidget = forwardRef<ChatWidgetRef>((props, ref) => {
 
     // 시스템 메시지 추가 함수
     const addSystemMessage = (content: string) => {
+        if (!clientId) return;
+
         const systemMessage: ChatMessage = {
-            clientId: "system",
+            sender: "system",
+            receiver: clientId,
             content,
             sendAt: new Date().toISOString(),
-            type: "system",
+            type: "SYSTEM",
         };
         setMessages((prev) => [...prev, systemMessage]);
+
+        if (stompClientRef.current) {
+            stompClientRef.current.publish({
+                destination: "/app/chat.send",
+                body: JSON.stringify(systemMessage),
+            });
+        }
     };
 
     // 특정 아이템 상담 시작 문구
     useImperativeHandle(ref, () => ({
         startItemChat(itemName: string) {
             setIsChatOpen(true);
-            if (clientId) {
-                connectStomp(clientId);
-            }
             addSystemMessage(`${itemName} 아이템 상담을 시작합니다 🤗`);
-        }, isOpen: () => isChatOpen,
+        },
+        addChatMessageWithOptions(message: { content: string; options: { label: string; value: string }[] }) {
+            setIsChatOpen(true);
+            setMessages(prev => [
+                ...prev,
+                {
+                    ...message,
+                    sender: "system",
+                    receiver: clientId,
+                    type: "SYSTEM",
+                    sendAt: new Date().toISOString()
+                } as ChatMessage,
+            ]);
+        },
+        isOpen: () => isChatOpen,
+        removeLastOptionMessage() {
+            setMessages(prev => prev.filter(msg => !msg.options));
+        },
+        addSystemMessage,
     }));
 
     // 언마운트 시 연결 해제
@@ -135,10 +168,11 @@ const ChatWidget = forwardRef<ChatWidgetRef>((props, ref) => {
     const sendMessage = () => {
         if (stompClientRef.current && inputMessage.trim() !== "" && clientId) {
             const chatMessage: ChatMessage = {
-                clientId: clientId,
+                sender: clientId,
+                receiver: "wishlist-admin",
                 content: inputMessage,
                 sendAt: new Date().toISOString(),
-                type: "user",
+                type: "USER",
             };
             stompClientRef.current.publish({
                 destination: "/app/chat.send",
@@ -147,6 +181,10 @@ const ChatWidget = forwardRef<ChatWidgetRef>((props, ref) => {
             setMessages((prev) => [...prev, chatMessage]);
             setInputMessage("");
         }
+    };
+
+    const handleOptionClick = (value: "yes" | "no") => {
+        if (onOptionSelect) onOptionSelect(value);
     };
 
     return (
@@ -220,7 +258,7 @@ const ChatWidget = forwardRef<ChatWidgetRef>((props, ref) => {
                         </div>
 
                         {messages.map((msg, index) =>
-                            msg.type === "system" ? (
+                            msg.type === "SYSTEM" ? (
                                 <div
                                     key={index}
                                     style={{
@@ -236,23 +274,78 @@ const ChatWidget = forwardRef<ChatWidgetRef>((props, ref) => {
                                     }}
                                 >
                                     {msg.content}
+
+                                    {/* options 렌더링 */}
+                                    {msg.options?.length ? (
+                                        <div style={{ marginTop: "8px", display: "flex", justifyContent: "center", gap: "6px" }}>
+                                            {msg.options.map((opt) => (
+                                                <button
+                                                    key={opt.value}
+                                                    onClick={() => handleOptionClick(opt.value as "yes" | "no")}
+                                                    style={{
+                                                        padding: "6px 12px",
+                                                        borderRadius: "12px",
+                                                        border: "1px solid #4599E6",
+                                                        backgroundColor: "white",
+                                                        color: "#4599E6",
+                                                        cursor: "pointer",
+                                                    }}
+                                                >
+                                                    {opt.label}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    ) : null}
+
                                 </div>
                             ) : (
                                 <div
                                     key={index}
                                     style={{
+                                        display: "flex",
+                                        alignItems: "flex-end",
+                                        justifyContent:
+                                            msg.sender === clientId ? "flex-end" : "flex-start",
+                                        gap: "4px",
                                         maxWidth: "80%",
-                                        padding: "8px 12px",
-                                        borderRadius: "15px",
-                                        wordWrap: "break-word",
-                                        alignSelf:
-                                            msg.clientId === clientId ? "flex-end" : "flex-start",
-                                        backgroundColor:
-                                            msg.clientId === clientId ? "#4599E6" : "#D1DADE",
-                                        color: msg.clientId === clientId ? "white" : "black",
+                                        marginLeft: msg.sender === clientId ? "auto" : undefined,
+                                        marginRight: msg.sender === clientId ? undefined : "auto",
                                     }}
                                 >
-                                    {msg.content}
+                                    {msg.sender === clientId && (
+                                        <span
+                                            style={{
+                                                fontSize: "12px",
+                                                color: "#6c757d",
+                                            }}
+                                        >
+                                            {formatKST(msg.sendAt).slice(13, 19)}
+                                        </span>
+                                    )}
+
+                                    <div
+                                        style={{
+                                            padding: "8px 12px",
+                                            borderRadius: "15px",
+                                            wordWrap: "break-word",
+                                            backgroundColor:
+                                                msg.sender === clientId ? "#4599E6" : "#D1DADE",
+                                            color: msg.sender === clientId ? "white" : "black",
+                                        }}
+                                    >
+                                        {msg.content}
+                                    </div>
+
+                                    {msg.sender !== clientId && (
+                                        <span
+                                            style={{
+                                                fontSize: "12px",
+                                                color: "#6c757d",
+                                            }}
+                                        >
+                                            {formatKST(msg.sendAt).slice(13, 19)}
+                                        </span>
+                                    )}
                                 </div>
                             )
                         )}
