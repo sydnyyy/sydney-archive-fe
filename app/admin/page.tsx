@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { Client } from "@stomp/stompjs";
-import SockJS from "sockjs-client";
+import { createStompClient } from "@/lib/chat/socketClient";
 import ChatRoomList from "@/app/admin/ChatRoomList";
 import ChatWindow from "@/app/admin/ChatWindow";
 import { ChatMessage, ChatRoom } from "@/types/chat";
@@ -15,40 +15,33 @@ export default function AdminPage() {
 
     const adminId = "wishlist-admin";
 
+    // STOMP 연결
     useEffect(() => {
-        const client = new Client({
-            webSocketFactory: () => new SockJS("http://localhost:8080/ws"),
-            reconnectDelay: 5000,
-            onConnect: () => {
-                console.log("🟢 Admin STOMP 연결 성공");
+        stompClientRef.current = createStompClient({
+            url: "http://localhost:8080/ws",
+            subscribePath: "/topic/admin.chat",
+            role: "admin",
+            onMessage: (chatMessage) => {
+                setMessages((prev) => [...prev, chatMessage]);
 
-                client.subscribe("/topic/admin.chat", (message) => {
-                    const chatMessage: ChatMessage = JSON.parse(message.body);
+                const clientId =
+                    chatMessage.type === "SYSTEM"
+                        ? chatMessage.receiver
+                        : chatMessage.sender;
 
-                    setMessages((prev) => [...prev, chatMessage]);
-
-                    const clientId =
-                        chatMessage.type === "SYSTEM"
-                            ? chatMessage.receiver
-                            : chatMessage.sender;
-
-                    setChatRooms((prev) => ({
-                        ...prev,
-                        [clientId]: prev[clientId] || {
-                            clientId,
-                            lastMessage: null,
-                            unreadCount: 0,
-                        },
-                    }));
-                });
+                setChatRooms((prev) => ({
+                    ...prev,
+                    [clientId]: prev[clientId] || {
+                        clientId,
+                        lastMessage: null,
+                        unreadCount: 0,
+                    },
+                }));
             },
         });
 
-        client.activate();
-        stompClientRef.current = client;
-
         return () => {
-            client.deactivate();
+            stompClientRef.current?.deactivate();
             stompClientRef.current = null;
         };
     }, []);

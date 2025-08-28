@@ -8,41 +8,11 @@ import React, {
     useImperativeHandle,
 } from "react";
 import { Client } from "@stomp/stompjs";
-import SockJS from "sockjs-client";
-import { v4 as uuidv4 } from "uuid";
-import { CLIENT_ID_KEY } from "@/constants/auth/storageKeys";
+import { createStompClient } from "@/lib/chat/socketClient";
 import { ChatMessage } from "@/types/chat";
 import { formatKST } from "@/utils/data";
-
-export function getOrCreateId(
-    storage: Storage,
-    key: string,
-    length: number = 8,
-    prefix?: string
-): string {
-    let id = storage.getItem(key);
-
-    if (!id) {
-        const randomPart = uuidv4().replace(/-/g, "").slice(0, length);
-        id = prefix ? `${prefix}_${randomPart}` : randomPart;
-        storage.setItem(key, id);
-    }
-    return id;
-}
-
-function getBrowserName(): string {
-    const ua = navigator.userAgent.toLowerCase();
-    if (ua.includes("chrome") && !ua.includes("edg") && !ua.includes("opr")) {
-        return "chrome";
-    } else if (ua.includes("safari") && !ua.includes("chrome")) {
-        return "safari";
-    } else if (ua.includes("firefox")) {
-        return "firefox";
-    } else if (ua.includes("edg")) {
-        return "edge";
-    }
-    return "unknown";
-}
+import { getOrCreateId } from "@/utils/clientId";
+import { CLIENT_ID_KEY } from "@/constants/auth/storageKeys";
 
 export interface ChatWidgetRef {
     startItemChat: (itemName: string) => void;
@@ -67,42 +37,31 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
 
     useEffect(() => {
         if (typeof window !== "undefined") {
-            const id = getOrCreateId(localStorage, CLIENT_ID_KEY, 8, getBrowserName());
+            const id = getOrCreateId(localStorage, CLIENT_ID_KEY, 8);
             setClientId(id);
         }
     }, []);
 
+    // STOMP 연결
     useEffect(() => {
         if (isChatOpen && clientId) {
-            connectStomp(clientId);
-        }
-    }, [isChatOpen, clientId]);
-
-    // STOMP 연결 함수
-    const connectStomp = (id: string) => {
-        if (!id || stompClientRef.current) return;
-
-        const client = new Client({
-            webSocketFactory: () =>
-                new SockJS(`http://localhost:8080/ws?clientId=${id}`),
-            reconnectDelay: 5000,
-            onConnect: () => {
-                console.log("🟢 STOMP 연결 성공");
-                client.subscribe(`/user/queue/chat.messages`, (message) => {
-                    const chatMessage: ChatMessage = JSON.parse(message.body);
-                    if (chatMessage.sender === "wishlist-admin") {
-                        setMessages((prev) => [...prev, chatMessage]);
+            stompClientRef.current = createStompClient({
+                url: `http://localhost:8080/ws?clientId=${clientId}`,
+                subscribePath: "/user/queue/chat.messages",
+                role: "user",
+                onMessage: (msg) => {
+                    if (msg.sender === "wishlist-admin") {
+                        setMessages((prev) => [...prev, msg]);
                     }
-                });
-            },
-            onStompError: (frame) => {
-                console.error("❌ STOMP 오류: " + frame.body);
-            },
-        });
+                },
+            });
+        }
 
-        client.activate();
-        stompClientRef.current = client;
-    };
+        return () => {
+            stompClientRef.current?.deactivate();
+            stompClientRef.current = null;
+        };
+    }, [isChatOpen, clientId]);
 
     // 시스템 메시지 추가 함수
     const addSystemMessage = (content: string) => {
