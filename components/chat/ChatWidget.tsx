@@ -8,11 +8,11 @@ import React, {
     useImperativeHandle,
 } from "react";
 import { Client } from "@stomp/stompjs";
-import SockJS from "sockjs-client";
-import { CLIENT_ID_KEY } from "@/constants/auth/storageKeys";
+import { createStompClient } from "@/lib/chat/socketClient";
 import { ChatMessage } from "@/types/chat";
 import { formatKST } from "@/utils/data";
 import { getOrCreateId } from "@/utils/clientId";
+import { CLIENT_ID_KEY } from "@/constants/auth/storageKeys";
 
 export interface ChatWidgetRef {
     startItemChat: (itemName: string) => void;
@@ -42,37 +42,26 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
         }
     }, []);
 
+    // STOMP 연결
     useEffect(() => {
         if (isChatOpen && clientId) {
-            connectStomp(clientId);
-        }
-    }, [isChatOpen, clientId]);
-
-    // STOMP 연결 함수
-    const connectStomp = (id: string) => {
-        if (!id || stompClientRef.current) return;
-
-        const client = new Client({
-            webSocketFactory: () =>
-                new SockJS(`http://localhost:8080/ws?clientId=${id}`),
-            reconnectDelay: 5000,
-            onConnect: () => {
-                console.log("🟢 STOMP 연결 성공");
-                client.subscribe(`/user/queue/chat.messages`, (message) => {
-                    const chatMessage: ChatMessage = JSON.parse(message.body);
-                    if (chatMessage.sender === "wishlist-admin") {
-                        setMessages((prev) => [...prev, chatMessage]);
+            stompClientRef.current = createStompClient({
+                url: `http://localhost:8080/ws?clientId=${clientId}`,
+                subscribePath: "/user/queue/chat.messages",
+                role: "user",
+                onMessage: (msg) => {
+                    if (msg.sender === "wishlist-admin") {
+                        setMessages((prev) => [...prev, msg]);
                     }
-                });
-            },
-            onStompError: (frame) => {
-                console.error("❌ STOMP 오류: " + frame.body);
-            },
-        });
+                },
+            });
+        }
 
-        client.activate();
-        stompClientRef.current = client;
-    };
+        return () => {
+            stompClientRef.current?.deactivate();
+            stompClientRef.current = null;
+        };
+    }, [isChatOpen, clientId]);
 
     // 시스템 메시지 추가 함수
     const addSystemMessage = (content: string) => {
