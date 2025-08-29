@@ -121,8 +121,13 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
 
     // 메시지 스크롤 최신화
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, [messages]);
+        if (isChatOpen && messages.length > 0) {
+            const timeout = setTimeout(() => {
+                messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+            }, 0);
+            return () => clearTimeout(timeout);
+        }
+    }, [isChatOpen, messages]);
 
     // 일반 메시지 전송
     const sendMessage = () => {
