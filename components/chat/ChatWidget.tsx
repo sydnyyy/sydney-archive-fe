@@ -165,6 +165,7 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
     const handleChatCloseConfirm = (shouldClose: boolean) => {
         if (shouldClose) {
             disconnectWebSocket();
+            setMessages([]);
         }
 
         setIsChatOpen(false);
