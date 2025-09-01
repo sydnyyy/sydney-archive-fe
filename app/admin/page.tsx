@@ -6,6 +6,7 @@ import { createStompClient } from "@/lib/chat/socketClient";
 import ChatRoomList from "@/app/admin/ChatRoomList";
 import ChatWindow from "@/app/admin/ChatWindow";
 import { ChatMessage, ChatRoom } from "@/types/chat";
+import {v4 as uuidv4} from "uuid";
 
 export default function AdminPage() {
     const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -50,6 +51,7 @@ export default function AdminPage() {
         if (!selectedClient) return;
 
         const chatMessage: ChatMessage = {
+            id: uuidv4(),
             sender: adminId,
             receiver: selectedClient,
             content,
