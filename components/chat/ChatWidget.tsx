@@ -53,7 +53,7 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
     useEffect(() => {
         if (isChatOpen && clientId) {
             stompClientRef.current = createStompClient({
-                url: `http://localhost:8080/ws?clientId=${clientId}`,
+                url: `http://localhost:8080/ws?client_id=${clientId}`,
                 subscribePath: "/user/queue/chat.messages",
                 role: "user",
                 onMessage: (msg) => {
