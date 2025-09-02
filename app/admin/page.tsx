@@ -19,7 +19,7 @@ export default function AdminPage() {
     // STOMP 연결
     useEffect(() => {
         stompClientRef.current = createStompClient({
-            url: "http://localhost:8080/ws",
+            url: "http://localhost:8080/ws?client_id=admin",
             subscribePath: "/topic/admin.chat",
             role: "admin",
             onMessage: (chatMessage) => {
