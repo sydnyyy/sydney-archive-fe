@@ -41,6 +41,7 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const stompClientRef = useRef<Client | null>(null);
+    const keepConnectionRef = useRef(false);
 
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -51,7 +52,7 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
 
     // STOMP 연결
     useEffect(() => {
-        if (isChatOpen && clientId) {
+        if (isChatOpen && clientId && !stompClientRef.current) {
             stompClientRef.current = createStompClient({
                 url: `http://localhost:8080/ws?client_id=${clientId}`,
                 subscribePath: "/user/queue/chat.messages",
@@ -65,8 +66,10 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
         }
 
         return () => {
-            stompClientRef.current?.deactivate();
-            stompClientRef.current = null;
+            if (!keepConnectionRef.current) {
+                stompClientRef.current?.deactivate();
+                stompClientRef.current = null;
+            }
         };
     }, [isChatOpen, clientId]);
 
@@ -170,6 +173,10 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
         if (shouldClose) {
             disconnectWebSocket();
             setMessages([]);
+            keepConnectionRef.current = false;
+        }
+        else {
+            keepConnectionRef.current = true;
         }
 
         setIsChatOpen(false);
