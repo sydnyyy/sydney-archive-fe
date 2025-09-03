@@ -1,7 +1,8 @@
 "use client";
+
 import { AnimatePresence, motion } from "framer-motion";
 import { ChatMessage } from "@/types/chat";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 
 interface ChatListProps {
     messages: ChatMessage[];
@@ -20,9 +21,18 @@ export default function ChatList({
                                      formatKST,
                                      onLoadPrevious,
                                  }: ChatListProps) {
+
     const [isLoading, setIsLoading] = useState(false);
     const containerRef = useRef<HTMLDivElement | null>(null);
+    const [isNewChat, setIsNewChat] = useState(true);
 
+    useEffect(() => {
+        if (messages.length > 0) {
+            setIsNewChat(false);
+        }
+    }, [messages]);
+
+    // 무한 스크롤 이전 메시지 로드
     const handleScroll = async () => {
         if (!containerRef.current || isLoading) return;
 
@@ -33,13 +43,19 @@ export default function ChatList({
 
             try {
                 await onLoadPrevious();
+
+                const observer = new ResizeObserver(() => {
+                    if (containerRef.current) {
+                        const newHeight = containerRef.current.scrollHeight;
+                        containerRef.current.scrollTop = newHeight - prevHeight;
+                        observer.disconnect();
+                    }
+                });
+
+                if (containerRef.current) observer.observe(containerRef.current);
+
             } finally {
                 setIsLoading(false);
-                // 이전 메시지 로드 후 스크롤 위치 유지
-                if (containerRef.current) {
-                    const newHeight = containerRef.current.scrollHeight;
-                    containerRef.current.scrollTop = newHeight - prevHeight;
-                }
             }
         }
     };
@@ -53,27 +69,30 @@ export default function ChatList({
                 padding: "14px",
                 display: "flex",
                 flexDirection: "column",
-                gap: "10px" }}
+                gap: "10px"
+            }}
             onScroll={handleScroll}
         >
-            <div
-                style={{
-                    paddingBottom: "14px",
-                    textAlign: "center",
-                    color: "#6c757d",
-                    fontSize: "14px",
-                    borderBottom: "1px solid #eee",
-                }}
-            >
-                궁금한 점이 있으신가요? 문의하실 내용을 남겨주세요!<br />
-                아이템을 클릭하면 아이템에 대한 상담을 시작합니다 🤗
-            </div>
+            {isNewChat && (
+                <div
+                    style={{
+                        paddingBottom: "14px",
+                        textAlign: "center",
+                        color: "#6c757d",
+                        fontSize: "14px",
+                        borderBottom: "1px solid #eee",
+                    }}
+                >
+                    궁금한 점이 있으신가요? 문의하실 내용을 남겨주세요!<br />
+                    아이템을 클릭하면 아이템에 대한 상담을 시작합니다 🤗
+                </div>
+            )}
 
-            <AnimatePresence initial={false}>
-                {messages.map((msg, index) =>
+            <AnimatePresence initial={false} mode={isLoading ? "wait" : undefined}>
+                {messages.map((msg) =>
                     msg.type === "SYSTEM" ? (
                         <motion.div
-                            key={index}
+                            key={msg.id}
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -20 }}
@@ -89,12 +108,8 @@ export default function ChatList({
                                 maxWidth: "85%",
                                 fontWeight: 500,
                             }}
-                            onAnimationComplete={() => {
-                                messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-                            }}
                         >
                             {msg.content}
-
                             {msg.options?.length && onOptionClick && (
                                 <div
                                     style={{
@@ -124,7 +139,7 @@ export default function ChatList({
                         </motion.div>
                     ) : (
                         <motion.div
-                            key={index}
+                            key={msg.id}
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             // exit={{ opacity: 0, y: -20 }}
@@ -137,9 +152,6 @@ export default function ChatList({
                                 maxWidth: "80%",
                                 marginLeft: msg.sender === clientId ? "auto" : undefined,
                                 marginRight: msg.sender === clientId ? undefined : "auto",
-                            }}
-                            onAnimationComplete={() => {
-                                messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
                             }}
                         >
                             {msg.sender === clientId && (

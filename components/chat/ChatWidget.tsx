@@ -84,7 +84,13 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
                     role: "user",
                     onMessage: (msg) => {
                         if (msg.sender === "wishlist-admin") {
-                            setMessages((prev) => [...prev, msg]);
+                            setMessages((prev) => {
+                                const updated = [...prev, msg];
+                                requestAnimationFrame(() => {
+                                    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+                                });
+                                return updated;
+                            });
                         }
                     },
                 });
@@ -120,6 +126,11 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
                 body: JSON.stringify(systemMessage),
             });
         }
+
+        // 새 메시지일 때 최하단으로 스크롤
+        requestAnimationFrame(() => {
+            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        });
     };
 
     // 특정 아이템 상담 시작 문구
@@ -164,7 +175,13 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
             destination: "/app/chat.send",
             body: JSON.stringify(chatMessage),
         });
-        setMessages((prev) => [...prev, chatMessage]);
+        setMessages((prev) => {
+            const updated = [...prev, chatMessage];
+            requestAnimationFrame(() => {
+                messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+            });
+            return updated;
+        });
         setInputMessage("");
     };
 
