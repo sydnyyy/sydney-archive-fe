@@ -14,6 +14,7 @@ import { getOrCreateId } from "@/utils/clientId";
 import { CLIENT_ID_KEY } from "@/constants/auth/storageKeys";
 import { v4 as uuidv4 } from "uuid";
 import { formatKST } from "@/utils/data";
+import { fetchMessagesApi } from "@/lib/chat/fetchMessageApi";
 
 import ChatList from "./ChatList";
 import ChatInput from "./ChatInput";
@@ -50,19 +51,45 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
         }
     }, []);
 
+    const loadMessages = async (cursorId?: string) => {
+        if (!clientId) return;
+        try {
+            const data = await fetchMessagesApi(clientId, false, cursorId);
+            if (cursorId) {
+                setMessages((prev) => [...data, ...prev]);
+            } else {
+                setMessages(data);
+                requestAnimationFrame(() => {
+                    messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
+                });
+            }
+        } catch (err) {
+            console.error("메시지 불러오기 실패", err);
+        }
+    };
+
+    const loadPreviousMessages = async () => {
+        if (!messages.length) return;
+        const oldestMessage = messages[0];
+        await loadMessages(oldestMessage.id);
+    };
+
     // STOMP 연결
     useEffect(() => {
-        if (isChatOpen && clientId && !stompClientRef.current) {
-            stompClientRef.current = createStompClient({
-                url: `http://localhost:8080/ws?client_id=${clientId}`,
-                subscribePath: "/user/queue/chat.messages",
-                role: "user",
-                onMessage: (msg) => {
-                    if (msg.sender === "wishlist-admin") {
-                        setMessages((prev) => [...prev, msg]);
-                    }
-                },
-            });
+        if (isChatOpen && clientId) {
+            if(!stompClientRef.current) {
+                stompClientRef.current = createStompClient({
+                    url: `http://localhost:8080/ws?client_id=${clientId}`,
+                    subscribePath: "/user/queue/chat.messages",
+                    role: "user",
+                    onMessage: (msg) => {
+                        if (msg.sender === "wishlist-admin") {
+                            setMessages((prev) => [...prev, msg]);
+                        }
+                    },
+                });
+                loadMessages();
+            }
         }
 
         return () => {
@@ -120,15 +147,6 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
         },
         addSystemMessage,
     }));
-
-    // 메시지 스크롤 최신화
-    useEffect(() => {
-        if (isChatOpen && messages.length > 0) {
-            requestAnimationFrame(() => {
-                messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-            });
-        }
-    }, [isChatOpen, messages]);
 
     // 일반 메시지 전송
     const sendMessage = () => {
@@ -209,6 +227,7 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
                         messagesEndRef={messagesEndRef}
                         onOptionClick={handleOptionClick}
                         formatKST={formatKST}
+                        onLoadPrevious={loadPreviousMessages}
                     />
                     <ChatInput
                         inputMessage={inputMessage}

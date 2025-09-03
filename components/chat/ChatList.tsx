@@ -1,6 +1,7 @@
 "use client";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChatMessage } from "@/types/chat";
+import { useRef, useState } from "react";
 
 interface ChatListProps {
     messages: ChatMessage[];
@@ -8,11 +9,44 @@ interface ChatListProps {
     messagesEndRef: React.RefObject<HTMLDivElement | null>;
     onOptionClick?: (value: "yes" | "no") => void;
     formatKST: (iso: string) => string;
+    onLoadPrevious: () => Promise<void>;
 }
 
-export default function ChatList({ messages, clientId, messagesEndRef, onOptionClick, formatKST }: ChatListProps) {
+export default function ChatList({
+                                     messages,
+                                     clientId,
+                                     messagesEndRef,
+                                     onOptionClick,
+                                     formatKST,
+                                     onLoadPrevious,
+                                 }: ChatListProps) {
+    const [isLoading, setIsLoading] = useState(false);
+    const containerRef = useRef<HTMLDivElement | null>(null);
+
+    const handleScroll = async () => {
+        if (!containerRef.current || isLoading) return;
+
+        // 맨 위 스크롤 감지
+        if (containerRef.current.scrollTop === 0) {
+            setIsLoading(true);
+            const prevHeight = containerRef.current.scrollHeight;
+
+            try {
+                await onLoadPrevious();
+            } finally {
+                setIsLoading(false);
+                // 이전 메시지 로드 후 스크롤 위치 유지
+                if (containerRef.current) {
+                    const newHeight = containerRef.current.scrollHeight;
+                    containerRef.current.scrollTop = newHeight - prevHeight;
+                }
+            }
+        }
+    };
+
     return (
         <div
+            ref={containerRef}
             style={{
                 flex: 1,
                 overflowY: "auto",
@@ -20,6 +54,7 @@ export default function ChatList({ messages, clientId, messagesEndRef, onOptionC
                 display: "flex",
                 flexDirection: "column",
                 gap: "10px" }}
+            onScroll={handleScroll}
         >
             <div
                 style={{
@@ -134,6 +169,12 @@ export default function ChatList({ messages, clientId, messagesEndRef, onOptionC
                     )
                 )}
             </AnimatePresence>
+
+            {isLoading && (
+                <div style={{ textAlign: "center", fontSize: "12px", color: "#6c757d", padding: "4px" }}>
+                    이전 메시지를 불러오는 중...
+                </div>
+            )}
 
             <div ref={messagesEndRef} />
         </div>
