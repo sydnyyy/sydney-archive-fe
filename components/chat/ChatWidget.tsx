@@ -1,12 +1,6 @@
 "use client";
 
-import React, {
-    useState,
-    useEffect,
-    useRef,
-    forwardRef,
-    useImperativeHandle,
-} from "react";
+import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from "react";
 import { Client } from "@stomp/stompjs";
 import { createStompClient } from "@/lib/chat/socketClient";
 import { ChatMessage } from "@/types/chat";
@@ -39,8 +33,10 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
     const [inputMessage, setInputMessage] = useState<string>("");
     const [clientId, setClientId] = useState<string | null>(null);
     const [showCloseDialog, setShowCloseDialog] = useState(false);
+    const [showTopNotice, setShowTopNotice] = useState(true); // 최상단 안내문 상태
 
-    const messagesEndRef = useRef<HTMLDivElement>(null);
+    const containerRef = useRef<HTMLDivElement | null>(null);
+    const messagesEndRef = useRef<HTMLDivElement | null>(null);
     const stompClientRef = useRef<Client | null>(null);
     const keepConnectionRef = useRef(false);
 
@@ -51,51 +47,60 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
         }
     }, []);
 
-    const loadMessages = async (cursorId?: string) => {
-        if (!clientId) return;
+    const loadMessages = async (cursorId?: string, isInitial = false): Promise<ChatMessage[]> => {
+        if (!clientId) return [];
+
         try {
             const data = await fetchMessagesApi(clientId, false, cursorId);
+
             if (cursorId) {
-                setMessages((prev) => [...data, ...prev]);
-            } else {
-                setMessages(data);
-                requestAnimationFrame(() => {
-                    messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
+                setMessages(prev => {
+                    const ids = new Set(prev.map(m => m.id));
+                    const filtered = data.filter(m => !ids.has(m.id));
+                    return [...filtered, ...prev];
                 });
+            } else {
+                setMessages([...data]);
+
+                if (isInitial) {
+                    requestAnimationFrame(() => {
+                        messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
+                    });
+                }
             }
+            return data;
         } catch (err) {
             console.error("메시지 불러오기 실패", err);
+            return [];
         }
     };
 
-    const loadPreviousMessages = async () => {
-        if (!messages.length) return;
+    const loadPreviousMessages = async (): Promise<ChatMessage[]> => {
+        if (!messages.length) return [];
         const oldestMessage = messages[0];
-        await loadMessages(oldestMessage.id);
+        return await loadMessages(oldestMessage.id);
     };
 
-    // STOMP 연결
     useEffect(() => {
-        if (isChatOpen && clientId) {
-            if(!stompClientRef.current) {
-                stompClientRef.current = createStompClient({
-                    url: `http://localhost:8080/ws?client_id=${clientId}`,
-                    subscribePath: "/user/queue/chat.messages",
-                    role: "user",
-                    onMessage: (msg) => {
-                        if (msg.sender === "wishlist-admin") {
-                            setMessages((prev) => {
-                                const updated = [...prev, msg];
-                                requestAnimationFrame(() => {
-                                    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-                                });
-                                return updated;
+        if (isChatOpen && clientId && !stompClientRef.current) {
+            stompClientRef.current = createStompClient({
+                url: `http://localhost:8080/ws?client_id=${clientId}`,
+                subscribePath: "/user/queue/chat.messages",
+                role: "user",
+                onMessage: (msg) => {
+                    setMessages(prev => {
+                        if (!prev.find(m => m.id === msg.id)) {
+                            const updated = [...prev, msg];
+                            requestAnimationFrame(() => {
+                                messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
                             });
+                            return updated;
                         }
-                    },
-                });
-                loadMessages();
-            }
+                        return prev;
+                    });
+                },
+            });
+            loadMessages(undefined, true);
         }
 
         return () => {
@@ -106,7 +111,6 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
         };
     }, [isChatOpen, clientId]);
 
-    // 시스템 메시지 추가 함수
     const addSystemMessage = (content: string) => {
         if (!clientId) return;
 
@@ -118,7 +122,7 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
             sendAt: new Date().toISOString(),
             type: "SYSTEM",
         };
-        setMessages((prev) => [...prev, systemMessage]);
+        setMessages(prev => [...prev, systemMessage]);
 
         if (stompClientRef.current) {
             stompClientRef.current.publish({
@@ -127,19 +131,17 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
             });
         }
 
-        // 새 메시지일 때 최하단으로 스크롤
         requestAnimationFrame(() => {
             messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
         });
     };
 
-    // 특정 아이템 상담 시작 문구
     useImperativeHandle(ref, () => ({
         startItemChat(itemName: string) {
             setIsChatOpen(true);
             addSystemMessage(`${itemName} 아이템 상담을 시작합니다 🤗`);
         },
-        addChatMessageWithOptions(message: { content: string; options: { label: string; value: string }[] }) {
+        addChatMessageWithOptions(message) {
             setIsChatOpen(true);
             setMessages(prev => [
                 ...prev,
@@ -159,7 +161,6 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
         addSystemMessage,
     }));
 
-    // 일반 메시지 전송
     const sendMessage = () => {
         if (!stompClientRef.current || inputMessage.trim() === "" || !clientId) return;
 
@@ -175,7 +176,7 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
             destination: "/app/chat.send",
             body: JSON.stringify(chatMessage),
         });
-        setMessages((prev) => {
+        setMessages(prev => {
             const updated = [...prev, chatMessage];
             requestAnimationFrame(() => {
                 messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -208,9 +209,9 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
         if (shouldClose) {
             disconnectWebSocket();
             setMessages([]);
+            setShowTopNotice(true);
             keepConnectionRef.current = false;
-        }
-        else {
+        } else {
             keepConnectionRef.current = true;
         }
 
@@ -242,9 +243,12 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
                         messages={messages}
                         clientId={clientId}
                         messagesEndRef={messagesEndRef}
+                        containerRef={containerRef}
                         onOptionClick={handleOptionClick}
                         formatKST={formatKST}
                         onLoadPrevious={loadPreviousMessages}
+                        showTopNotice={showTopNotice}
+                        setShowTopNotice={setShowTopNotice}
                     />
                     <ChatInput
                         inputMessage={inputMessage}

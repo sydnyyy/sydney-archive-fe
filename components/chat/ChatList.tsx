@@ -2,61 +2,53 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { ChatMessage } from "@/types/chat";
-import { useRef, useState, useEffect } from "react";
+import { RefObject, useState } from "react";
 
 interface ChatListProps {
     messages: ChatMessage[];
     clientId: string | null;
-    messagesEndRef: React.RefObject<HTMLDivElement | null>;
+    messagesEndRef: RefObject<HTMLDivElement | null>;
+    containerRef: RefObject<HTMLDivElement | null>;
     onOptionClick?: (value: "yes" | "no") => void;
     formatKST: (iso: string) => string;
-    onLoadPrevious: () => Promise<void>;
+    onLoadPrevious: () => Promise<ChatMessage[]>;
+    showTopNotice: boolean;
+    setShowTopNotice: (show: boolean) => void;
 }
 
 export default function ChatList({
-                                     messages,
+                                     messages = [],
                                      clientId,
                                      messagesEndRef,
+                                     containerRef,
                                      onOptionClick,
                                      formatKST,
                                      onLoadPrevious,
+                                     showTopNotice,
+                                     setShowTopNotice,
                                  }: ChatListProps) {
-
     const [isLoading, setIsLoading] = useState(false);
-    const containerRef = useRef<HTMLDivElement | null>(null);
-    const [isNewChat, setIsNewChat] = useState(true);
 
-    useEffect(() => {
-        if (messages.length > 0) {
-            setIsNewChat(false);
-        }
-    }, [messages]);
-
-    // 무한 스크롤 이전 메시지 로드
     const handleScroll = async () => {
         if (!containerRef.current || isLoading) return;
 
-        // 맨 위 스크롤 감지
         if (containerRef.current.scrollTop === 0) {
             setIsLoading(true);
-            const prevHeight = containerRef.current.scrollHeight;
-
             try {
-                await onLoadPrevious();
-
-                const observer = new ResizeObserver(() => {
-                    if (containerRef.current) {
-                        const newHeight = containerRef.current.scrollHeight;
-                        containerRef.current.scrollTop = newHeight - prevHeight;
-                        observer.disconnect();
-                    }
-                });
-
-                if (containerRef.current) observer.observe(containerRef.current);
-
+                const prevHeight = containerRef.current.scrollHeight;
+                const loaded = await onLoadPrevious();
+                if (loaded.length > 0 && containerRef.current) {
+                    const newHeight = containerRef.current.scrollHeight;
+                    containerRef.current.scrollTop = newHeight - prevHeight;
+                }
+                if (containerRef.current.scrollTop === 0) {
+                    setShowTopNotice(true);
+                }
             } finally {
                 setIsLoading(false);
             }
+        } else {
+            setShowTopNotice(false);
         }
     };
 
@@ -73,7 +65,7 @@ export default function ChatList({
             }}
             onScroll={handleScroll}
         >
-            {isNewChat && (
+            {showTopNotice && (
                 <div
                     style={{
                         paddingBottom: "14px",
@@ -116,7 +108,8 @@ export default function ChatList({
                                         marginTop: "8px",
                                         display: "flex",
                                         justifyContent: "center",
-                                        gap: "6px" }}
+                                        gap: "6px"
+                                    }}
                                 >
                                     {msg.options.map((opt) => (
                                         <button
@@ -142,7 +135,6 @@ export default function ChatList({
                             key={msg.id}
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            // exit={{ opacity: 0, y: -20 }}
                             transition={{ duration: 0.3 }}
                             style={{
                                 display: "flex",
@@ -159,7 +151,6 @@ export default function ChatList({
                                     {formatKST(msg.sendAt).slice(13, 19)}
                                 </span>
                             )}
-
                             <div
                                 style={{
                                     padding: "8px 12px",
@@ -171,7 +162,6 @@ export default function ChatList({
                             >
                                 {msg.content}
                             </div>
-
                             {msg.sender !== clientId && (
                                 <span style={{ fontSize: "12px", color: "#6c757d" }}>
                                     {formatKST(msg.sendAt).slice(13, 19)}
@@ -183,7 +173,14 @@ export default function ChatList({
             </AnimatePresence>
 
             {isLoading && (
-                <div style={{ textAlign: "center", fontSize: "12px", color: "#6c757d", padding: "4px" }}>
+                <div
+                    style={{
+                        textAlign: "center",
+                        fontSize: "12px",
+                        color: "#6c757d",
+                        padding: "4px"
+                    }}
+                >
                     이전 메시지를 불러오는 중...
                 </div>
             )}
