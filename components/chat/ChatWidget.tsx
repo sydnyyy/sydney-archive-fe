@@ -85,28 +85,32 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
         if (isChatOpen && clientId && !stompClientRef.current) {
             stompClientRef.current = createStompClient({
                 url: `http://localhost:8080/ws?client_id=${clientId}`,
-                subscribePath: "/user/queue/chat.messages",
                 role: "user",
-                onMessage: (msg) => {
-                    setMessages(prev => {
-                        if (!prev.find(m => m.id === msg.id)) {
-                            const updated = [...prev, msg];
-                            requestAnimationFrame(() => {
-                                messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-                            });
-                            return updated;
-                        }
-                        return prev;
-                    });
-                },
+                subscribePaths: [
+                    {
+                        path: "/user/queue/chat.messages",
+                        onMessage: (msg) => {
+                            setMessages((prev) => [...prev, msg]);
+                        },
+                    },
+                    {
+                        path: "/user/queue/system",
+                        onMessage: (event) => {
+                            if (event.type === "SESSION_EXPIRED") {
+                                if (event.shouldTerminate) {
+                                    disconnectWebSocket();
+                                }
+                            }
+                        },
+                    },
+                ],
             });
             loadMessages(undefined, true);
         }
 
         return () => {
             if (!keepConnectionRef.current) {
-                stompClientRef.current?.deactivate();
-                stompClientRef.current = null;
+                disconnectWebSocket();
             }
         };
     }, [isChatOpen, clientId]);

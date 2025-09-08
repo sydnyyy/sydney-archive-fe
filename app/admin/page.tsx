@@ -20,25 +20,29 @@ export default function AdminPage() {
     useEffect(() => {
         stompClientRef.current = createStompClient({
             url: "http://localhost:8080/ws?client_id=admin",
-            subscribePath: "/topic/admin.chat",
             role: "admin",
-            onMessage: (chatMessage) => {
-                setMessages((prev) => [...prev, chatMessage]);
+            subscribePaths: [
+                {
+                    path: "/topic/admin.chat",
+                    onMessage: (chatMessage) => {
+                        setMessages((prev) => [...prev, chatMessage]);
 
-                const clientId =
-                    chatMessage.type === "SYSTEM"
-                        ? chatMessage.receiver
-                        : chatMessage.sender;
+                        const clientId =
+                            chatMessage.type === "SYSTEM"
+                                ? chatMessage.receiver
+                                : chatMessage.sender;
 
-                setChatRooms((prev) => ({
-                    ...prev,
-                    [clientId]: prev[clientId] || {
-                        clientId,
-                        lastMessage: null,
-                        unreadCount: 0,
+                        setChatRooms((prev) => ({
+                            ...prev,
+                            [clientId]: prev[clientId] || {
+                                clientId,
+                                lastMessage: null,
+                                unreadCount: 0,
+                            },
+                        }));
                     },
-                }));
-            },
+                },
+            ],
         });
 
         return () => {
