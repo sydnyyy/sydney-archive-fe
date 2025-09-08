@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } f
 import { Client } from "@stomp/stompjs";
 import { createStompClient } from "@/lib/chat/socketClient";
 import { ChatMessage } from "@/types/chat";
+import { SystemEvent } from "@/types/system";
 import { getOrCreateId } from "@/utils/clientId";
 import { CLIENT_ID_KEY } from "@/constants/auth/storageKeys";
 import { v4 as uuidv4 } from "uuid";
@@ -14,6 +15,7 @@ import ChatList from "./ChatList";
 import ChatInput from "./ChatInput";
 import ChatButton from "./ChatButton";
 import ChatCloseDialog from "./ChatCloseDialog";
+import SystemEventDialog from "./SystemEventDialog";
 
 export interface ChatWidgetRef {
     startItemChat: (itemName: string) => void;
@@ -34,6 +36,7 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
     const [clientId, setClientId] = useState<string | null>(null);
     const [showCloseDialog, setShowCloseDialog] = useState(false);
     const [showTopNotice, setShowTopNotice] = useState(true); // 최상단 안내문 상태
+    const [systemEvent, setSystemEvent] = useState<SystemEvent | null>(null); //  시스템 이벤트 상태 (웹소켓 종료 여부)
 
     const containerRef = useRef<HTMLDivElement | null>(null);
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -99,6 +102,8 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
                             if (event.type === "SESSION_EXPIRED") {
                                 if (event.shouldTerminate) {
                                     disconnectWebSocket();
+                                } else {
+                                    setSystemEvent(event);
                                 }
                             }
                         },
@@ -263,6 +268,18 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
             )}
 
             {showCloseDialog && <ChatCloseDialog onConfirm={handleChatCloseConfirm} />}
+
+            {systemEvent && (
+                <SystemEventDialog
+                    onDecision={(decision) => {
+                        stompClientRef.current?.publish({
+                            destination: "/app/system.response",
+                            body: JSON.stringify({ ...systemEvent, shouldTerminate: decision }),
+                        });
+                        setSystemEvent(null);
+                    }}
+                />
+            )}
         </>
     );
 });
