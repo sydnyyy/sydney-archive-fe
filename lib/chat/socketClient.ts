@@ -1,14 +1,19 @@
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
-import { ChatMessage } from "@/types/chat";
 
-export function createStompClient(options: {
+export interface SubscribePath {
+    path: string;
+    onMessage: (msg: any) => void;
+}
+
+export interface CreateStompClientOptions {
     url: string;
-    subscribePath: string;
     role: "admin" | "user";
-    onMessage: (msg: ChatMessage) => void;
+    subscribePaths: SubscribePath[];
     reconnectDelay?: number;
-}): Client {
+}
+
+export function createStompClient(options: CreateStompClientOptions): Client {
     const client = new Client({
         webSocketFactory: () => new SockJS(options.url),
         reconnectDelay: options.reconnectDelay ?? 5000,
@@ -19,8 +24,10 @@ export function createStompClient(options: {
                     : "🟢 User STOMP 연결 성공"
             );
 
-            client.subscribe(options.subscribePath, (message) => {
-                options.onMessage(JSON.parse(message.body));
+            options.subscribePaths.forEach(({ path, onMessage }) => {
+                client.subscribe(path, (message) => {
+                    onMessage(JSON.parse(message.body));
+                });
             });
         },
         onStompError: (frame) => {
@@ -33,6 +40,5 @@ export function createStompClient(options: {
     });
 
     client.activate();
-
     return client;
 }
