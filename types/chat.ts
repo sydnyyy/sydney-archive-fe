@@ -8,6 +8,7 @@ export interface ChatMessage {
     options?: { label: string; value: string }[];
 }
 
-export interface ChatRoom {
+export interface AdminChatRoom {
     clientId: string;
+    lastMessageAt: string;
 }
