@@ -29,6 +29,12 @@ export default function Page() {
 
     const [currentChatItem, setCurrentChatItem] = useState<Item | null>(null);
     const [nextChatItem, setNextChatItem] = useState<Item | null>(null);
+    const [clientId, setClientId] = useState<string>("anonymous");
+
+    useEffect(() => {
+        const id = localStorage.getItem("client_id") ?? "anonymous";
+        setClientId(id);
+    }, []);
 
     const handleItemClick = (item: Item) => {
         setSelectedItem(item);
@@ -135,12 +141,20 @@ export default function Page() {
                     )}
 
                     {selectedItem && selectedItem.type === ITEM_TYPE.PRODUCT && (
-                        <ProductModal selectedItem={selectedItem} onClose={() => setSelectedItem(null)} />
+                        <ProductModal
+                            selectedItem={selectedItem}
+                            onClose={() => setSelectedItem(null)}
+                            clientId={clientId}
+                        />
                     )}
 
                     {/* 음식 모달 */}
                     {selectedItem && selectedItem.type === ITEM_TYPE.FOOD && (
-                        <FoodModal selectedItem={selectedItem} onClose={() => setSelectedItem(null)} />
+                        <FoodModal
+                            selectedItem={selectedItem}
+                            onClose={() => setSelectedItem(null)}
+                            clientId={clientId}
+                        />
                     )}
                 </AnimatePresence>
 
@@ -177,7 +191,11 @@ export default function Page() {
                                     )}
 
                                     {item.type === ITEM_TYPE.FOOD && item.format === FOOD_FORMAT.RESTAURANT && (
-                                        <RestaurantCard item={item} onSelect={(item) => handleItemClick(item)} />
+                                        <RestaurantCard
+                                            item={item}
+                                            onSelect={handleItemClick}
+                                            clientId={clientId}
+                                        />
                                     )}
 
                                     {item.type === ITEM_TYPE.FOOD && item.format === FOOD_FORMAT.RECIPE && (

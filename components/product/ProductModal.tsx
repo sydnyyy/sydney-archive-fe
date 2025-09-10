@@ -1,14 +1,26 @@
 import { motion } from "framer-motion";
 import TaggedImage from "@/components/common/TaggedImage";
-import { Item } from "@/lib/types";
-import { ITEM_TYPE } from "@/lib/types";
+import { Item, ITEM_TYPE } from "@/lib/types";
+import { sendAccessEvent } from "@/lib/accesslog/accessEventApi";
+import { useEffect, useRef } from "react";
 
 interface ProductModalProps {
     selectedItem: Item;
     onClose: () => void;
+    clientId: string;
 }
 
-export default function ProductModal({ selectedItem, onClose }: ProductModalProps) {
+export default function ProductModal({ selectedItem, onClose, clientId }: ProductModalProps) {
+
+    const hasSentLog = useRef(false);
+
+    useEffect(() => {
+        if (!hasSentLog.current) {
+            sendAccessEvent(clientId ?? "anonymous", selectedItem.id);
+            hasSentLog.current = true;
+        }
+    }, [clientId, selectedItem.id]);
+
     return (
         <motion.div
             className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
