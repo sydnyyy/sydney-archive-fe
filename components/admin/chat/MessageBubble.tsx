@@ -1,10 +1,8 @@
-import React from "react";
 import { ChatMessage } from "@/types/chat";
 import { formatKST } from "@/utils/data";
 
 interface Props {
     msg: ChatMessage;
-    adminId: string;
 }
 
 export default function MessageBubble({ msg }: Props) {
