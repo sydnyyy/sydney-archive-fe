@@ -1,5 +1,4 @@
 import { Client } from "@stomp/stompjs";
-import SockJS from "sockjs-client";
 
 export interface SubscribePath {
     path: string;
@@ -15,7 +14,7 @@ export interface CreateStompClientOptions {
 
 export function createStompClient(options: CreateStompClientOptions): Client {
     const client = new Client({
-        webSocketFactory: () => new SockJS(options.url),
+        brokerURL: options.url,
         reconnectDelay: options.reconnectDelay ?? 5000,
         debug: (str) => {
             console.log("STOMP DEBUG:", str);
