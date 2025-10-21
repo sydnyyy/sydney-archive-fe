@@ -24,11 +24,15 @@ export default function AdminPage() {
     useEffect(() => {
         stompClientRef.current = createStompClient({
             url: "http://localhost:8080/ws?client_id=admin",
-            subscribePath: "/topic/admin.chat",
             role: "admin",
-            onMessage: (msg: ChatMessage) => {
-                setMessages((prev) => [...prev, msg]);
-            },
+            subscribePaths: [
+                {
+                    path: "/topic/admin.chat",
+                    onMessage: (msg: ChatMessage) => {
+                        setMessages((prev) => [...prev, msg]);
+                    },
+                },
+            ],
         });
 
         return () => {

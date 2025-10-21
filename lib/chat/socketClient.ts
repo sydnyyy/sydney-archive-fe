@@ -1,5 +1,4 @@
 import { Client } from "@stomp/stompjs";
-import SockJS from "sockjs-client";
 
 export interface SubscribePath {
     path: string;
@@ -15,8 +14,11 @@ export interface CreateStompClientOptions {
 
 export function createStompClient(options: CreateStompClientOptions): Client {
     const client = new Client({
-        webSocketFactory: () => new SockJS(options.url),
+        brokerURL: options.url,
         reconnectDelay: options.reconnectDelay ?? 5000,
+        debug: (str) => {
+            console.log("STOMP DEBUG:", str);
+        },
         onConnect: () => {
             console.log(
                 options.role === "admin"
@@ -30,11 +32,17 @@ export function createStompClient(options: CreateStompClientOptions): Client {
                 });
             });
         },
+        onWebSocketError: (err) => {
+            console.error("🔴 WebSocket error:", err);
+        },
+        onWebSocketClose: (evt) => {
+            console.warn("🟢 WebSocket closed:", evt);
+        },
         onStompError: (frame) => {
             console.error(
                 options.role === "admin"
-                    ? `❌ Admin STOMP 오류: ${frame.body}`
-                    : `❌ User STOMP 오류: ${frame.body}`
+                    ? `🔴 Admin STOMP 오류: ${frame.body}`
+                    : `🔴 User STOMP 오류: ${frame.body}`
             );
         },
     });
