@@ -86,8 +86,9 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
 
     useEffect(() => {
         if (isChatOpen && clientId && !stompClientRef.current) {
+            const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
             stompClientRef.current = createStompClient({
-                url: `http://localhost:8080/ws?client_id=${clientId}`,
+                url: `${baseUrl}/ws?client_id=${clientId}`,
                 reconnectDelay: keepConnectionRef.current ? 5000 : 0,
                 role: "user",
                 subscribePaths: [
