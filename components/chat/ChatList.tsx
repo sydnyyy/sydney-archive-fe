@@ -93,8 +93,8 @@ export default function ChatList({
                                 textAlign: "center",
                                 fontSize: "14px",
                                 padding: "8px 12px",
-                                backgroundColor: "#EAF4FF",
-                                color: "#4599E6",
+                                backgroundColor: "#EDFAF3",
+                                color: "#6CA67C",
                                 borderRadius: "12px",
                                 margin: "4px auto",
                                 maxWidth: "85%",
@@ -120,7 +120,7 @@ export default function ChatList({
                                                 borderRadius: "12px",
                                                 border: "1px solid #4599E6",
                                                 backgroundColor: "white",
-                                                color: "#4599E6",
+                                                color: "#6CA67C",
                                                 cursor: "pointer",
                                             }}
                                         >
@@ -156,7 +156,7 @@ export default function ChatList({
                                     padding: "8px 12px",
                                     borderRadius: "15px",
                                     wordWrap: "break-word",
-                                    backgroundColor: msg.sender === clientId ? "#4599E6" : "#e6ebed",
+                                    backgroundColor: msg.sender === clientId ? "#6CA67C" : "#e6ebed",
                                     color: msg.sender === clientId ? "white" : "black",
                                 }}
                             >
