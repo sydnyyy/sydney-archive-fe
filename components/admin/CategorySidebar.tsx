@@ -15,11 +15,12 @@ export default function CategorySidebar<T extends string>({
                 <button
                     key={category}
                     onClick={() => onSelect(category)}
-                    className={`p-2 rounded text-left ${
-                        category === activeCategory
-                            ? "bg-blue-400 text-white"
-                            : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                    }`}
+                    style={{
+                        backgroundColor:
+                            category === activeCategory ? "#6CA67C" : "#E5E7EB",
+                        color: category === activeCategory ? "#FFFFFF" : "#374151",
+                    }}
+                    className="p-6 rounded-2xl text-left hover:bg-gray-300"
                 >
                     {category}
                 </button>
