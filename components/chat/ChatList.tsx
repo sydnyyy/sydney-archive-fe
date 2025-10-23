@@ -1,8 +1,8 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
 import { ChatMessage } from "@/types/chat";
 import { RefObject, useState } from "react";
+import AnimatedMessages from "./AnimatedMessages";
 
 interface ChatListProps {
     messages: ChatMessage[];
@@ -80,97 +80,13 @@ export default function ChatList({
                 </div>
             )}
 
-            <AnimatePresence initial={false} mode={isLoading ? "wait" : undefined}>
-                {messages.map((msg) =>
-                    msg.type === "SYSTEM" ? (
-                        <motion.div
-                            key={msg.id}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            transition={{ duration: 0.3 }}
-                            style={{
-                                textAlign: "center",
-                                fontSize: "14px",
-                                padding: "8px 12px",
-                                backgroundColor: "#EDFAF3",
-                                color: "#6CA67C",
-                                borderRadius: "12px",
-                                margin: "4px auto",
-                                maxWidth: "85%",
-                                fontWeight: 500,
-                            }}
-                        >
-                            {msg.content}
-                            {msg.options?.length && onOptionClick && (
-                                <div
-                                    style={{
-                                        marginTop: "8px",
-                                        display: "flex",
-                                        justifyContent: "center",
-                                        gap: "6px"
-                                    }}
-                                >
-                                    {msg.options.map((opt) => (
-                                        <button
-                                            key={opt.value}
-                                            onClick={() => onOptionClick(opt.value as "yes" | "no")}
-                                            style={{
-                                                padding: "6px 12px",
-                                                borderRadius: "12px",
-                                                border: "1px solid #4599E6",
-                                                backgroundColor: "white",
-                                                color: "#6CA67C",
-                                                cursor: "pointer",
-                                            }}
-                                        >
-                                            {opt.label}
-                                        </button>
-                                    ))}
-                                </div>
-                            )}
-                        </motion.div>
-                    ) : (
-                        <motion.div
-                            key={msg.id}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.3 }}
-                            style={{
-                                display: "flex",
-                                alignItems: "flex-end",
-                                justifyContent: msg.sender === clientId ? "flex-end" : "flex-start",
-                                gap: "4px",
-                                maxWidth: "80%",
-                                marginLeft: msg.sender === clientId ? "auto" : undefined,
-                                marginRight: msg.sender === clientId ? undefined : "auto",
-                            }}
-                        >
-                            {msg.sender === clientId && (
-                                <span style={{ fontSize: "12px", color: "#6c757d" }}>
-                                    {formatKST(msg.sendAt).slice(13, 19)}
-                                </span>
-                            )}
-                            <div
-                                style={{
-                                    padding: "8px 12px",
-                                    borderRadius: "15px",
-                                    wordWrap: "break-word",
-                                    backgroundColor: msg.sender === clientId ? "#6CA67C" : "#e6ebed",
-                                    color: msg.sender === clientId ? "white" : "black",
-                                }}
-                            >
-                                {msg.content}
-                            </div>
-                            {msg.sender !== clientId && (
-                                <span style={{ fontSize: "12px", color: "#6c757d" }}>
-                                    {formatKST(msg.sendAt).slice(13, 19)}
-                                </span>
-                            )}
-                        </motion.div>
-                    )
-                )}
-            </AnimatePresence>
+            <AnimatedMessages
+                messages={messages}
+                clientId={clientId}
+                onOptionClick={onOptionClick}
+                formatKST={formatKST}
+                isLoading={isLoading}
+            />
 
             {isLoading && (
                 <div
