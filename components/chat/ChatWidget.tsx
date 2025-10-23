@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } f
 import { Client } from "@stomp/stompjs";
 import { createStompClient } from "@/lib/chat/socketClient";
 import { ChatMessage } from "@/types/chat";
+import { SystemEvent } from "@/types/system";
 import { getOrCreateId } from "@/utils/clientId";
 import { CLIENT_ID_KEY } from "@/constants/auth/storageKeys";
 import { v4 as uuidv4 } from "uuid";
@@ -14,6 +15,7 @@ import ChatList from "./ChatList";
 import ChatInput from "./ChatInput";
 import ChatButton from "./ChatButton";
 import ChatCloseDialog from "./ChatCloseDialog";
+import SystemEventDialog from "./SystemEventDialog";
 
 export interface ChatWidgetRef {
     startItemChat: (itemName: string) => void;
@@ -34,6 +36,7 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
     const [clientId, setClientId] = useState<string | null>(null);
     const [showCloseDialog, setShowCloseDialog] = useState(false);
     const [showTopNotice, setShowTopNotice] = useState(true); // 최상단 안내문 상태
+    const [systemEvent, setSystemEvent] = useState<SystemEvent | null>(null); //  시스템 이벤트 상태 (웹소켓 종료 여부)
 
     const containerRef = useRef<HTMLDivElement | null>(null);
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -83,30 +86,38 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
 
     useEffect(() => {
         if (isChatOpen && clientId && !stompClientRef.current) {
+            const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
             stompClientRef.current = createStompClient({
-                url: `http://localhost:8080/ws?client_id=${clientId}`,
-                subscribePath: "/user/queue/chat.messages",
+                url: `${baseUrl}/ws?client_id=${clientId}`,
+                reconnectDelay: keepConnectionRef.current ? 5000 : 0,
                 role: "user",
-                onMessage: (msg) => {
-                    setMessages(prev => {
-                        if (!prev.find(m => m.id === msg.id)) {
-                            const updated = [...prev, msg];
-                            requestAnimationFrame(() => {
-                                messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-                            });
-                            return updated;
-                        }
-                        return prev;
-                    });
-                },
+                subscribePaths: [
+                    {
+                        path: "/user/queue/chat.messages",
+                        onMessage: (msg) => {
+                            setMessages((prev) => [...prev, msg]);
+                        },
+                    },
+                    {
+                        path: "/user/queue/system",
+                        onMessage: (event) => {
+                            if (event.type === "SESSION_EXPIRED") {
+                                if (event.shouldTerminate) {
+                                    disconnectWebSocket();
+                                } else {
+                                    setSystemEvent(event);
+                                }
+                            }
+                        },
+                    },
+                ],
             });
             loadMessages(undefined, true);
         }
 
         return () => {
             if (!keepConnectionRef.current) {
-                stompClientRef.current?.deactivate();
-                stompClientRef.current = null;
+                disconnectWebSocket();
             }
         };
     }, [isChatOpen, clientId]);
@@ -259,6 +270,18 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
             )}
 
             {showCloseDialog && <ChatCloseDialog onConfirm={handleChatCloseConfirm} />}
+
+            {systemEvent && (
+                <SystemEventDialog
+                    onDecision={(decision) => {
+                        stompClientRef.current?.publish({
+                            destination: "/app/system.response",
+                            body: JSON.stringify({ ...systemEvent, shouldTerminate: decision }),
+                        });
+                        setSystemEvent(null);
+                    }}
+                />
+            )}
         </>
     );
 });

@@ -1,15 +1,26 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { Item } from "@/lib/types";
-import { FOOD_FORMAT } from "@/lib/types";
+import { Item, FOOD_FORMAT } from "@/lib/types";
+import { sendAccessEvent } from "@/lib/accesslog/accessEventApi";
 
 interface FoodModalProps {
     selectedItem: Item;
     onClose: () => void;
+    clientId: string;
 }
 
-export default function FoodModal({ selectedItem, onClose }: FoodModalProps) {
+export default function FoodModal({ selectedItem, onClose, clientId }: FoodModalProps) {
+    const hasSentLog = useRef(false);
+
+    useEffect(() => {
+        if (!hasSentLog.current) {
+            sendAccessEvent(clientId ?? "anonymous", selectedItem.id);
+            hasSentLog.current = true;
+        }
+    }, [clientId, selectedItem.id]);
+
     return (
         <motion.div
             className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"

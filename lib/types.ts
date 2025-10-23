@@ -13,7 +13,7 @@ export const FOOD_FORMAT = {
 export type FoodFormat = typeof FOOD_FORMAT[keyof typeof FOOD_FORMAT];
 
 export interface BaseItem {
-    id: number;
+    id: string;
     type: ItemType;
     title: string;
     image: string;

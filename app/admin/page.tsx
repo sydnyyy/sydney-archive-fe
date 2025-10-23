@@ -22,13 +22,18 @@ export default function AdminPage() {
 
     // 관리자 화면 진입 시 웹소켓 연결
     useEffect(() => {
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
         stompClientRef.current = createStompClient({
-            url: "http://localhost:8080/ws?client_id=admin",
-            subscribePath: "/topic/admin.chat",
+            url: `${baseUrl}/ws?client_id=admin`,
             role: "admin",
-            onMessage: (msg: ChatMessage) => {
-                setMessages((prev) => [...prev, msg]);
-            },
+            subscribePaths: [
+                {
+                    path: "/topic/admin.chat",
+                    onMessage: (msg: ChatMessage) => {
+                        setMessages((prev) => [...prev, msg]);
+                    },
+                },
+            ],
         });
 
         return () => {
@@ -41,7 +46,8 @@ export default function AdminPage() {
         setActiveCategory(category);
 
         if (category === "채팅 관리") {
-            fetch("http://localhost:8080/api/admin/chat/users")
+            const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+            fetch(`${baseUrl}/api/admin/chat/users`)
                 .then((res) => res.json())
                 .then((data: AdminChatRoom[]) => setChatRooms(data))
                 .catch((err) => console.error("채팅방 불러오기 실패:", err));
