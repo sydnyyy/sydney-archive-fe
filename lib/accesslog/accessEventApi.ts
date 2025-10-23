@@ -1,6 +1,7 @@
 export async function sendAccessEvent(clientId: string, cardId: string) {
     try {
-        await fetch("http://localhost:8080/api/access", {
+        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+        await fetch(`${baseUrl}/api/access`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

@@ -5,7 +5,8 @@ export async function fetchMessagesApi(
     isAdmin: boolean,
     cursorId?: string
 ): Promise<ChatMessage[]> {
-    const url = new URL("http://localhost:8080/api/chat/messages");
+    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+    const url = new URL(`${baseUrl}/api/chat/messages`);
     url.searchParams.append("clientId", clientId);
     url.searchParams.append("isAdmin", String(isAdmin));
     if (cursorId) url.searchParams.append("cursorId", cursorId);
