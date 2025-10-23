@@ -17,7 +17,7 @@ export default function CategorySidebar<T extends string>({
                     onClick={() => onSelect(category)}
                     style={{
                         backgroundColor:
-                            category === activeCategory ? "#6CA67C" : "#E5E7EB",
+                            category === activeCategory ? "#6CA67C" : "#E1E8E5",
                         color: category === activeCategory ? "#FFFFFF" : "#374151",
                         boxShadow:
                             category === activeCategory
