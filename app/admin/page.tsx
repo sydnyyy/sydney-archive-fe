@@ -66,9 +66,9 @@ export default function AdminPage() {
             type: "ADMIN",
         };
 
-        // 웹소켓으로 전송
+        // 웹소켓으로 전송 (어드민 -> 사용자)
         stompClientRef.current?.publish({
-            destination: "/app/chat.send",
+            destination: "/app/chat.sendToUser",
             body: JSON.stringify(chatMessage),
         });
 
