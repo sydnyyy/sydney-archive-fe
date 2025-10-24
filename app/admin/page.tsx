@@ -58,7 +58,6 @@ export default function AdminPage() {
     const handleSendMessage = (content: string) => {
         if (!modalClient) return;
         const chatMessage: ChatMessage = {
-            id: crypto.randomUUID(),
             sender: adminId,
             receiver: modalClient,
             content,
@@ -71,8 +70,6 @@ export default function AdminPage() {
             destination: "/app/chat.sendToUser",
             body: JSON.stringify(chatMessage),
         });
-
-        setMessages((prev) => [...prev, chatMessage]);
     };
 
     const handleOpenModal = async (clientId: string) => {
