@@ -2,6 +2,7 @@
 
 import { ChatMessage } from "@/types/chat";
 import { useState } from "react";
+import AdminAnimatedMessages from "@/components/admin/chat/AdminAnimatedMessages";
 
 interface Props {
     messages: ChatMessage[];
@@ -23,16 +24,7 @@ export default function ChatWindow({ messages, onSend }: Props) {
         <div className="flex flex-col flex-1 p-3 overflow-auto">
             <div className="flex-1 overflow-auto mb-2">
                 {messages.map((msg) => (
-                    <div
-                        key={msg.id}
-                        className={`p-2 rounded my-1 max-w-[70%] ${
-                            msg.type === "ADMIN"
-                                ? "bg-blue-100 self-end"
-                                : "bg-gray-200 self-start"
-                        }`}
-                    >
-                        {msg.content}
-                    </div>
+                    <AdminAnimatedMessages key={msg.id} msg={msg} />
                 ))}
             </div>
 
@@ -46,7 +38,7 @@ export default function ChatWindow({ messages, onSend }: Props) {
                 />
                 <button
                     onClick={handleSend}
-                    className="bg-blue-400 text-white px-4 rounded"
+                    className="bg-[#6CA67C] text-[#FFFFFF] px-4 rounded"
                 >
                     전송
                 </button>

@@ -7,6 +7,7 @@ import ChatRoomCard from "@/components/admin/chat/ChatRoomCard";
 import ChatModal from "@/components/admin/chat/ChatModal";
 import { AdminChatRoom, ChatMessage } from "@/types/chat";
 import { createStompClient } from "@/lib/chat/socketClient";
+import { fetchMessagesApi } from "@/lib/chat/fetchMessageApi";
 
 const categories = ["상품 관리", "채팅 관리"] as const;
 type Category = typeof categories[number];
@@ -74,6 +75,21 @@ export default function AdminPage() {
         setMessages((prev) => [...prev, chatMessage]);
     };
 
+    const handleOpenModal = async (clientId: string) => {
+        setModalClient(clientId);
+
+        try {
+            const fetchedMessages = await fetchMessagesApi(clientId, true);
+            setMessages((prev) => {
+                const existingIds = new Set(prev.map((m) => m.id));
+                const newMessages = fetchedMessages.filter((m) => !existingIds.has(m.id));
+                return [...prev, ...newMessages];
+            });
+        } catch (err) {
+            console.error("메시지 불러오기 실패:", err);
+        }
+    };
+
     return (
         <div className="flex flex-col h-screen">
             {/* 상단 고정 문구 */}
@@ -102,7 +118,7 @@ export default function AdminPage() {
                                     key={room.clientId}
                                     room={room}
                                     selected={modalClient === room.clientId}
-                                    onClick={() => setModalClient(room.clientId)}
+                                    onClick={() => handleOpenModal(room.clientId)}
                                 />
                             ))}
                         </div>
