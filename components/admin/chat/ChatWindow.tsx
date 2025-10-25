@@ -1,7 +1,7 @@
 "use client";
 
 import { ChatMessage } from "@/types/chat";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import AdminAnimatedMessages from "@/components/admin/chat/AdminAnimatedMessages";
 
 interface Props {
@@ -13,6 +13,7 @@ interface Props {
 
 export default function ChatWindow({ messages, onSend }: Props) {
     const [input, setInput] = useState("");
+    const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
     const handleSend = () => {
         if (!input.trim()) return;
@@ -20,12 +21,18 @@ export default function ChatWindow({ messages, onSend }: Props) {
         setInput("");
     };
 
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages]);
+
+
     return (
         <div className="flex flex-col flex-1 p-3 overflow-auto">
             <div className="flex-1 overflow-auto mb-2">
                 {messages.map((msg) => (
                     <AdminAnimatedMessages key={msg.id} msg={msg} />
                 ))}
+                <div ref={messagesEndRef} />
             </div>
 
             <div className="flex gap-2 mt-2">
