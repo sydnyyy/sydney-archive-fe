@@ -245,7 +245,6 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
                         flexDirection: "column",
                         backgroundColor: "white",
                         zIndex: 1000,
-                        fontFamily: "'Poor Story', cursive",
                     }}>
                     <ChatList
                         messages={messages}
