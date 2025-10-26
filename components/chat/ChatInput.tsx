@@ -41,7 +41,7 @@ export default function ChatInput({ inputMessage, onChange, onSend }: ChatInputP
                     padding: "10px 15px",
                     borderRadius: "20px",
                     border: "none",
-                    backgroundColor: "#4599E6",
+                    backgroundColor: "#6CA67C",
                     color: "white",
                     cursor: "pointer",
                 }}

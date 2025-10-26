@@ -1,18 +1,18 @@
 import { ChatMessage } from "@/types/chat";
-import { formatKST } from "@/utils/data";
+import { formatKST } from "@/utils/formatKSTShort";
 
 interface Props {
     msg: ChatMessage;
 }
 
-export default function MessageBubble({ msg }: Props) {
+export default function AdminAnimatedMessages({ msg }: Props) {
     const displayTime = formatKST(msg.sendAt);
 
     switch (msg.type) {
         case "SYSTEM":
             return (
                 <div className="mb-3 flex justify-center">
-                    <div className="px-3 py-2 rounded-xl bg-blue-50 text-blue-400 text-sm font-medium">
+                    <div className="px-3 py-2 rounded-xl text-sm font-medium bg-[#E1E8E5] text-[#6CA67C]">
                         {msg.content}
                     </div>
                 </div>
@@ -21,8 +21,8 @@ export default function MessageBubble({ msg }: Props) {
         case "ADMIN":
             return (
                 <div className="mb-3 flex items-end justify-end">
-                    <span className="text-xs text-gray-500 mr-1">{displayTime}</span>
-                    <div className="px-3 py-2 rounded-2xl bg-blue-400 text-white">
+                    <span className="text-xs text-gray-500 mr-2">{displayTime}</span>
+                    <div className="px-3 py-2 rounded-2xl text-[#000000] bg-[#e6ebed]">
                         {msg.content}
                     </div>
                 </div>
@@ -32,10 +32,10 @@ export default function MessageBubble({ msg }: Props) {
         default:
             return (
                 <div className="mb-3 flex items-end justify-start">
-                    <div className="px-3 py-2 rounded-2xl bg-gray-200 text-black">
+                    <div className="px-3 py-2 rounded-2xl bg-[#6CA67C] text-[#FFFFFF]">
                         {msg.content}
                     </div>
-                    <span className="text-xs text-gray-500 ml-1">{displayTime}</span>
+                    <span className="text-xs text-gray-500 ml-2">{displayTime}</span>
                 </div>
             );
     }

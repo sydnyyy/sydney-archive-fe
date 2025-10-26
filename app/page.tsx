@@ -120,7 +120,7 @@ export default function Page() {
     }, []);
 
     return (
-        <div className="min-h-screen bg-sky-50 flex flex-col relative">
+        <div className="min-h-screen flex flex-col relative bg-[#C5E0C7]">
             <main className="flex flex-1 justify-center items-start p-6 relative">
                 <AnimatePresence>
                     {showSidebarText && (
@@ -160,7 +160,7 @@ export default function Page() {
 
                 <div className="w-full max-w-2xl mx-auto">
                     {/* 메인 문구 (스크롤되면서 사라짐) */}
-                    <div className="p-6 text-gray-500 leading-relaxed text-sm text-right">
+                    <div className="p-6 text-gray-600 leading-relaxed text-sm text-right">
                         내 위시리스트야<br />
                         네가 경험했으면 하는 내 위시리스트<br />
                         네가 소소한 행복에도 잘 살아갔으면 좋겠어<br />

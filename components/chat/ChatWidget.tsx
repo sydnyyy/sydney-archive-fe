@@ -94,9 +94,7 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
                 subscribePaths: [
                     {
                         path: "/user/queue/chat.messages",
-                        onMessage: (msg) => {
-                            setMessages((prev) => [...prev, msg]);
-                        },
+                        onMessage: handleIncomingMessage,
                     },
                     {
                         path: "/user/queue/system",
@@ -176,7 +174,6 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
         if (!stompClientRef.current || inputMessage.trim() === "" || !clientId) return;
 
         const chatMessage: ChatMessage = {
-            id: uuidv4(),
             sender: clientId,
             receiver: "wishlist-admin",
             content: inputMessage,
@@ -187,14 +184,14 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
             destination: "/app/chat.send",
             body: JSON.stringify(chatMessage),
         });
-        setMessages(prev => {
-            const updated = [...prev, chatMessage];
-            requestAnimationFrame(() => {
-                messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-            });
-            return updated;
-        });
         setInputMessage("");
+    };
+
+    const handleIncomingMessage = (message: ChatMessage) => {
+        setMessages(prev => [...prev, message]);
+        requestAnimationFrame(() => {
+            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        });
     };
 
     const handleOptionClick = (value: "yes" | "no") => {
@@ -248,7 +245,6 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
                         flexDirection: "column",
                         backgroundColor: "white",
                         zIndex: 1000,
-                        fontFamily: "'Poor Story', cursive",
                     }}>
                     <ChatList
                         messages={messages}
