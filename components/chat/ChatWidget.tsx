@@ -16,6 +16,7 @@ import ChatInput from "./ChatInput";
 import ChatButton from "./ChatButton";
 import ChatCloseDialog from "./ChatCloseDialog";
 import SystemEventDialog from "./SystemEventDialog";
+import useAutoReply from "@/hooks/useAutoReply";
 
 export interface ChatWidgetRef {
     startItemChat: (itemName: string) => void;
@@ -42,6 +43,7 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
     const stompClientRef = useRef<Client | null>(null);
     const keepConnectionRef = useRef(false);
+    const isAdminJoined = useRef(false);
 
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -49,6 +51,18 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
             setClientId(id);
         }
     }, []);
+
+    const { handleUserMessage } = useAutoReply(
+        (msg: ChatMessage) => {
+            setMessages(prev => [...prev, msg]);
+
+            requestAnimationFrame(() => {
+                messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+            });
+        },
+        isAdminJoined,
+        clientId || ""
+    );
 
     const loadMessages = async (cursorId?: string, isInitial = false): Promise<ChatMessage[]> => {
         if (!clientId) return [];
@@ -94,7 +108,7 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
                 subscribePaths: [
                     {
                         path: "/user/queue/chat.messages",
-                        onMessage: handleIncomingMessage,
+                        onMessage: handleIncomingMessageWithAdminCheck,
                     },
                     {
                         path: "/user/queue/system",
@@ -185,9 +199,14 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
             body: JSON.stringify(chatMessage),
         });
         setInputMessage("");
+        handleUserMessage();
     };
 
-    const handleIncomingMessage = (message: ChatMessage) => {
+    const handleIncomingMessageWithAdminCheck = (message: ChatMessage) => {
+        if (message.sender === "wishlist-admin") {
+            isAdminJoined.current = true;
+        }
+
         setMessages(prev => [...prev, message]);
         requestAnimationFrame(() => {
             messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
