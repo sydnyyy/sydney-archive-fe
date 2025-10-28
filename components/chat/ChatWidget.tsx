@@ -200,6 +200,10 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
         });
         setInputMessage("");
         handleUserMessage();
+
+        requestAnimationFrame(() => {
+            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        });
     };
 
     const handleIncomingMessageWithAdminCheck = (message: ChatMessage) => {
