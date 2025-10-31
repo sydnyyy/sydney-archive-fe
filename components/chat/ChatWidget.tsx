@@ -5,7 +5,7 @@ import { Client } from "@stomp/stompjs";
 import { createStompClient } from "@/lib/chat/socketClient";
 import { ChatMessage } from "@/types/chat";
 import { SystemEvent } from "@/types/system";
-import { getOrCreateClientId } from "@/utils/clientId";
+import { getOrCreateClientId, getOrCreateTabId } from "@/utils/clientId";
 import { v4 as uuidv4 } from "uuid";
 import { formatKST } from "@/utils/data";
 import { fetchMessagesApi } from "@/lib/chat/fetchMessageApi";
@@ -100,8 +100,10 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
     useEffect(() => {
         if (isChatOpen && clientId && !stompClientRef.current) {
             const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+            const tabId = getOrCreateTabId();
+
             stompClientRef.current = createStompClient({
-                url: `${baseUrl}/ws?client_id=${clientId}`,
+                url: `${baseUrl}/ws?client_id=${clientId}&tab_id=${tabId}`,
                 reconnectDelay: keepConnectionRef.current ? 5000 : 0,
                 role: "user",
                 subscribePaths: [

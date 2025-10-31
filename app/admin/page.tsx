@@ -6,6 +6,7 @@ import CategorySidebar from "@/components/admin/CategorySidebar";
 import AdminChatManagement from "@/components/admin/chat/AdminChatManagement";
 import { ChatMessage } from "@/types/chat";
 import { createStompClient } from "@/lib/chat/socketClient";
+import { getOrCreateTabId } from "@/utils/clientId";
 
 const categories = ["상품 관리", "채팅 관리"] as const;
 type Category = typeof categories[number];
@@ -19,8 +20,10 @@ export default function AdminPage() {
     // 관리자 화면 진입 시 웹소켓 연결
     useEffect(() => {
         const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+        const tabId = getOrCreateTabId();
+
         stompClientRef.current = createStompClient({
-            url: `${baseUrl}/ws?client_id=admin`,
+            url: `${baseUrl}/ws?client_id=admin&tab_id=${tabId}`,
             role: "admin",
             subscribePaths: [
                 {
