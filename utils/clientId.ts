@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
+import { CLIENT_ID_KEY } from "@/constants/auth/storageKeys";
 
 export function getOrCreateId(
     storage: Storage,
@@ -15,6 +16,12 @@ export function getOrCreateId(
     }
 
     return id;
+}
+
+export function getOrCreateClientId(
+    length: number = 8
+): string {
+    return getOrCreateId(localStorage, CLIENT_ID_KEY);
 }
 
 function getBrowserName(): string {

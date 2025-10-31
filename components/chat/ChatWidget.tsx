@@ -5,8 +5,7 @@ import { Client } from "@stomp/stompjs";
 import { createStompClient } from "@/lib/chat/socketClient";
 import { ChatMessage } from "@/types/chat";
 import { SystemEvent } from "@/types/system";
-import { getOrCreateId } from "@/utils/clientId";
-import { CLIENT_ID_KEY } from "@/constants/auth/storageKeys";
+import { getOrCreateClientId } from "@/utils/clientId";
 import { v4 as uuidv4 } from "uuid";
 import { formatKST } from "@/utils/data";
 import { fetchMessagesApi } from "@/lib/chat/fetchMessageApi";
@@ -47,8 +46,8 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
 
     useEffect(() => {
         if (typeof window !== "undefined") {
-            const id = getOrCreateId(localStorage, CLIENT_ID_KEY, 8);
-            setClientId(id);
+            const clientId = getOrCreateClientId();
+            setClientId(clientId);
         }
     }, []);
 
