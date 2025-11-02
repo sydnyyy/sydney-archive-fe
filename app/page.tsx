@@ -6,6 +6,7 @@ import { foodItems } from "@/lib/foodItems";
 import { Item } from "@/lib/types";
 import { motion, AnimatePresence } from "framer-motion";
 import { ITEM_TYPE, FOOD_FORMAT } from "@/lib/types";
+import { CLIENT_ID_KEY } from "@/constants/auth/storageKeys";
 
 import CategoryTabs from "@/components/common/CategoryTabs";
 import ProductModal from "@/components/product/ProductModal";
@@ -32,8 +33,8 @@ export default function Page() {
     const [clientId, setClientId] = useState<string>("anonymous");
 
     useEffect(() => {
-        const id = localStorage.getItem("client_id") ?? "anonymous";
-        setClientId(id);
+        const clientId = localStorage.getItem(CLIENT_ID_KEY) ?? "anonymous";
+        setClientId(clientId);
     }, []);
 
     const handleItemClick = (item: Item) => {
