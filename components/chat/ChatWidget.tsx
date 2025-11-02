@@ -8,7 +8,6 @@ import { SystemEvent } from "@/types/system";
 import { getOrCreateClientId, getOrCreateTabId } from "@/utils/clientId";
 import { v4 as uuidv4 } from "uuid";
 import { formatKST } from "@/utils/data";
-import { fetchMessagesApi } from "@/lib/chat/fetchMessageApi";
 
 import ChatList from "./ChatList";
 import ChatInput from "./ChatInput";
@@ -16,6 +15,7 @@ import ChatButton from "./ChatButton";
 import ChatCloseDialog from "./ChatCloseDialog";
 import SystemEventDialog from "./SystemEventDialog";
 import useAutoReply from "@/hooks/useAutoReply";
+import { useChatMessages } from "@/hooks/useChatMessages";
 
 export interface ChatWidgetRef {
     startItemChat: (itemName: string) => void;
@@ -31,7 +31,6 @@ interface ChatWidgetProps {
 
 const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect }, ref) => {
     const [isChatOpen, setIsChatOpen] = useState(false);
-    const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [inputMessage, setInputMessage] = useState<string>("");
     const [clientId, setClientId] = useState<string | null>(null);
     const [showCloseDialog, setShowCloseDialog] = useState(false);
@@ -43,6 +42,8 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
     const stompClientRef = useRef<Client | null>(null);
     const keepConnectionRef = useRef(false);
     const isAdminJoined = useRef(false);
+
+    const { messages, setMessages, loadMessages, loadPreviousMessages } = useChatMessages();
 
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -62,40 +63,6 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
         isAdminJoined,
         clientId || ""
     );
-
-    const loadMessages = async (cursorId?: string, isInitial = false): Promise<ChatMessage[]> => {
-        if (!clientId) return [];
-
-        try {
-            const data = await fetchMessagesApi(clientId, false, cursorId);
-
-            if (cursorId) {
-                setMessages(prev => {
-                    const ids = new Set(prev.map(m => m.id));
-                    const filtered = data.filter(m => !ids.has(m.id));
-                    return [...filtered, ...prev];
-                });
-            } else {
-                setMessages([...data]);
-
-                if (isInitial) {
-                    requestAnimationFrame(() => {
-                        messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
-                    });
-                }
-            }
-            return data;
-        } catch (err) {
-            console.error("메시지 불러오기 실패", err);
-            return [];
-        }
-    };
-
-    const loadPreviousMessages = async (): Promise<ChatMessage[]> => {
-        if (!messages.length) return [];
-        const oldestMessage = messages[0];
-        return await loadMessages(oldestMessage.id);
-    };
 
     useEffect(() => {
         if (isChatOpen && clientId && !stompClientRef.current) {
@@ -125,7 +92,12 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
                     },
                 ],
             });
-            loadMessages(undefined, true);
+
+            loadMessages(clientId, false, undefined).then(() => {
+                requestAnimationFrame(() => {
+                    messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
+                });
+            });
         }
 
         return () => {
@@ -277,7 +249,7 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
                         containerRef={containerRef}
                         onOptionClick={handleOptionClick}
                         formatKST={formatKST}
-                        onLoadPrevious={loadPreviousMessages}
+                        onLoadPrevious={() => loadPreviousMessages(clientId!, false)}
                         showTopNotice={showTopNotice}
                         setShowTopNotice={setShowTopNotice}
                     />
