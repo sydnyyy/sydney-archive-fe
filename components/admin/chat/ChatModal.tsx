@@ -6,12 +6,19 @@ import ChatWindow from "./ChatWindow";
 interface Props {
     clientId: string;
     adminId: string;
+    stompClient: any;
     messages: ChatMessage[];
-    onSend: (content: string) => void;
+    setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
     onClose: () => void;
 }
 
-export default function ChatModal({ clientId, adminId, messages, onSend, onClose }: Props) {
+export default function ChatModal({
+                                      clientId,
+                                      adminId,
+                                      stompClient,
+                                      messages,
+                                      setMessages,
+                                      onClose }: Props) {
     return (
         <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
             <div className="bg-white rounded-xl w-[600px] max-h-[80vh] flex flex-col overflow-hidden">
@@ -26,10 +33,11 @@ export default function ChatModal({ clientId, adminId, messages, onSend, onClose
                 </div>
 
                 <ChatWindow
-                    messages={messages}
-                    selectedClient={clientId}
+                    clientId={clientId}
                     adminId={adminId}
-                    onSend={onSend}
+                    stompClient={stompClient}
+                    messages={messages}
+                    setMessages={setMessages}
                 />
             </div>
         </div>

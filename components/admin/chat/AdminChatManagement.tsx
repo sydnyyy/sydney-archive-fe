@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import ChatRoomCard from "@/components/admin/chat/ChatRoomCard";
 import ChatModal from "@/components/admin/chat/ChatModal";
 import { AdminChatRoom, ChatMessage } from "@/types/chat";
-import { fetchMessagesApi } from "@/lib/chat/fetchMessageApi";
 
 interface Props {
     adminId: string;
@@ -14,11 +13,10 @@ interface Props {
 }
 
 export default function AdminChatManagement({
-                                           adminId,
-                                           stompClient,
-                                           messages,
-                                           setMessages,
-                                       }: Props) {
+                                                adminId,
+                                                stompClient,
+                                                messages,
+                                                setMessages }: Props) {
     const [chatRooms, setChatRooms] = useState<AdminChatRoom[]>([]);
     const [modalClient, setModalClient] = useState<string | null>(null);
 
@@ -30,38 +28,6 @@ export default function AdminChatManagement({
             .catch((err) => console.error("채팅방 불러오기 실패:", err));
     }, []);
 
-    const handleSendMessage = (content: string) => {
-        if (!modalClient) return;
-
-        const chatMessage: ChatMessage = {
-            sender: adminId,
-            receiver: modalClient,
-            content,
-            sendAt: new Date().toISOString(),
-            type: "ADMIN",
-        };
-
-        stompClient?.publish({
-            destination: "/app/chat.sendToUser",
-            body: JSON.stringify(chatMessage),
-        });
-    };
-
-    const handleOpenModal = async (clientId: string) => {
-        setModalClient(clientId);
-
-        try {
-            const fetchedMessages = await fetchMessagesApi(clientId, true);
-            setMessages((prev) => {
-                const existingIds = new Set(prev.map((m) => m.id));
-                const newMessages = fetchedMessages.filter((m) => !existingIds.has(m.id));
-                return [...prev, ...newMessages];
-            });
-        } catch (err) {
-            console.error("메시지 불러오기 실패:", err);
-        }
-    };
-
     return (
         <div className="p-6">
             <div className="grid grid-cols-3 gap-4">
@@ -70,7 +36,7 @@ export default function AdminChatManagement({
                         key={room.clientId}
                         room={room}
                         selected={modalClient === room.clientId}
-                        onClick={() => handleOpenModal(room.clientId)}
+                        onClick={() => setModalClient(room.clientId)}
                     />
                 ))}
             </div>
@@ -79,10 +45,9 @@ export default function AdminChatManagement({
                 <ChatModal
                     clientId={modalClient}
                     adminId={adminId}
-                    messages={messages.filter(
-                        (msg) => msg.sender === modalClient || msg.receiver === modalClient
-                    )}
-                    onSend={handleSendMessage}
+                    stompClient={stompClient}
+                    messages={messages}
+                    setMessages={setMessages}
                     onClose={() => setModalClient(null)}
                 />
             )}
