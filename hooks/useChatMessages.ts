@@ -12,7 +12,7 @@ export const useChatMessages = () => {
         if (!clientId) return [];
 
         try {
-            const data = await fetchMessagesApi(clientId, false, cursorId);
+            const data = await fetchMessagesApi(clientId, isAdmin, cursorId);
 
             if (cursorId) {
                 setMessages(prev => {
