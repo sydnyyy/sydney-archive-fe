@@ -42,6 +42,7 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
     const stompClientRef = useRef<Client | null>(null);
     const keepConnectionRef = useRef(false);
     const isAdminJoined = useRef(false);
+    const SCROLL_THRESHOLD = 100;
 
     const { messages, setMessages, loadMessages, loadPreviousMessages } = useChatMessages();
 
@@ -52,13 +53,22 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
         }
     }, []);
 
+    const scrollToBottomIfNeeded = () => {
+        const container = containerRef.current;
+        if (!container) return;
+
+        const isAtBottom =
+            container.scrollHeight - container.scrollTop - container.clientHeight < SCROLL_THRESHOLD;
+
+        if (isAtBottom) {
+            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        }
+    };
+
     const { handleUserMessage } = useAutoReply(
         (msg: ChatMessage) => {
             setMessages(prev => [...prev, msg]);
-
-            requestAnimationFrame(() => {
-                messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-            });
+            requestAnimationFrame(scrollToBottomIfNeeded);
         },
         isAdminJoined,
         clientId || ""
@@ -127,9 +137,7 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
             });
         }
 
-        requestAnimationFrame(() => {
-            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-        });
+        requestAnimationFrame(scrollToBottomIfNeeded);
     };
 
     useImperativeHandle(ref, () => ({
@@ -173,10 +181,7 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
         });
         setInputMessage("");
         handleUserMessage();
-
-        requestAnimationFrame(() => {
-            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-        });
+        requestAnimationFrame(scrollToBottomIfNeeded);
     };
 
     const handleIncomingMessageWithAdminCheck = (message: ChatMessage) => {
@@ -185,9 +190,7 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
         }
 
         setMessages(prev => [...prev, message]);
-        requestAnimationFrame(() => {
-            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-        });
+        requestAnimationFrame(scrollToBottomIfNeeded);
     };
 
     const handleOptionClick = (value: "yes" | "no") => {
