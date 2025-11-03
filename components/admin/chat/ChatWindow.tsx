@@ -111,21 +111,26 @@ export default function ChatWindow({
                 <div ref={messagesEndRef} />
             </div>
 
-            <div className="flex gap-2 mt-2">
+            <form
+                className="flex gap-2 mt-2"
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    sendMessage();
+                }}
+            >
                 <input
                     type="text"
                     className="flex-1 border rounded p-2"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && sendMessage()}
                 />
                 <button
-                    onClick={sendMessage}
+                    type="submit"
                     className="bg-[#6CA67C] text-[#FFFFFF] px-4 rounded"
                 >
                     전송
                 </button>
-            </div>
+            </form>
         </div>
     );
 }
