@@ -12,7 +12,7 @@ import CategoryTabs from "@/components/common/CategoryTabs";
 import ProductModal from "@/components/product/ProductModal";
 import FoodModal from "@/components/food/FoodModal";
 import RestaurantCard from "@/components/food/RestaurantCard";
-import ChatWidget, { ChatWidgetRef } from "@/components/chat/ChatWidget";
+import ChatWidget, { ChatWidgetRef } from "@/components/chat/user/ChatWidget";
 
 const categories = [
     { label: ITEM_TYPE.PRODUCT, icon: "🎁" },
