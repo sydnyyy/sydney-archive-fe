@@ -1,9 +1,7 @@
-import { useState } from "react";
 import { ChatMessage } from "@/types/chat";
 import { fetchMessagesApi } from "@/lib/chat/fetchMessageApi";
 
 export const useChatMessages = () => {
-    const [messages, setMessages] = useState<ChatMessage[]>([]);
 
     const loadMessages = async (
         clientId: string,
@@ -12,18 +10,7 @@ export const useChatMessages = () => {
         if (!clientId) return [];
 
         try {
-            const data = await fetchMessagesApi(clientId, isAdmin, cursorId);
-
-            if (cursorId) {
-                setMessages(prev => {
-                    const ids = new Set(prev.map(m => m.id));
-                    const filtered = data.filter(m => !ids.has(m.id));
-                    return [...filtered, ...prev];
-                });
-            } else {
-                setMessages([...data]);
-            }
-            return data;
+            return await fetchMessagesApi(clientId, isAdmin, cursorId);
         } catch (err) {
             console.error("메시지 불러오기 실패", err);
             return [];
@@ -32,12 +19,16 @@ export const useChatMessages = () => {
 
     const loadPreviousMessages = async (
         clientId: string,
-        isAdmin: boolean = false
+        isAdmin: boolean = false,
+        messages: ChatMessage[],
     ): Promise<ChatMessage[]> => {
         if (!messages.length) return [];
         const oldestMessage = messages[0];
-        return await loadMessages(clientId, isAdmin, oldestMessage.id);
+        const previousMessages = await loadMessages(clientId, isAdmin, oldestMessage.id);
+
+        const ids = new Set(messages.map(m => m.id));
+        return previousMessages.filter(m => !ids.has(m.id));
     };
 
-    return { messages, setMessages, loadMessages, loadPreviousMessages };
+    return { loadMessages, loadPreviousMessages };
 }
