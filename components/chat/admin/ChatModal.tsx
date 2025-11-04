@@ -1,7 +1,7 @@
 "use client";
 
 import { ChatMessage } from "@/types/chat";
-import ChatWindow from "./ChatWindow";
+import AdminChatView from "./AdminChatView";
 
 interface Props {
     clientId: string;
@@ -32,7 +32,7 @@ export default function ChatModal({
                     </button>
                 </div>
 
-                <ChatWindow
+                <AdminChatView
                     clientId={clientId}
                     adminId={adminId}
                     stompClient={stompClient}

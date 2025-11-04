@@ -13,7 +13,7 @@ interface Props {
     setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
 }
 
-export default function ChatWindow({
+export default function AdminChatView({
                                        clientId,
                                        adminId,
                                        stompClient,
