@@ -17,7 +17,7 @@ import SystemEventDialog from "./SystemEventDialog";
 import useAutoReply from "@/hooks/useAutoReply";
 import { useChatMessages } from "@/hooks/useChatMessages";
 
-export interface ChatWidgetRef {
+export interface UserChatViewRef {
     startItemChat: (itemName: string) => void;
     addChatMessageWithOptions: (message: { content: string; options: { label: string; value: string }[] }) => void;
     isOpen: () => boolean;
@@ -25,11 +25,11 @@ export interface ChatWidgetRef {
     addSystemMessage: (content: string) => void;
 }
 
-interface ChatWidgetProps {
+interface UserChatViewProps {
     onOptionSelect?: (value: "yes" | "no") => void;
 }
 
-const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect }, ref) => {
+const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(({ onOptionSelect }, ref) => {
     const [isChatOpen, setIsChatOpen] = useState(false);
     const [inputMessage, setInputMessage] = useState<string>("");
     const [clientId, setClientId] = useState<string | null>(null);
@@ -281,4 +281,4 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
     );
 });
 
-export default ChatWidget;
+export default UserChatView;
