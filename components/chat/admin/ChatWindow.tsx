@@ -2,7 +2,7 @@
 
 import { ChatMessage } from "@/types/chat";
 import { useState, useRef, useEffect, useLayoutEffect } from "react";
-import AdminAnimatedMessages from "@/components/admin/chat/AdminAnimatedMessages";
+import AdminAnimatedMessages from "@/components/chat/admin/AdminAnimatedMessages";
 import { useChatMessages } from "@/hooks/useChatMessages";
 
 interface Props {

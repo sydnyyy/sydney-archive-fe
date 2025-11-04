@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import ChatRoomCard from "@/components/admin/chat/ChatRoomCard";
-import ChatModal from "@/components/admin/chat/ChatModal";
+import ChatRoomCard from "@/components/chat/admin/ChatRoomCard";
+import ChatModal from "@/components/chat/admin/ChatModal";
 import { AdminChatRoom, ChatMessage } from "@/types/chat";
 
 interface Props {

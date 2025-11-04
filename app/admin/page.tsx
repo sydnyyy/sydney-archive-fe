@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import FixedHeader from "@/components/admin/FixedHeader";
 import CategorySidebar from "@/components/admin/CategorySidebar";
-import AdminChatManagement from "@/components/admin/chat/AdminChatManagement";
+import AdminChatManagement from "@/components/chat/admin/AdminChatManagement";
 import { ChatMessage } from "@/types/chat";
 import { createStompClient } from "@/lib/chat/socketClient";
 import { getOrCreateTabId } from "@/utils/clientId";
