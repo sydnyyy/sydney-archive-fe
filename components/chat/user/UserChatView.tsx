@@ -7,9 +7,8 @@ import { ChatMessage } from "@/types/chat";
 import { SystemEvent } from "@/types/system";
 import { getOrCreateClientId, getOrCreateTabId } from "@/utils/clientId";
 import { v4 as uuidv4 } from "uuid";
-import { formatKST } from "@/utils/data";
+import AnimatedMessages from "@/components/chat/common/AnimatedMessages";
 
-import ChatList from "./ChatList";
 import ChatInput from "./ChatInput";
 import ChatButton from "./ChatButton";
 import ChatCloseDialog from "./ChatCloseDialog";
@@ -33,6 +32,7 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(({ onOptionS
     const [isChatOpen, setIsChatOpen] = useState(false);
     const [inputMessage, setInputMessage] = useState<string>("");
     const [clientId, setClientId] = useState<string | null>(null);
+    const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [showCloseDialog, setShowCloseDialog] = useState(false);
     const [showTopNotice, setShowTopNotice] = useState(true); // 최상단 안내문 상태
     const [systemEvent, setSystemEvent] = useState<SystemEvent | null>(null); //  시스템 이벤트 상태 (웹소켓 종료 여부)
@@ -44,7 +44,7 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(({ onOptionS
     const isAdminJoined = useRef(false);
     const SCROLL_THRESHOLD = 100;
 
-    const { messages, setMessages, loadMessages, loadPreviousMessages } = useChatMessages();
+    const { loadMessages, loadPreviousMessages } = useChatMessages();
 
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -245,17 +245,13 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(({ onOptionS
                         backgroundColor: "white",
                         zIndex: 1000,
                     }}>
-                    <ChatList
-                        messages={messages}
-                        clientId={clientId}
-                        messagesEndRef={messagesEndRef}
-                        containerRef={containerRef}
-                        onOptionClick={handleOptionClick}
-                        formatKST={formatKST}
-                        onLoadPrevious={() => loadPreviousMessages(clientId!, false)}
-                        showTopNotice={showTopNotice}
-                        setShowTopNotice={setShowTopNotice}
-                    />
+                    <div className="flex-1 overflow-y-auto px-2 py-2 space-y-2">
+                        <AnimatedMessages
+                            messages={messages}
+                            myRole="USER"
+                            onOptionClick={onOptionSelect}
+                        />
+                    </div>
                     <ChatInput
                         inputMessage={inputMessage}
                         onChange={setInputMessage}
