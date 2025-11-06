@@ -32,13 +32,15 @@ export default function AdminChatView({
         (older: ChatMessage[]) => setMessages((prev) => [...older, ...prev])
     );
 
-    // 최초 메시지 로딩
+    // 첫 화면 최신 메시지 로딩
     useEffect(() => {
         if (!clientId) return;
 
-        loadMessages(clientId, true).then((fetched) => {
-            setMessages(fetched);
-            setIsInitialLoadDone(true);
+        loadMessages(clientId, true).then((initialMessages) => {
+            if (initialMessages?.length) {
+                setMessages(initialMessages);
+                setIsInitialLoadDone(true);
+            }
         });
     }, [clientId]);
 
