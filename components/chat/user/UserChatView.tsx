@@ -235,7 +235,7 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(({ onOptionS
                     <div
                         ref={messagesContainerRef}
                         onScroll={handleScroll}
-                        className="flex-1 overflow-y-auto px-2 py-2 space-y-2"
+                        className="flex-1 overflow-y-auto px-2 py-2 space-y-2 hide-scrollbar"
                     >
                         <AnimatedMessages
                             messages={messages}
