@@ -8,6 +8,7 @@ export function useChatScroll(
     isInitialLoadDone: boolean,
     loadPreviousMessages: () => Promise<ChatMessage[]>,
     onPrependMessages: (older: ChatMessage[]) => void,
+    onNoMoreMessages?: () => void
 ) {
 
     const messagesContainerRef = useRef<HTMLDivElement | null>(null);
@@ -26,7 +27,10 @@ export function useChatScroll(
         if (container.scrollTop === 0) {
             const prevHeight = container.scrollHeight;
             const older = await loadPreviousMessages();
-            if (!older || older.length === 0) return;
+            if (!older || older.length === 0) {
+                onNoMoreMessages?.();
+                return;
+            }
 
             onPrependMessages(older);
 

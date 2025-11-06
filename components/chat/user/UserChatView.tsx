@@ -35,7 +35,7 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(({ onOptionS
     const [clientId, setClientId] = useState<string | null>(null);
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [showCloseDialog, setShowCloseDialog] = useState(false);
-    const [showTopNotice, setShowTopNotice] = useState(true); // 최상단 안내문 상태
+    const [hasMoreMessages, setHasMoreMessages] = useState(true);
     const [systemEvent, setSystemEvent] = useState<SystemEvent | null>(null); //  시스템 이벤트 상태 (웹소켓 종료 여부)
     const [isInitialLoadDone, setIsInitialLoadDone] = useState(false);
 
@@ -51,7 +51,8 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(({ onOptionS
             if (!clientId) return [];
             return await loadPreviousMessages(clientId, false, messages);
         },
-        (older) => setMessages(prev => [...older, ...prev])
+        (older) => setMessages(prev => [...older, ...prev]),
+        () => setHasMoreMessages(false)
     );
 
     useEffect(() => {
@@ -203,7 +204,7 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(({ onOptionS
         if (shouldClose) {
             disconnectWebSocket();
             setMessages([]);
-            setShowTopNotice(true);
+            // setShowTopNotice(true);
             keepConnectionRef.current = false;
         } else {
             keepConnectionRef.current = true;
@@ -237,6 +238,12 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(({ onOptionS
                         onScroll={handleScroll}
                         className="flex-1 overflow-y-auto px-2 py-2 space-y-2 hide-scrollbar"
                     >
+                        {(!messages.length || !hasMoreMessages) && (
+                            <div className="mt-2 pb-2 pr-2 text-right text-[14px] text-[#6c757d] border-b border-[#eee]">
+                                문의하실 내용을 남겨주세요!<br />
+                                아이템을 클릭하면 아이템에 대한 상담을 할 수 있어요. 🤗
+                            </div>
+                        )}
                         <AnimatedMessages
                             messages={messages}
                             myRole="USER"
