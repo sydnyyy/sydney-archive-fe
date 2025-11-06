@@ -2,7 +2,7 @@
 
 import { ChatMessage } from "@/types/chat";
 import { useState, useEffect } from "react";
-import AdminAnimatedMessages from "@/components/chat/admin/AdminAnimatedMessages";
+import AnimatedMessages from "@/components/chat/common/AnimatedMessages";
 import { useChatMessages } from "@/hooks/useChatMessages";
 import { useChatScroll } from "@/hooks/useChatScroll";
 
@@ -68,9 +68,10 @@ export default function AdminChatView({
                 onScroll={handleScroll}
                 ref={messagesContainerRef}
             >
-                {messages.map((msg) => (
-                    <AdminAnimatedMessages key={msg.id} msg={msg} />
-                ))}
+                <AnimatedMessages
+                    messages={messages}
+                    myRole="ADMIN"
+                />
                 <div ref={messagesEndRef} />
             </div>
 
