@@ -15,6 +15,7 @@ import ChatCloseDialog from "./ChatCloseDialog";
 import SystemEventDialog from "./SystemEventDialog";
 import useAutoReply from "@/hooks/useAutoReply";
 import { useChatMessages } from "@/hooks/useChatMessages";
+import { useChatScroll } from "@/hooks/useChatScroll";
 
 export interface UserChatViewRef {
     startItemChat: (itemName: string) => void;
@@ -36,15 +37,22 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(({ onOptionS
     const [showCloseDialog, setShowCloseDialog] = useState(false);
     const [showTopNotice, setShowTopNotice] = useState(true); // 최상단 안내문 상태
     const [systemEvent, setSystemEvent] = useState<SystemEvent | null>(null); //  시스템 이벤트 상태 (웹소켓 종료 여부)
+    const [isInitialLoadDone, setIsInitialLoadDone] = useState(false);
 
-    const containerRef = useRef<HTMLDivElement | null>(null);
-    const messagesEndRef = useRef<HTMLDivElement | null>(null);
     const stompClientRef = useRef<Client | null>(null);
     const keepConnectionRef = useRef(false);
     const isAdminJoined = useRef(false);
-    const SCROLL_THRESHOLD = 100;
 
     const { loadMessages, loadPreviousMessages } = useChatMessages();
+    const { messagesContainerRef, messagesEndRef, handleScroll } = useChatScroll(
+        messages,
+        isInitialLoadDone,
+        async () => {
+            if (!clientId) return [];
+            return await loadPreviousMessages(clientId, false, messages);
+        },
+        (older) => setMessages(prev => [...older, ...prev])
+    );
 
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -53,23 +61,8 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(({ onOptionS
         }
     }, []);
 
-    const scrollToBottomIfNeeded = () => {
-        const container = containerRef.current;
-        if (!container) return;
-
-        const isAtBottom =
-            container.scrollHeight - container.scrollTop - container.clientHeight < SCROLL_THRESHOLD;
-
-        if (isAtBottom) {
-            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-        }
-    };
-
     const { handleUserMessage } = useAutoReply(
-        (msg: ChatMessage) => {
-            setMessages(prev => [...prev, msg]);
-            requestAnimationFrame(scrollToBottomIfNeeded);
-        },
+        (msg: ChatMessage) => setMessages(prev => [...prev, msg]),
         isAdminJoined,
         clientId || ""
     );
@@ -103,10 +96,12 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(({ onOptionS
                 ],
             });
 
-            loadMessages(clientId, false, undefined).then(() => {
-                requestAnimationFrame(() => {
-                    messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
-                });
+            // 첫 화면 최신 메시지 로딩
+            loadMessages(clientId, false).then((initialMessages) => {
+                if (initialMessages?.length) {
+                    setMessages(initialMessages);
+                    setIsInitialLoadDone(true);
+                }
             });
         }
 
@@ -136,8 +131,6 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(({ onOptionS
                 body: JSON.stringify(systemMessage),
             });
         }
-
-        requestAnimationFrame(scrollToBottomIfNeeded);
     };
 
     useImperativeHandle(ref, () => ({
@@ -181,7 +174,6 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(({ onOptionS
         });
         setInputMessage("");
         handleUserMessage();
-        requestAnimationFrame(scrollToBottomIfNeeded);
     };
 
     const handleIncomingMessageWithAdminCheck = (message: ChatMessage) => {
@@ -190,11 +182,6 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(({ onOptionS
         }
 
         setMessages(prev => [...prev, message]);
-        requestAnimationFrame(scrollToBottomIfNeeded);
-    };
-
-    const handleOptionClick = (value: "yes" | "no") => {
-        onOptionSelect?.(value);
     };
 
     const handleChatToggle = () => {
@@ -245,12 +232,17 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(({ onOptionS
                         backgroundColor: "white",
                         zIndex: 1000,
                     }}>
-                    <div className="flex-1 overflow-y-auto px-2 py-2 space-y-2">
+                    <div
+                        ref={messagesContainerRef}
+                        onScroll={handleScroll}
+                        className="flex-1 overflow-y-auto px-2 py-2 space-y-2"
+                    >
                         <AnimatedMessages
                             messages={messages}
                             myRole="USER"
                             onOptionClick={onOptionSelect}
                         />
+                        <div ref={messagesEndRef} />
                     </div>
                     <ChatInput
                         inputMessage={inputMessage}
