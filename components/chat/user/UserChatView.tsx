@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from "react";
+import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle, useLayoutEffect } from "react";
 import { Client } from "@stomp/stompjs";
 import { createStompClient } from "@/lib/chat/socketClient";
 import { ChatMessage } from "@/types/chat";
@@ -68,6 +68,30 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(({ onOptionS
         clientId || ""
     );
 
+    useLayoutEffect(() => {
+        if (messagesContainerRef.current && isInitialLoadDone) {
+            messagesContainerRef.current?.scrollTo({
+                top: messagesContainerRef.current.scrollHeight,
+                behavior: "auto",
+            });
+        }
+    }, [messages, isInitialLoadDone]);
+
+    const disconnectWebSocket = () => {
+        if (stompClientRef.current) {
+            stompClientRef.current.deactivate();
+            stompClientRef.current = null;
+        }
+    };
+
+    const resetChatState = () => {
+        disconnectWebSocket();
+        setMessages([]);
+        setHasMoreMessages(true);
+        setIsInitialLoadDone(false);
+        messagesContainerRef.current?.scrollTo({ top: 0 });
+    };
+
     useEffect(() => {
         if (isChatOpen && clientId && !stompClientRef.current) {
             const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -87,7 +111,7 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(({ onOptionS
                         onMessage: (event) => {
                             if (event.type === "SESSION_EXPIRED") {
                                 if (event.shouldTerminate) {
-                                    disconnectWebSocket();
+                                    resetChatState();
                                 } else {
                                     setSystemEvent(event);
                                 }
@@ -108,7 +132,7 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(({ onOptionS
 
         return () => {
             if (!keepConnectionRef.current) {
-                disconnectWebSocket();
+                resetChatState();
             }
         };
     }, [isChatOpen, clientId]);
@@ -193,18 +217,9 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(({ onOptionS
         }
     };
 
-    const disconnectWebSocket = () => {
-        if (stompClientRef.current) {
-            stompClientRef.current.deactivate();
-            stompClientRef.current = null;
-        }
-    };
-
     const handleChatCloseConfirm = (shouldClose: boolean) => {
         if (shouldClose) {
-            disconnectWebSocket();
-            setMessages([]);
-            // setShowTopNotice(true);
+            resetChatState();
             keepConnectionRef.current = false;
         } else {
             keepConnectionRef.current = true;
