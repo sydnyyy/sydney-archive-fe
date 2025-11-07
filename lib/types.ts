@@ -31,9 +31,17 @@ export type Tag = {
     bgColor?: string;
 };
 
+export interface ProductInfo {
+    name: string;
+    price: string;
+    link: string;
+    description?: string;
+}
+
 export interface ProductItem extends BaseItem {
     type: typeof ITEM_TYPE.PRODUCT;
     tags?: Tag[];
+    products: ProductInfo[];
 }
 
 export interface FoodItem extends BaseItem {
