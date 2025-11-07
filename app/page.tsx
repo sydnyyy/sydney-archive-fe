@@ -143,7 +143,7 @@ export default function Page() {
 
                     {selectedItem && selectedItem.type === ITEM_TYPE.PRODUCT && (
                         <ProductModal
-                            selectedItem={selectedItem}
+                            item={selectedItem}
                             onClose={() => setSelectedItem(null)}
                             clientId={clientId}
                         />
