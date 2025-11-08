@@ -1,7 +1,9 @@
+"use client";
+
+import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { ProductItem } from "@/lib/types";
 import { sendAccessEvent } from "@/lib/accesslog/accessEventApi";
-import { useEffect, useRef } from "react";
 
 interface ProductModalProps {
     item: ProductItem;
