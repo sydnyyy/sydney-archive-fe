@@ -1,16 +1,16 @@
 import { motion } from "framer-motion";
-import { FoodItem } from "@/lib/types";
+import { FoodItem, RestaurantItem } from "@/lib/types";
 import { ITEM_TYPE, FOOD_FORMAT } from "@/lib/types";
 import { sendAccessEvent } from "@/lib/accesslog/accessEventApi";
 import { useRef } from "react";
 
-interface RestaurantCardProps {
-    item: FoodItem;
+interface RestaurantProps {
+    item: RestaurantItem;
     onSelect: (item: FoodItem) => void;
     clientId: string;
 }
 
-export default function RestaurantCard({ item, onSelect, clientId }: RestaurantCardProps) {
+export default function RestaurantModal({ item, onSelect, clientId }: RestaurantProps) {
     const hoverTimeout = useRef<NodeJS.Timeout | null>(null);
 
     if (item.type === ITEM_TYPE.FOOD && "format" in item && item.format === FOOD_FORMAT.RESTAURANT) {
