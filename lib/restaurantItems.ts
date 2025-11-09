@@ -1,8 +1,8 @@
-import { FoodItem } from "./types";
+import { RestaurantItem } from "./types";
 
-export const foodItems: FoodItem[] = [
+export const restaurantItems: RestaurantItem[] = [
     {
-        id: 1,
+        id: "1",
         type: "음식",
         title: "터프이너프 로스터스",
         image: "/items/IMG_6164.jpeg",
@@ -12,21 +12,7 @@ export const foodItems: FoodItem[] = [
         location: "경기 평택시",
     },
     {
-        id: 2,
-        type: "음식",
-        title: "수육",
-        image: "/items/IMG_4.jpeg",
-        format: "레시피",
-        cookTime: "총 조리 시간 약 45분",
-        ingredients: "앞다리살(or 삼겹살), 된장, 양파, 마늘",
-        steps: [
-            "돼지고기 초벌하고 (선택 ✅)",
-            "🔥 끓는 물에 모든 재료를 10분 삶다가",
-            "35분 이상 약중불에서 삶고 먹기",
-        ],
-    },
-    {
-        id: 3,
+        id: "2",
         type: "음식",
         title: "태리주택",
         image: "/items/IMG_6614.jpeg",
@@ -36,7 +22,7 @@ export const foodItems: FoodItem[] = [
         location: "경기 수원시",
     },
     {
-        id: 4,
+        id: "3",
         type: "음식",
         title: "브뤼셀프라이",
         image: "/items/IMG_6552.jpeg",
