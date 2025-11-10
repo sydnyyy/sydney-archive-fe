@@ -1,4 +1,4 @@
-import { RecipeItem, createRecipeItem } from "./types";
+import { RecipeItem, createRecipeItem } from "@/lib/types/recipe";
 
 export const recipeItems: RecipeItem[] = [
     createRecipeItem({

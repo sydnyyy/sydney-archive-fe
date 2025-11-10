@@ -1,4 +1,4 @@
-import { ProductItem, createProductItem } from "./types";
+import { ProductItem, createProductItem } from "@/lib/types/product";
 
 export const productItems: ProductItem[] = [
     createProductItem({
