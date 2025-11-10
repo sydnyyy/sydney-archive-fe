@@ -1,10 +1,10 @@
 import { Dispatch, SetStateAction } from "react";
-import { ItemType } from "@/lib/types";
+import { CategoryType } from "@/lib/types";
 
 interface CategoryTabsProps {
-    categories: readonly { label: ItemType; icon: string }[];
-    activeCategory: ItemType;
-    setActiveCategory: Dispatch<SetStateAction<ItemType>>;
+    categories: readonly { label: CategoryType; icon: string }[];
+    activeCategory: CategoryType;
+    setActiveCategory: Dispatch<SetStateAction<CategoryType>>;
 }
 
 export default function CategoryTabs({ categories, activeCategory, setActiveCategory }: CategoryTabsProps) {
