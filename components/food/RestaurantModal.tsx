@@ -47,7 +47,9 @@ export default function RestaurantModal({ item, onSelect, clientId }: Restaurant
                     onClick={(e) => {
                         e.stopPropagation();
                         onSelect(item);
-                        sendAccessEvent(clientId ?? "anonymous", item.id);
+                        if (item.link) {
+                            window.open(item.link, "_blank");
+                        }
                     }}
                 >
                     <h3 className="text-[15px] font-semibold text-gray-700 mb-2">{item.title}</h3>
