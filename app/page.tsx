@@ -1,28 +1,29 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { productItems } from "@/lib/productItems";
-import { foodItems } from "@/lib/foodItems";
-import { Item } from "@/lib/types";
+import { productItems } from "@/lib/items/productItems";
+import { restaurantItems } from "@/lib/items/restaurantItems";
+import { recipeItems } from "@/lib/items/RecipeItems";
+import { CATEGORY, Item } from "@/lib/types";
 import { motion, AnimatePresence } from "framer-motion";
-import { ITEM_TYPE, FOOD_FORMAT } from "@/lib/types";
+import { isProductItem, isRestaurantItem, isRecipeItem } from "@/lib/types";
 import { CLIENT_ID_KEY } from "@/constants/auth/storageKeys";
 
 import CategoryTabs from "@/components/common/CategoryTabs";
 import ProductModal from "@/components/product/ProductModal";
-import FoodModal from "@/components/food/FoodModal";
-import RestaurantCard from "@/components/food/RestaurantCard";
+import RecipeModal from "@/components/food/RecipeModal";
+import RestaurantModal from "@/components/food/RestaurantModal";
 import ChatWidget, { ChatWidgetRef } from "@/components/chat/ChatWidget";
 
 const categories = [
-    { label: ITEM_TYPE.PRODUCT, icon: "🎁" },
-    { label: ITEM_TYPE.FOOD, icon: "🍕" },
+    { label: CATEGORY.PRODUCT, icon: "🎁" },
+    { label: CATEGORY.FOOD, icon: "🍕" },
 ] as const;
 
 type CategoryLabel = typeof categories[number]["label"];
 
 export default function Page() {
-    const [activeCategory, setActiveCategory] = useState<CategoryLabel>(ITEM_TYPE.PRODUCT);
+    const [activeCategory, setActiveCategory] = useState<CategoryLabel>(CATEGORY.PRODUCT);
     const [showSidebarText, setShowSidebarText] = useState(false);
     const [selectedItem, setSelectedItem] = useState<Item | null>(null);
     const [tabRightPosition, setTabRightPosition] = useState<string>('');
@@ -56,10 +57,6 @@ export default function Page() {
             }
             return;
         }
-
-        if (item.type === ITEM_TYPE.FOOD && item.format === FOOD_FORMAT.RESTAURANT && item.link) {
-            window.open(item.link, "_blank");
-        }
     };
 
     const handleChatOptionSelect = (choice: "yes" | "no") => {
@@ -81,12 +78,12 @@ export default function Page() {
     };
 
     let filteredItems: Item[];
-    if (activeCategory === ITEM_TYPE.PRODUCT) {
+    if (activeCategory === CATEGORY.PRODUCT) {
         filteredItems = productItems;
-    } else if (activeCategory === ITEM_TYPE.FOOD) {
-        filteredItems = foodItems
+    } else if (activeCategory === CATEGORY.FOOD) {
+        filteredItems = [...restaurantItems, ...recipeItems];
     } else {
-        filteredItems = [...productItems, ...foodItems];
+        filteredItems = [...productItems, ...restaurantItems, ...recipeItems];
     }
 
     // 스크롤 감지 (사이드 문구)
@@ -141,7 +138,7 @@ export default function Page() {
                         </motion.div>
                     )}
 
-                    {selectedItem && selectedItem.type === ITEM_TYPE.PRODUCT && (
+                    {selectedItem && isProductItem(selectedItem) && (
                         <ProductModal
                             item={selectedItem}
                             onClose={() => setSelectedItem(null)}
@@ -149,10 +146,9 @@ export default function Page() {
                         />
                     )}
 
-                    {/* 음식 모달 */}
-                    {selectedItem && selectedItem.type === ITEM_TYPE.FOOD && (
-                        <FoodModal
-                            selectedItem={selectedItem}
+                    {selectedItem && isRecipeItem(selectedItem) && (
+                        <RecipeModal
+                            item={selectedItem}
                             onClose={() => setSelectedItem(null)}
                             clientId={clientId}
                         />
@@ -175,39 +171,21 @@ export default function Page() {
                             max-[1024px]:grid-cols-3 max-[640px]:grid-cols-2 lg:grid-cols-4"
                         >
                             {filteredItems.map((item) => (
-                                <div
-                                    key={item.id}
-                                    className="
-                                        flex flex-col items-center justify-center
-                                        text-center transition hover:scale-[1.02]"
-                                >
-                                    {item.type === ITEM_TYPE.PRODUCT && (
-                                        <div onClick={() => handleItemClick(item)}>
-                                            <img
-                                                src={item.image}
-                                                alt={item.title}
-                                                className="rounded-xl shadow-md cursor-pointer"
-                                            />
-                                        </div>
-                                    )}
-
-                                    {item.type === ITEM_TYPE.FOOD && item.format === FOOD_FORMAT.RESTAURANT && (
-                                        <RestaurantCard
+                                <div key={item.id} className="flex flex-col items-center">
+                                    {isProductItem(item) || isRecipeItem(item) ? (
+                                        <img
+                                            src={item.image}
+                                            alt={item.title}
+                                            className="rounded-xl shadow-md cursor-pointer"
+                                            onClick={() => handleItemClick(item)}
+                                        />
+                                    ) : isRestaurantItem(item) ? (
+                                        <RestaurantModal
                                             item={item}
                                             onSelect={handleItemClick}
                                             clientId={clientId}
                                         />
-                                    )}
-
-                                    {item.type === ITEM_TYPE.FOOD && item.format === FOOD_FORMAT.RECIPE && (
-                                        <div onClick={() => handleItemClick(item)}>
-                                            <img
-                                                src={item.image}
-                                                alt={item.title}
-                                                className="rounded-xl shadow-md cursor-pointer"
-                                            />
-                                        </div>
-                                    )}
+                                    ) : null}
                                 </div>
                             ))}
                         </div>
