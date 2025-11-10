@@ -1,9 +1,10 @@
-import { ProductItem } from "./types";
+import { ProductItem, createProductItem } from "./types";
 
 export const productItems: ProductItem[] = [
-    {
+    createProductItem({
         id: "1",
-        type: "상품",  title: "미니 파우치", image: "/items/IMG_1.jpeg",
+        title: "미니 파우치",
+        image: "/items/IMG_1.jpeg",
         tags: [
             {
                 x: "15%", y: "10%",
@@ -35,15 +36,16 @@ export const productItems: ProductItem[] = [
             },
             {
                 name: "[다이소] 케어베어 스트랩",
-                price: "1000원",
+                price: "1,000원",
                 link: "https://www.daisomall.co.kr/pd/pdr/SCR_PDR_0001?pdNo=1039952&recmYn=N",
                 description: "구매 링크 가기"
             },
         ]
-    },
-    {
+    }),
+    createProductItem({
         id: "2",
-        type: "상품",  title: "러쉬고체향수", image: "/items/IMG_2.jpeg",
+        title: "러쉬고체향수",
+        image: "/items/IMG_2.jpeg",
         tags: [
             {
                 x: "60%", y: "35%",
@@ -64,10 +66,11 @@ export const productItems: ProductItem[] = [
                 description: "시트러스 + 우디 향을 좋아한다면 강추 💚 | 구매 링크 가기"
             },
         ]
-    },
-    {
+    }),
+    createProductItem({
         id: "3",
-        type: "상품",  title: "키링", image: "/items/IMG_3.jpeg",
+        title: "키링",
+        image: "/items/IMG_3.jpeg",
         tags: [
             {
                 x: "55%", y: "25%",
@@ -88,6 +91,6 @@ export const productItems: ProductItem[] = [
                 description: "네이버 플레이스 추가하러 가기"
             },
         ]
-    },
+    }),
 ];
 

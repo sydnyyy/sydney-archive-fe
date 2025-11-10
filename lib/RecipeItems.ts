@@ -1,9 +1,8 @@
-import { RecipeItem } from "./types";
+import { RecipeItem, createRecipeItem } from "./types";
 
 export const recipeItems: RecipeItem[] = [
-    {
-        id: "1",
-        type: "음식",
+    createRecipeItem({
+        id: "4",
         title: "수육",
         image: "/items/IMG_4.jpeg",
         cookTime: "총 조리 시간 약 45분",
@@ -13,5 +12,5 @@ export const recipeItems: RecipeItem[] = [
             "🔥 끓는 물에 모든 재료를 10분 삶다가",
             "35분 이상 약중불에서 삶고 먹기",
         ],
-    },
+    }),
 ]
