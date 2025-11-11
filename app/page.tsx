@@ -155,7 +155,7 @@ export default function Page() {
                     )}
                 </AnimatePresence>
 
-                <div className="w-full max-w-2xl mx-auto">
+                <div className="w-full max-w-2xl mx-auto lg:max-w-3xl">
                     {/* 메인 문구 (스크롤되면서 사라짐) */}
                     <div className="p-6 text-gray-600 leading-relaxed text-sm text-right">
                         내 위시리스트야<br />
@@ -165,11 +165,8 @@ export default function Page() {
                     </div>
 
                     {/* 아이템 리스트 */}
-                    <div className="p-6">
-                        <div className="
-                            grid gap-2 grid-cols-[repeat(auto-fit,minmax(0,1fr))]
-                            max-[1024px]:grid-cols-3 max-[640px]:grid-cols-2 lg:grid-cols-4"
-                        >
+                    <div className="w-full mx-auto max-w-none p-1">
+                        <div className="grid gap-1.5 grid-cols-4">
                             {filteredItems.map((item) => (
                                 <div key={item.id} className="flex flex-col items-center">
                                     {isProductItem(item) || isRecipeItem(item) ? (
