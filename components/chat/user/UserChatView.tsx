@@ -1,23 +1,23 @@
 "use client";
 
-import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from "react";
+import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle, useLayoutEffect } from "react";
 import { Client } from "@stomp/stompjs";
 import { createStompClient } from "@/lib/chat/socketClient";
 import { ChatMessage } from "@/types/chat";
 import { SystemEvent } from "@/types/system";
 import { getOrCreateClientId, getOrCreateTabId } from "@/utils/clientId";
 import { v4 as uuidv4 } from "uuid";
-import { formatKST } from "@/utils/data";
-import { fetchMessagesApi } from "@/lib/chat/fetchMessageApi";
+import AnimatedMessages from "@/components/chat/common/AnimatedMessages";
 
-import ChatList from "./ChatList";
 import ChatInput from "./ChatInput";
 import ChatButton from "./ChatButton";
 import ChatCloseDialog from "./ChatCloseDialog";
 import SystemEventDialog from "./SystemEventDialog";
 import useAutoReply from "@/hooks/useAutoReply";
+import { useChatMessages } from "@/hooks/useChatMessages";
+import { useChatScroll } from "@/hooks/useChatScroll";
 
-export interface ChatWidgetRef {
+export interface UserChatViewRef {
     startItemChat: (itemName: string) => void;
     addChatMessageWithOptions: (message: { content: string; options: { label: string; value: string }[] }) => void;
     isOpen: () => boolean;
@@ -25,24 +25,35 @@ export interface ChatWidgetRef {
     addSystemMessage: (content: string) => void;
 }
 
-interface ChatWidgetProps {
+interface UserChatViewProps {
     onOptionSelect?: (value: "yes" | "no") => void;
 }
 
-const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect }, ref) => {
+const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(({ onOptionSelect }, ref) => {
     const [isChatOpen, setIsChatOpen] = useState(false);
-    const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [inputMessage, setInputMessage] = useState<string>("");
     const [clientId, setClientId] = useState<string | null>(null);
+    const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [showCloseDialog, setShowCloseDialog] = useState(false);
-    const [showTopNotice, setShowTopNotice] = useState(true); // 최상단 안내문 상태
+    const [hasMoreMessages, setHasMoreMessages] = useState(true);
     const [systemEvent, setSystemEvent] = useState<SystemEvent | null>(null); //  시스템 이벤트 상태 (웹소켓 종료 여부)
+    const [isInitialLoadDone, setIsInitialLoadDone] = useState(false);
 
-    const containerRef = useRef<HTMLDivElement | null>(null);
-    const messagesEndRef = useRef<HTMLDivElement | null>(null);
     const stompClientRef = useRef<Client | null>(null);
     const keepConnectionRef = useRef(false);
     const isAdminJoined = useRef(false);
+
+    const { loadMessages, loadPreviousMessages } = useChatMessages();
+    const { messagesContainerRef, messagesEndRef, handleScroll } = useChatScroll(
+        messages,
+        isInitialLoadDone,
+        async () => {
+            if (!clientId) return [];
+            return await loadPreviousMessages(clientId, false, messages);
+        },
+        (older) => setMessages(prev => [...older, ...prev]),
+        () => setHasMoreMessages(false)
+    );
 
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -52,49 +63,33 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
     }, []);
 
     const { handleUserMessage } = useAutoReply(
-        (msg: ChatMessage) => {
-            setMessages(prev => [...prev, msg]);
-
-            requestAnimationFrame(() => {
-                messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-            });
-        },
+        (msg: ChatMessage) => setMessages(prev => [...prev, msg]),
         isAdminJoined,
         clientId || ""
     );
 
-    const loadMessages = async (cursorId?: string, isInitial = false): Promise<ChatMessage[]> => {
-        if (!clientId) return [];
+    useLayoutEffect(() => {
+        if (messagesContainerRef.current && isInitialLoadDone) {
+            messagesContainerRef.current?.scrollTo({
+                top: messagesContainerRef.current.scrollHeight,
+                behavior: "auto",
+            });
+        }
+    }, [messages, isInitialLoadDone]);
 
-        try {
-            const data = await fetchMessagesApi(clientId, false, cursorId);
-
-            if (cursorId) {
-                setMessages(prev => {
-                    const ids = new Set(prev.map(m => m.id));
-                    const filtered = data.filter(m => !ids.has(m.id));
-                    return [...filtered, ...prev];
-                });
-            } else {
-                setMessages([...data]);
-
-                if (isInitial) {
-                    requestAnimationFrame(() => {
-                        messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
-                    });
-                }
-            }
-            return data;
-        } catch (err) {
-            console.error("메시지 불러오기 실패", err);
-            return [];
+    const disconnectWebSocket = () => {
+        if (stompClientRef.current) {
+            stompClientRef.current.deactivate();
+            stompClientRef.current = null;
         }
     };
 
-    const loadPreviousMessages = async (): Promise<ChatMessage[]> => {
-        if (!messages.length) return [];
-        const oldestMessage = messages[0];
-        return await loadMessages(oldestMessage.id);
+    const resetChatState = () => {
+        disconnectWebSocket();
+        setMessages([]);
+        setHasMoreMessages(true);
+        setIsInitialLoadDone(false);
+        messagesContainerRef.current?.scrollTo({ top: 0 });
     };
 
     useEffect(() => {
@@ -116,7 +111,7 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
                         onMessage: (event) => {
                             if (event.type === "SESSION_EXPIRED") {
                                 if (event.shouldTerminate) {
-                                    disconnectWebSocket();
+                                    resetChatState();
                                 } else {
                                     setSystemEvent(event);
                                 }
@@ -125,12 +120,19 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
                     },
                 ],
             });
-            loadMessages(undefined, true);
+
+            // 첫 화면 최신 메시지 로딩
+            loadMessages(clientId, false).then((initialMessages) => {
+                if (initialMessages?.length) {
+                    setMessages(initialMessages);
+                    setIsInitialLoadDone(true);
+                }
+            });
         }
 
         return () => {
             if (!keepConnectionRef.current) {
-                disconnectWebSocket();
+                resetChatState();
             }
         };
     }, [isChatOpen, clientId]);
@@ -154,10 +156,6 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
                 body: JSON.stringify(systemMessage),
             });
         }
-
-        requestAnimationFrame(() => {
-            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-        });
     };
 
     useImperativeHandle(ref, () => ({
@@ -209,13 +207,6 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
         }
 
         setMessages(prev => [...prev, message]);
-        requestAnimationFrame(() => {
-            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-        });
-    };
-
-    const handleOptionClick = (value: "yes" | "no") => {
-        onOptionSelect?.(value);
     };
 
     const handleChatToggle = () => {
@@ -226,18 +217,9 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
         }
     };
 
-    const disconnectWebSocket = () => {
-        if (stompClientRef.current) {
-            stompClientRef.current.deactivate();
-            stompClientRef.current = null;
-        }
-    };
-
     const handleChatCloseConfirm = (shouldClose: boolean) => {
         if (shouldClose) {
-            disconnectWebSocket();
-            setMessages([]);
-            setShowTopNotice(true);
+            resetChatState();
             keepConnectionRef.current = false;
         } else {
             keepConnectionRef.current = true;
@@ -266,17 +248,24 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
                         backgroundColor: "white",
                         zIndex: 1000,
                     }}>
-                    <ChatList
-                        messages={messages}
-                        clientId={clientId}
-                        messagesEndRef={messagesEndRef}
-                        containerRef={containerRef}
-                        onOptionClick={handleOptionClick}
-                        formatKST={formatKST}
-                        onLoadPrevious={loadPreviousMessages}
-                        showTopNotice={showTopNotice}
-                        setShowTopNotice={setShowTopNotice}
-                    />
+                    <div
+                        ref={messagesContainerRef}
+                        onScroll={handleScroll}
+                        className="flex-1 overflow-y-auto px-2 py-2 space-y-2 hide-scrollbar"
+                    >
+                        {(!messages.length || !hasMoreMessages) && (
+                            <div className="mt-2 pb-2 pr-2 text-right text-[14px] text-[#6c757d] border-b border-[#eee]">
+                                문의하실 내용을 남겨주세요!<br />
+                                아이템을 클릭하면 아이템에 대한 상담을 할 수 있어요. 🤗
+                            </div>
+                        )}
+                        <AnimatedMessages
+                            messages={messages}
+                            myRole="USER"
+                            onOptionClick={onOptionSelect}
+                        />
+                        <div ref={messagesEndRef} />
+                    </div>
                     <ChatInput
                         inputMessage={inputMessage}
                         onChange={setInputMessage}
@@ -302,4 +291,4 @@ const ChatWidget = forwardRef<ChatWidgetRef, ChatWidgetProps>(({ onOptionSelect 
     );
 });
 
-export default ChatWidget;
+export default UserChatView;

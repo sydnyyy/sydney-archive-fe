@@ -42,3 +42,14 @@ html {
 .rotate-y-180 {
   transform: rotateY(180deg);
 }
+
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scrollbar-gutter: stable both-edges;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
