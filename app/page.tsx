@@ -13,7 +13,7 @@ import CategoryTabs from "@/components/common/CategoryTabs";
 import ProductModal from "@/components/product/ProductModal";
 import RecipeModal from "@/components/food/RecipeModal";
 import RestaurantModal from "@/components/food/RestaurantModal";
-import ChatWidget, { ChatWidgetRef } from "@/components/chat/ChatWidget";
+import UserChatView, { UserChatViewRef } from "@/components/chat/user/UserChatView";
 
 const categories = [
     { label: CATEGORY.PRODUCT, icon: "🎁" },
@@ -27,7 +27,7 @@ export default function Page() {
     const [showSidebarText, setShowSidebarText] = useState(false);
     const [selectedItem, setSelectedItem] = useState<Item | null>(null);
     const [tabRightPosition, setTabRightPosition] = useState<string>('');
-    const chatRef = useRef<ChatWidgetRef>(null);
+    const chatRef = useRef<UserChatViewRef>(null);
 
     const [currentChatItem, setCurrentChatItem] = useState<Item | null>(null);
     const [nextChatItem, setNextChatItem] = useState<Item | null>(null);
@@ -206,7 +206,7 @@ export default function Page() {
             </div>
 
             {/* 관리자 문의하기 위젯 */}
-            <ChatWidget ref={chatRef} onOptionSelect={handleChatOptionSelect} />
+            <UserChatView ref={chatRef} onOptionSelect={handleChatOptionSelect} />
         </div>
     );
 }
