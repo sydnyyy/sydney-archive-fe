@@ -109,7 +109,7 @@ export default function ProductModal({ item, onClose, clientId }: ProductModalPr
             exit={{ opacity: 0 }}
         >
             <motion.div
-                className="bg-[#EDF2EF] p-1.5 rounded-2xl w-[330px] relative shadow-xl flex flex-col"
+                className="bg-[#EDF2EF] p-1.5 rounded-2xl w-[330px] relative shadow-2xl flex flex-col"
                 onClick={(e) => e.stopPropagation()}
                 initial={{ scale: 0.5, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}

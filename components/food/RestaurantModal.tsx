@@ -33,7 +33,7 @@ export default function RestaurantModal({ item, onSelect, clientId }: Restaurant
                 transition={{ duration: 0.6, ease: "easeInOut" }}
             >
                 {/* 앞면 */}
-                <div className="absolute inset-0 backface-hidden rounded-2xl overflow-hidden">
+                <div className="absolute inset-0 backface-hidden rounded-2xl overflow-hidden shadow-md">
                     <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
                 </div>
 
