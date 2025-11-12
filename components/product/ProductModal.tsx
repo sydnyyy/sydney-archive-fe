@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { ProductItem } from "@/lib/types";
 import { sendAccessEvent } from "@/lib/accesslog/accessEventApi";
+import ModalLayout from "@/components/common/ModalLayout";
 
 interface ProductModalProps {
     item: ProductItem;
@@ -13,14 +14,13 @@ interface ProductModalProps {
 
 function ProductDetailView({ image, tags, products }: any) {
     return (
-        <div className="flex flex-col gap-2 w-full h-[450px]">
-
+        <div className="flex flex-col gap-1.5 w-full">
             {/* 이미지 + 태그 */}
             <div className="relative w-full">
                 <img
                     src={image}
                     alt="상품 이미지"
-                    className="w-full h-auto object-cover rounded-2xl"
+                    className="w-full h-[220px] sm:h-[350px] object-cover rounded-2xl"
                 />
 
                 {tags.map((tag: any, idx: number) => (
@@ -67,9 +67,7 @@ function ProductDetailView({ image, tags, products }: any) {
                         href={p.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="
-                            flex flex-col px-1 py-2.5 text-sm hover:bg-gray-100 rounded-lg
-                            transition-all hover:bg-white hover:shadow-md hover:-translate-y-[1px]"
+                        className="flex flex-col px-1 py-2.5 md:text-base text-sm rounded-lg"
                     >
                         <div className="flex justify-between items-center">
                             <span className="font-medium">{p.name}</span>
@@ -101,27 +99,12 @@ export default function ProductModal({ item, onClose, clientId }: ProductModalPr
     }, [clientId, item.id]);
 
     return (
-        <motion.div
-            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-            onClick={onClose}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-        >
-            <motion.div
-                className="bg-[#EDF2EF] p-1.5 rounded-2xl w-[330px] relative shadow-2xl flex flex-col"
-                onClick={(e) => e.stopPropagation()}
-                initial={{ scale: 0.5, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.8, opacity: 0 }}
-                transition={{ duration: 0.3, ease: "easeOut" }}
-            >
-                <ProductDetailView
-                    image={item.image}
-                    tags={item.tags}
-                    products={item.products}
-                />
-            </motion.div>
-        </motion.div>
+        <ModalLayout onClose={onClose}>
+            <ProductDetailView
+                image={item.image}
+                tags={item.tags}
+                products={item.products}
+            />
+        </ModalLayout>
     );
 }
