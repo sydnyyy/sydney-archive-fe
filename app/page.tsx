@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { productItems } from "@/lib/items/productItems";
 import { restaurantItems } from "@/lib/items/restaurantItems";
 import { recipeItems } from "@/lib/items/RecipeItems";
-import { CATEGORY, Item } from "@/lib/types";
+import { CATEGORY, CategoryType, Item } from "@/lib/types";
 import { motion, AnimatePresence } from "framer-motion";
 import { isProductItem, isRestaurantItem, isRecipeItem } from "@/lib/types";
 import { CLIENT_ID_KEY } from "@/constants/auth/storageKeys";
@@ -15,15 +15,8 @@ import RecipeModal from "@/components/food/RecipeModal";
 import RestaurantModal from "@/components/food/RestaurantModal";
 import UserChatView, { UserChatViewRef } from "@/components/chat/user/UserChatView";
 
-const categories = [
-    { label: CATEGORY.PRODUCT, icon: "🎁" },
-    { label: CATEGORY.FOOD, icon: "🍕" },
-] as const;
-
-type CategoryLabel = typeof categories[number]["label"];
-
 export default function Page() {
-    const [activeCategory, setActiveCategory] = useState<CategoryLabel>(CATEGORY.PRODUCT);
+    const [activeCategory, setActiveCategory] = useState<CategoryType>(CATEGORY.PRODUCT);
     const [showSidebarText, setShowSidebarText] = useState(false);
     const [selectedItem, setSelectedItem] = useState<Item | null>(null);
     const [tabRightPosition, setTabRightPosition] = useState<string>('');
@@ -196,7 +189,6 @@ export default function Page() {
                 style={{ right: tabRightPosition }}
             >
                 <CategoryTabs
-                    categories={categories}
                     activeCategory={activeCategory}
                     setActiveCategory={setActiveCategory}
                 />

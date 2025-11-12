@@ -1,13 +1,19 @@
 import { Dispatch, SetStateAction } from "react";
-import { CategoryType } from "@/lib/types";
+import { CATEGORY, CategoryType } from "@/lib/types";
+
+export const categories = [
+    { label: CATEGORY.PRODUCT, icon: "🎁" },
+    { label: CATEGORY.FOOD, icon: "🍕" },
+] as const;
 
 interface CategoryTabsProps {
-    categories: readonly { label: CategoryType; icon: string }[];
     activeCategory: CategoryType;
     setActiveCategory: Dispatch<SetStateAction<CategoryType>>;
 }
 
-export default function CategoryTabs({ categories, activeCategory, setActiveCategory }: CategoryTabsProps) {
+export default function CategoryTabs({
+                                         activeCategory,
+                                         setActiveCategory }: CategoryTabsProps) {
     return (
         <aside className="flex flex-col space-y-1">
             {categories.map((cat) => (
