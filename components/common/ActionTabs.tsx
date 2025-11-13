@@ -78,33 +78,35 @@ export default function ActionTabs({
         return () => window.removeEventListener("resize", calculatePosition);
     }, []);
 
+    const renderButtons = () => (
+        TABS.map(tab => (
+            <button
+                key={tab.value}
+                onClick={() => handleClick(tab)}
+                className={`text-3xl ${
+                    tab.value === activeTab ? "opacity-100" : "opacity-50 hover:opacity-100"
+                }`}
+            >
+                {tab.emoji}
+            </button>
+        ))
+    );
 
     return (
         <div>
             {/* 웹: 오른쪽 세로 */}
             <div className="hidden lg:block fixed top-54" style={{ right: tabRightPosition }}>
                 <div className="flex flex-col border-2 rounded-xl p-3 space-y-5">
-                    {TABS.map(tab => (
-                        <button key={tab.value} onClick={() => handleClick(tab)}
-                                className={`text-3xl ${tab.value === activeTab ? "opacity-100" : "opacity-50 hover:opacity-100"}`}>
-                            {tab.emoji}
-                        </button>
-                    ))}
+                    {renderButtons()}
                 </div>
             </div>
 
             {/* 모바일: 하단 가로 */}
             <div className="block lg:hidden fixed bottom-0 w-full border-t border-gray-400">
                 <div className="flex justify-around pt-3 pb-5 px-4">
-                    {TABS.map(tab => (
-                        <button key={tab.value} onClick={() => handleClick(tab)}
-                                className={`text-3xl ${tab.value === activeTab ? "opacity-100" : "opacity-50 hover:opacity-100"}`}>
-                            {tab.emoji}
-                        </button>
-                    ))}
+                    {renderButtons()}
                 </div>
             </div>
         </div>
-
     );
 }
