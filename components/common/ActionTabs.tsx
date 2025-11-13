@@ -6,17 +6,17 @@ import { TAB_VALUES, TabValue } from "@/constants/tab/tabs";
 type TabType = "category" | "feature";
 
 interface TabItem {
-    emoji: string;
+    icon: string;
     value: TabValue;
     type: TabType;
 }
 
 const TABS: TabItem[] = [
-    { emoji: "📦", value: TAB_VALUES.PRODUCT, type: "category" },
-    { emoji: "💻", value: TAB_VALUES.STUDY, type: "category" },
-    { emoji: "🖤", value: TAB_VALUES.WISHLIST, type: "feature" },
-    { emoji: "👤", value: TAB_VALUES.PROFILE, type: "feature" },
-    { emoji: "💬", value: TAB_VALUES.CHAT, type: "feature" },
+    { icon: "/tabs/icon-home-heart.svg", value: TAB_VALUES.PRODUCT, type: "category" },
+    { icon: "/tabs/icon-book.svg", value: TAB_VALUES.STUDY, type: "category" },
+    { icon: "/tabs/icon-heart.svg", value: TAB_VALUES.WISHLIST, type: "feature" },
+    { icon: "/tabs/icon-user.svg", value: TAB_VALUES.PROFILE, type: "feature" },
+    { icon: "/tabs/icon-comment.svg", value: TAB_VALUES.CHAT, type: "feature" },
 ];
 
 interface ActionTabsProps {
@@ -85,10 +85,14 @@ export default function ActionTabs({
                 onClick={() => handleClick(tab)}
                 className={`text-3xl ${
                     tab.value === activeTab || (tab.value === TAB_VALUES.CHAT && isChatOpen) 
-                        ? "opacity-100" : "opacity-50 hover:opacity-100"
+                        ? "opacity-100" : "opacity-20 hover:opacity-100"
                 }`}
             >
-                {tab.emoji}
+                <img
+                    src={tab.icon}
+                    alt={tab.value}
+                    className="w-8 h-8"
+                />
             </button>
         ))
     );
@@ -97,7 +101,7 @@ export default function ActionTabs({
         <div>
             {/* 웹: 오른쪽 세로 */}
             <div className="hidden lg:block fixed top-54" style={{ right: tabRightPosition }}>
-                <div className="flex flex-col border-2 rounded-xl p-3 space-y-5">
+                <div className="flex flex-col border-2 rounded-xl p-3.5 space-y-7">
                     {renderButtons()}
                 </div>
             </div>
