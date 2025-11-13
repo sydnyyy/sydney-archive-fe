@@ -10,7 +10,6 @@ import { v4 as uuidv4 } from "uuid";
 import AnimatedMessages from "@/components/chat/common/AnimatedMessages";
 
 import ChatInput from "./ChatInput";
-import ChatButton from "./ChatButton";
 import ChatCloseDialog from "./ChatCloseDialog";
 import SystemEventDialog from "./SystemEventDialog";
 import useAutoReply from "@/hooks/useAutoReply";
@@ -18,11 +17,12 @@ import { useChatMessages } from "@/hooks/useChatMessages";
 import { useChatScroll } from "@/hooks/useChatScroll";
 
 export interface UserChatViewRef {
-    startItemChat: (itemName: string) => void;
+    startItemChat: (itemName?: string) => void;
     addChatMessageWithOptions: (message: { content: string; options: { label: string; value: string }[] }) => void;
     isOpen: () => boolean;
     removeLastOptionMessage: () => void;
     addSystemMessage: (content: string) => void;
+    handleChatToggle: () => void;
 }
 
 interface UserChatViewProps {
@@ -159,9 +159,11 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(({ onOptionS
     };
 
     useImperativeHandle(ref, () => ({
-        startItemChat(itemName: string) {
+        startItemChat(itemName?: string) {
             setIsChatOpen(true);
-            addSystemMessage(`${itemName} 아이템 상담을 시작합니다 🤗`);
+            if (itemName) {
+                addSystemMessage(`${itemName} 아이템 상담을 시작합니다 🤗`);
+            }
         },
         addChatMessageWithOptions(message) {
             setIsChatOpen(true);
@@ -181,6 +183,7 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(({ onOptionS
             setMessages(prev => prev.filter(msg => !msg.options));
         },
         addSystemMessage,
+        handleChatToggle,
     }));
 
     const sendMessage = () => {
@@ -231,8 +234,6 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(({ onOptionS
 
     return (
         <>
-            <ChatButton onClick={handleChatToggle} />
-
             {isChatOpen && (
                 <div
                     style={{

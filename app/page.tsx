@@ -20,10 +20,12 @@ export default function Page() {
     const [activeTab, setActiveTab] = useState<TabValue>(TAB_VALUES.PRODUCT);
     const [showSidebarText, setShowSidebarText] = useState(false);
     const [selectedItem, setSelectedItem] = useState<Item | null>(null);
-    const chatRef = useRef<UserChatViewRef>(null);
 
+    const chatRef = useRef<UserChatViewRef>(null);
+    const [isChatVisible, setIsChatVisible] = useState(false);
     const [currentChatItem, setCurrentChatItem] = useState<Item | null>(null);
     const [nextChatItem, setNextChatItem] = useState<Item | null>(null);
+
     const [clientId, setClientId] = useState<string>("anonymous");
 
     useEffect(() => {
@@ -66,8 +68,21 @@ export default function Page() {
             }, 500);
         }
 
+        setIsChatVisible(false);
+
         // 다음 아이템 초기화
         setNextChatItem(null);
+    };
+
+    const handleChatTabClick = () => {
+        if (!isChatVisible) {
+            setIsChatVisible(true);
+            setTimeout(() => {
+                chatRef.current?.startItemChat();
+            }, 0);
+        } else {
+            chatRef.current?.handleChatToggle?.();
+        }
     };
 
     let filteredItems: Item[] = [];
@@ -164,11 +179,13 @@ export default function Page() {
                 setActiveTab={setActiveTab}
                 onWishlistClick={() => console.log("wishlist clicked")}  // TODO: 위시리스트 기능 연결
                 onProfileClick={() => console.log("profile clicked")}    // TODO: 프로필 기능 연결
-                onChatClick={() => console.log("chat clicked")}          // TODO: 채팅 기능 연결
+                onChatClick={handleChatTabClick}
             />
 
             {/* 관리자 문의하기 위젯 */}
-            <UserChatView ref={chatRef} onOptionSelect={handleChatOptionSelect} />
+            {isChatVisible && (
+                <UserChatView ref={chatRef} onOptionSelect={handleChatOptionSelect} />
+            )}
         </div>
     );
 }
