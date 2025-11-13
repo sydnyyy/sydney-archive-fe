@@ -4,22 +4,22 @@ import { useState, useEffect, useRef } from "react";
 import { productItems } from "@/lib/items/productItems";
 import { restaurantItems } from "@/lib/items/restaurantItems";
 import { recipeItems } from "@/lib/items/RecipeItems";
-import { CATEGORY, CategoryType, Item } from "@/lib/types";
+import { Item } from "@/lib/types";
+import { TAB_VALUES, TabValue } from "@/constants/tab/tabs";
 import { motion, AnimatePresence } from "framer-motion";
 import { isProductItem, isRestaurantItem, isRecipeItem } from "@/lib/types";
 import { CLIENT_ID_KEY } from "@/constants/auth/storageKeys";
 
-import CategoryTabs from "@/components/common/CategoryTabs";
+import ActionTabs from "@/components/common/ActionTabs";
 import ProductModal from "@/components/product/ProductModal";
 import RecipeModal from "@/components/food/RecipeModal";
 import RestaurantModal from "@/components/food/RestaurantModal";
 import UserChatView, { UserChatViewRef } from "@/components/chat/user/UserChatView";
 
 export default function Page() {
-    const [activeCategory, setActiveCategory] = useState<CategoryType>(CATEGORY.PRODUCT);
+    const [activeTab, setActiveTab] = useState<TabValue>(TAB_VALUES.PRODUCT);
     const [showSidebarText, setShowSidebarText] = useState(false);
     const [selectedItem, setSelectedItem] = useState<Item | null>(null);
-    const [tabRightPosition, setTabRightPosition] = useState<string>('');
     const chatRef = useRef<UserChatViewRef>(null);
 
     const [currentChatItem, setCurrentChatItem] = useState<Item | null>(null);
@@ -70,13 +70,11 @@ export default function Page() {
         setNextChatItem(null);
     };
 
-    let filteredItems: Item[];
-    if (activeCategory === CATEGORY.PRODUCT) {
-        filteredItems = productItems;
-    } else if (activeCategory === CATEGORY.FOOD) {
-        filteredItems = [...restaurantItems, ...recipeItems];
-    } else {
+    let filteredItems: Item[] = [];
+    if (activeTab === TAB_VALUES.PRODUCT) {
         filteredItems = [...productItems, ...restaurantItems, ...recipeItems];
+    } else if (activeTab === TAB_VALUES.STUDY) {
+        // TODO: 스터디 아이템 추가
     }
 
     // 스크롤 감지 (사이드 문구)
@@ -86,28 +84,6 @@ export default function Page() {
         };
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
-
-    useEffect(() => {
-        const calculatePosition = () => {
-            const windowWidth = window.innerWidth;
-            const containerWidth = 672;
-
-            const tabWidth = 72;
-            const tabMargin = 0;
-
-            if (windowWidth > containerWidth + tabWidth + tabMargin) {
-                const rightGap = (windowWidth - containerWidth) / 2;
-                const position = rightGap - tabWidth - tabMargin;
-                setTabRightPosition(`${position}px`);
-            } else {
-                setTabRightPosition('-100px');
-            }
-        };
-
-        calculatePosition();
-        window.addEventListener('resize', calculatePosition);
-        return () => window.removeEventListener('resize', calculatePosition);
     }, []);
 
     return (
@@ -183,16 +159,13 @@ export default function Page() {
                 </div>
             </main>
 
-            {/* 탭 메뉴 (스크롤해도 고정) */}
-            <div
-                className={`fixed top-52 hidden lg:block`}
-                style={{ right: tabRightPosition }}
-            >
-                <CategoryTabs
-                    activeCategory={activeCategory}
-                    setActiveCategory={setActiveCategory}
-                />
-            </div>
+            <ActionTabs
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                onWishlistClick={() => console.log("wishlist clicked")}  // TODO: 위시리스트 기능 연결
+                onProfileClick={() => console.log("profile clicked")}    // TODO: 프로필 기능 연결
+                onChatClick={() => console.log("chat clicked")}          // TODO: 채팅 기능 연결
+            />
 
             {/* 관리자 문의하기 위젯 */}
             <UserChatView ref={chatRef} onOptionSelect={handleChatOptionSelect} />
