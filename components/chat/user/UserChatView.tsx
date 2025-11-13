@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle, useLayoutEffect } from "react";
+import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle, useLayoutEffect, Dispatch, SetStateAction } from "react";
 import { Client } from "@stomp/stompjs";
 import { createStompClient } from "@/lib/chat/socketClient";
 import { ChatMessage } from "@/types/chat";
@@ -26,11 +26,14 @@ export interface UserChatViewRef {
 }
 
 interface UserChatViewProps {
+    isChatOpen: boolean;
+    setIsChatOpen: Dispatch<SetStateAction<boolean>>;
     onOptionSelect?: (value: "yes" | "no") => void;
 }
 
-const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(({ onOptionSelect }, ref) => {
-    const [isChatOpen, setIsChatOpen] = useState(false);
+const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(
+    ({ isChatOpen, setIsChatOpen, onOptionSelect }, ref) => {
+
     const [inputMessage, setInputMessage] = useState<string>("");
     const [clientId, setClientId] = useState<string | null>(null);
     const [messages, setMessages] = useState<ChatMessage[]>([]);

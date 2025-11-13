@@ -22,7 +22,7 @@ export default function Page() {
     const [selectedItem, setSelectedItem] = useState<Item | null>(null);
 
     const chatRef = useRef<UserChatViewRef>(null);
-    const [isChatVisible, setIsChatVisible] = useState(false);
+    const [isChatOpen, setIsChatOpen] = useState(false);
     const [currentChatItem, setCurrentChatItem] = useState<Item | null>(null);
     const [nextChatItem, setNextChatItem] = useState<Item | null>(null);
 
@@ -68,17 +68,15 @@ export default function Page() {
             }, 500);
         }
 
-        setIsChatVisible(false);
-
         // 다음 아이템 초기화
         setNextChatItem(null);
     };
 
     const handleChatTabClick = () => {
-        if (!isChatVisible) {
-            setIsChatVisible(true);
+        if (!isChatOpen) {
+            setIsChatOpen(true);
             setTimeout(() => {
-                chatRef.current?.startItemChat();
+                chatRef.current?.startItemChat?.();
             }, 0);
         } else {
             chatRef.current?.handleChatToggle?.();
@@ -180,11 +178,16 @@ export default function Page() {
                 onWishlistClick={() => console.log("wishlist clicked")}  // TODO: 위시리스트 기능 연결
                 onProfileClick={() => console.log("profile clicked")}    // TODO: 프로필 기능 연결
                 onChatClick={handleChatTabClick}
+                isChatOpen={isChatOpen}
             />
 
-            {/* 관리자 문의하기 위젯 */}
-            {isChatVisible && (
-                <UserChatView ref={chatRef} onOptionSelect={handleChatOptionSelect} />
+            {isChatOpen && (
+                <UserChatView
+                    ref={chatRef}
+                    onOptionSelect={handleChatOptionSelect}
+                    isChatOpen={isChatOpen}
+                    setIsChatOpen={setIsChatOpen}
+                />
             )}
         </div>
     );
