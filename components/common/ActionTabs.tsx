@@ -25,7 +25,7 @@ interface ActionTabsProps {
     onWishlistClick?: () => void;
     onProfileClick?: () => void;
     onChatClick?: () => void;
-    mode?: "vertical" | "horizontal";
+    isChatOpen: boolean;
 }
 
 export default function ActionTabs({
@@ -34,7 +34,7 @@ export default function ActionTabs({
                                        onWishlistClick,
                                        onProfileClick,
                                        onChatClick,
-                                       mode = "vertical",
+                                       isChatOpen,
                                    }: ActionTabsProps) {
 
     const [tabRightPosition, setTabRightPosition] = useState("0px");
@@ -84,7 +84,8 @@ export default function ActionTabs({
                 key={tab.value}
                 onClick={() => handleClick(tab)}
                 className={`text-3xl ${
-                    tab.value === activeTab ? "opacity-100" : "opacity-50 hover:opacity-100"
+                    tab.value === activeTab || (tab.value === TAB_VALUES.CHAT && isChatOpen) 
+                        ? "opacity-100" : "opacity-50 hover:opacity-100"
                 }`}
             >
                 {tab.emoji}
