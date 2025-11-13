@@ -15,6 +15,7 @@ import ProductModal from "@/components/product/ProductModal";
 import RecipeModal from "@/components/food/RecipeModal";
 import RestaurantModal from "@/components/food/RestaurantModal";
 import UserChatView, { UserChatViewRef } from "@/components/chat/user/UserChatView";
+import Footer from "@/components/common/Footer";
 
 export default function Page() {
     const [activeTab, setActiveTab] = useState<TabValue>(TAB_VALUES.PRODUCT);
@@ -189,6 +190,8 @@ export default function Page() {
                     setIsChatOpen={setIsChatOpen}
                 />
             )}
+
+            <Footer />
         </div>
     );
 }
