@@ -5,7 +5,7 @@ import { fontVariables } from "./_shared/fonts";
 export const metadata: Metadata = {
   title: "Wishlist",
   icons: {
-      icon: "/wishlist_logo.svg"
+      icon: "/tags/tag_heart_pin_right.svg"
   }
 };
 
