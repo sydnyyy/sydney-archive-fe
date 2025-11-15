@@ -16,7 +16,7 @@ const TABS: TabItem[] = [
     { icon: "/tabs/icon-book.svg", value: TAB_VALUES.STUDY, type: "category" },
     { icon: "/tabs/icon-heart.svg", value: TAB_VALUES.WISHLIST, type: "feature" },
     { icon: "/tabs/icon-user.svg", value: TAB_VALUES.PROFILE, type: "feature" },
-    { icon: "/tabs/icon-comment.svg", value: TAB_VALUES.CHAT, type: "feature" },
+    { icon: "/tabs/icon-chat-bold.svg", value: TAB_VALUES.CHAT, type: "feature" },
 ];
 
 interface ActionTabsProps {
