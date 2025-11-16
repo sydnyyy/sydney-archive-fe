@@ -73,15 +73,23 @@ export default function Page() {
         setNextChatItem(null);
     };
 
-    const handleChatTabClick = () => {
+    const handleChatClick = (item?: Item) => {
         if (!isChatOpen) {
             setIsChatOpen(true);
             setTimeout(() => {
-                chatRef.current?.startItemChat?.();
+                chatRef.current?.startItemChat?.(item?.title);
             }, 0);
         } else {
             chatRef.current?.handleChatToggle?.();
         }
+    };
+
+    const handleLike = () => {
+        // TODO 좋아요 기능
+    };
+
+    const handleShare = () => {
+        // TODO 공유 기능
     };
 
     let filteredItems: Item[] = [];
@@ -126,6 +134,11 @@ export default function Page() {
                             item={selectedItem}
                             onClose={() => setSelectedItem(null)}
                             clientId={clientId}
+                            actionBarHandlers={{
+                                onLike: handleLike,
+                                onChat: () => handleChatClick(selectedItem),
+                                onShare: handleShare
+                            }}
                         />
                     )}
 
@@ -134,6 +147,11 @@ export default function Page() {
                             item={selectedItem}
                             onClose={() => setSelectedItem(null)}
                             clientId={clientId}
+                            actionBarHandlers={{
+                                onLike: handleLike,
+                                onChat: () => handleChatClick(selectedItem),
+                                onShare: handleShare
+                            }}
                         />
                     )}
                 </AnimatePresence>
@@ -178,7 +196,7 @@ export default function Page() {
                 setActiveTab={setActiveTab}
                 onWishlistClick={() => console.log("wishlist clicked")}  // TODO: 위시리스트 기능 연결
                 onProfileClick={() => console.log("profile clicked")}    // TODO: 프로필 기능 연결
-                onChatClick={handleChatTabClick}
+                onChatClick={handleChatClick}
                 isChatOpen={isChatOpen}
             />
 
