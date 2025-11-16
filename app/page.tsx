@@ -188,6 +188,7 @@ export default function Page() {
                     onOptionSelect={handleChatOptionSelect}
                     isChatOpen={isChatOpen}
                     setIsChatOpen={setIsChatOpen}
+                    clientId={clientId}
                 />
             )}
 

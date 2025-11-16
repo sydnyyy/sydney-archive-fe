@@ -29,13 +29,13 @@ interface UserChatViewProps {
     isChatOpen: boolean;
     setIsChatOpen: Dispatch<SetStateAction<boolean>>;
     onOptionSelect?: (value: "yes" | "no") => void;
+    clientId: string;
 }
 
 const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(
-    ({ isChatOpen, setIsChatOpen, onOptionSelect }, ref) => {
+    ({ isChatOpen, setIsChatOpen, onOptionSelect, clientId }, ref) => {
 
     const [inputMessage, setInputMessage] = useState<string>("");
-    const [clientId, setClientId] = useState<string | null>(null);
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [showCloseDialog, setShowCloseDialog] = useState(false);
     const [hasMoreMessages, setHasMoreMessages] = useState(true);
@@ -57,13 +57,6 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(
         (older) => setMessages(prev => [...older, ...prev]),
         () => setHasMoreMessages(false)
     );
-
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            const clientId = getOrCreateClientId();
-            setClientId(clientId);
-        }
-    }, []);
 
     const { handleUserMessage } = useAutoReply(
         (msg: ChatMessage) => setMessages(prev => [...prev, msg]),
