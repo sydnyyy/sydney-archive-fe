@@ -18,7 +18,6 @@ import { useChatScroll } from "@/hooks/useChatScroll";
 
 export interface UserChatViewRef {
     startItemChat: (itemName?: string) => void;
-    addChatMessageWithOptions: (message: { content: string; options: { label: string; value: string }[] }) => void;
     isOpen: () => boolean;
     removeLastOptionMessage: () => void;
     addSystemMessage: (content: string) => void;
@@ -28,12 +27,11 @@ export interface UserChatViewRef {
 interface UserChatViewProps {
     isChatOpen: boolean;
     setIsChatOpen: Dispatch<SetStateAction<boolean>>;
-    onOptionSelect?: (value: "yes" | "no") => void;
     clientId: string;
 }
 
 const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(
-    ({ isChatOpen, setIsChatOpen, onOptionSelect, clientId }, ref) => {
+    ({ isChatOpen, setIsChatOpen, clientId }, ref) => {
 
     const [inputMessage, setInputMessage] = useState<string>("");
     const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -161,19 +159,6 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(
                 addSystemMessage(`${itemName} 아이템 상담을 시작합니다 🤗`);
             }
         },
-        addChatMessageWithOptions(message) {
-            setIsChatOpen(true);
-            setMessages(prev => [
-                ...prev,
-                {
-                    ...message,
-                    sender: "system",
-                    receiver: clientId,
-                    type: "SYSTEM",
-                    sendAt: new Date().toISOString()
-                } as ChatMessage,
-            ]);
-        },
         isOpen: () => isChatOpen,
         removeLastOptionMessage() {
             setMessages(prev => prev.filter(msg => !msg.options));
@@ -259,7 +244,6 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(
                         <AnimatedMessages
                             messages={messages}
                             myRole="USER"
-                            onOptionClick={onOptionSelect}
                         />
                         <div ref={messagesEndRef} />
                     </div>

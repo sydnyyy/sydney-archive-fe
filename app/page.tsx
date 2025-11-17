@@ -24,8 +24,6 @@ export default function Page() {
 
     const chatRef = useRef<UserChatViewRef>(null);
     const [isChatOpen, setIsChatOpen] = useState(false);
-    const [currentChatItem, setCurrentChatItem] = useState<Item | null>(null);
-    const [nextChatItem, setNextChatItem] = useState<Item | null>(null);
 
     const [clientId, setClientId] = useState<string>("anonymous");
 
@@ -36,41 +34,7 @@ export default function Page() {
 
     const handleItemClick = (item: Item) => {
         setSelectedItem(item);
-
-        if (chatRef.current?.isOpen()) {
-            if (!currentChatItem) {
-                setCurrentChatItem(item);
-                chatRef.current.startItemChat(item.title);
-            } else if (currentChatItem.id !== item.id) {
-                setNextChatItem(item);
-                chatRef.current.addChatMessageWithOptions({
-                    content: `${currentChatItem.title} 상담을 종료하시겠습니까?`,
-                    options: [
-                        { label: "예", value: "yes" },
-                        { label: "아니오", value: "no" },
-                    ],
-                });
-            }
-            return;
-        }
-    };
-
-    const handleChatOptionSelect = (choice: "yes" | "no") => {
-        chatRef.current?.removeLastOptionMessage?.();
-
-        if (!currentChatItem || !nextChatItem) return;
-
-        if (choice === "yes") {
-            chatRef.current?.addSystemMessage?.(`${currentChatItem.title} 상담을 종료합니다.`);
-
-            setTimeout(() => {
-                setCurrentChatItem(nextChatItem);
-                chatRef.current?.startItemChat(nextChatItem.title);
-            }, 500);
-        }
-
-        // 다음 아이템 초기화
-        setNextChatItem(null);
+        chatRef.current?.startItemChat(item.title);
     };
 
     const handleChatClick = (item?: Item) => {
@@ -203,7 +167,6 @@ export default function Page() {
             {isChatOpen && (
                 <UserChatView
                     ref={chatRef}
-                    onOptionSelect={handleChatOptionSelect}
                     isChatOpen={isChatOpen}
                     setIsChatOpen={setIsChatOpen}
                     clientId={clientId}
