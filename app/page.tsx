@@ -11,9 +11,9 @@ import { isProductItem, isRestaurantItem, isRecipeItem } from "@/lib/types";
 import { CLIENT_ID_KEY } from "@/constants/auth/storageKeys";
 
 import ActionTabs from "@/components/common/ActionTabs";
-import ProductModal from "@/components/product/ProductModal";
-import RecipeModal from "@/components/food/RecipeModal";
-import RestaurantModal from "@/components/food/RestaurantModal";
+import ProductModal from "@/components/item/product/ProductModal";
+import RecipeModal from "@/components/item/food/RecipeModal";
+import RestaurantModal from "@/components/item/food/RestaurantModal";
 import UserChatView, { UserChatViewRef } from "@/components/chat/user/UserChatView";
 import Footer from "@/components/common/Footer";
 
