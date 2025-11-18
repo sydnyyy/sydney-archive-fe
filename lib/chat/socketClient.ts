@@ -10,6 +10,7 @@ export interface CreateStompClientOptions {
     role: "admin" | "user";
     subscribePaths: SubscribePath[];
     reconnectDelay?: number;
+    fetchInitialSystemMessage?: () => Promise<void>;
 }
 
 export function createStompClient(options: CreateStompClientOptions): Client {
@@ -31,6 +32,14 @@ export function createStompClient(options: CreateStompClientOptions): Client {
                     onMessage(JSON.parse(message.body));
                 });
             });
+
+            if (options.fetchInitialSystemMessage) {
+                try {
+                    options.fetchInitialSystemMessage();
+                } catch (err) {
+                    console.error("❗ 초기 시스템 메시지 요청 실패:", err);
+                }
+            }
         },
         onWebSocketError: (err) => {
             console.error("🔴 WebSocket error:", err);

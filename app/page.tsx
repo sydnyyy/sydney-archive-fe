@@ -37,12 +37,9 @@ export default function Page() {
         chatRef.current?.startItemChat(item.title);
     };
 
-    const handleChatClick = (item?: Item) => {
+    const handleChatClick = () => {
         if (!isChatOpen) {
             setIsChatOpen(true);
-            setTimeout(() => {
-                chatRef.current?.startItemChat?.(item?.title);
-            }, 0);
         } else {
             chatRef.current?.handleChatToggle?.();
         }
@@ -100,7 +97,7 @@ export default function Page() {
                             clientId={clientId}
                             actionBarHandlers={{
                                 onLike: handleLike,
-                                onChat: () => handleChatClick(selectedItem),
+                                onChat: () => handleChatClick(),
                                 onShare: handleShare
                             }}
                         />
@@ -113,7 +110,7 @@ export default function Page() {
                             clientId={clientId}
                             actionBarHandlers={{
                                 onLike: handleLike,
-                                onChat: () => handleChatClick(selectedItem),
+                                onChat: () => handleChatClick(),
                                 onShare: handleShare
                             }}
                         />
@@ -170,6 +167,7 @@ export default function Page() {
                     isChatOpen={isChatOpen}
                     setIsChatOpen={setIsChatOpen}
                     clientId={clientId}
+                    selectedItem={selectedItem}
                 />
             )}
 

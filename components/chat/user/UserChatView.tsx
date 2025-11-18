@@ -15,6 +15,7 @@ import SystemEventDialog from "./SystemEventDialog";
 import useAutoReply from "@/hooks/useAutoReply";
 import { useChatMessages } from "@/hooks/useChatMessages";
 import { useChatScroll } from "@/hooks/useChatScroll";
+import { Item } from "@/lib/types";
 
 export interface UserChatViewRef {
     startItemChat: (itemName?: string) => void;
@@ -28,10 +29,14 @@ interface UserChatViewProps {
     isChatOpen: boolean;
     setIsChatOpen: Dispatch<SetStateAction<boolean>>;
     clientId: string;
+    selectedItem: Item | null;
 }
 
 const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(
-    ({ isChatOpen, setIsChatOpen, clientId }, ref) => {
+    (
+        { isChatOpen, setIsChatOpen, clientId, selectedItem },
+        ref
+    ) => {
 
     const [inputMessage, setInputMessage] = useState<string>("");
     const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -113,6 +118,13 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(
                         },
                     },
                 ],
+
+                // 아이템 open → 채팅 open
+                fetchInitialSystemMessage: async () => {
+                    if (selectedItem) {
+                        addSystemMessage(`${selectedItem.title} 아이템 상담을 시작합니다 🤗`);
+                    }
+                },
             });
 
             // 첫 화면 최신 메시지 로딩
@@ -142,7 +154,6 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(
             sendAt: new Date().toISOString(),
             type: "SYSTEM",
         };
-        setMessages(prev => [...prev, systemMessage]);
 
         if (stompClientRef.current) {
             stompClientRef.current.publish({
@@ -153,6 +164,7 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(
     };
 
     useImperativeHandle(ref, () => ({
+        // 채팅 open → 아이템 open
         startItemChat(itemName?: string) {
             setIsChatOpen(true);
             if (itemName) {
