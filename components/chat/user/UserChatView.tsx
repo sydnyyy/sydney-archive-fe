@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle, useLayoutEffect, Dispatch, SetStateAction } from "react";
 import { Client } from "@stomp/stompjs";
 import { createStompClient } from "@/lib/chat/socketClient";
-import { ChatMessage } from "@/types/chat";
+import { CHAT_TYPE, ChatMessage } from "@/types/chat";
 import { SystemEvent } from "@/types/system";
 import { getOrCreateClientId, getOrCreateTabId } from "@/utils/clientId";
 import { v4 as uuidv4 } from "uuid";
@@ -152,7 +152,7 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(
             receiver: clientId,
             content,
             sendAt: new Date().toISOString(),
-            type: "SYSTEM",
+            type: CHAT_TYPE.SYSTEM,
         };
 
         if (stompClientRef.current) {
@@ -187,7 +187,7 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(
             receiver: "wishlist-admin",
             content: inputMessage,
             sendAt: new Date().toISOString(),
-            type: "USER",
+            type: CHAT_TYPE.USER,
         };
         stompClientRef.current.publish({
             destination: "/app/chat.send",

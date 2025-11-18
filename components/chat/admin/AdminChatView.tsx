@@ -1,6 +1,6 @@
 "use client";
 
-import { ChatMessage } from "@/types/chat";
+import { CHAT_TYPE, ChatMessage } from "@/types/chat";
 import { useState, useEffect } from "react";
 import AnimatedMessages from "@/components/chat/common/AnimatedMessages";
 import { useChatMessages } from "@/hooks/useChatMessages";
@@ -52,7 +52,7 @@ export default function AdminChatView({
             receiver: clientId,
             content: input.trim(),
             sendAt: new Date().toISOString(),
-            type: "ADMIN",
+            type: CHAT_TYPE.ADMIN,
         };
 
         stompClient?.publish({
