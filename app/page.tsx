@@ -45,10 +45,6 @@ export default function Page() {
         }
     };
 
-    const handleLike = () => {
-        // TODO 좋아요 기능
-    };
-
     const handleShare = () => {
         // TODO 공유 기능
     };
@@ -95,11 +91,8 @@ export default function Page() {
                             item={selectedItem}
                             onClose={() => setSelectedItem(null)}
                             clientId={clientId}
-                            actionBarHandlers={{
-                                onLike: handleLike,
-                                onChat: () => handleChatClick(),
-                                onShare: handleShare
-                            }}
+                            onChat={handleChatClick}
+                            onShare={handleShare}
                         />
                     )}
 
@@ -108,11 +101,8 @@ export default function Page() {
                             item={selectedItem}
                             onClose={() => setSelectedItem(null)}
                             clientId={clientId}
-                            actionBarHandlers={{
-                                onLike: handleLike,
-                                onChat: () => handleChatClick(),
-                                onShare: handleShare
-                            }}
+                            onChat={handleChatClick}
+                            onShare={handleShare}
                         />
                     )}
                 </AnimatePresence>

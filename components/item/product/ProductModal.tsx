@@ -5,20 +5,22 @@ import { motion } from "framer-motion";
 import { ProductItem } from "@/lib/types";
 import { sendAccessEvent } from "@/lib/accesslog/accessEventApi";
 import ModalLayout from "@/components/common/ModalLayout";
-import ModalActionBar, { ActionBarHandlers } from "@/components/common/ModalActionBar";
+import ModalActionBar from "@/components/common/ModalActionBar";
 
 interface ProductModalProps {
     item: ProductItem;
     onClose: () => void;
     clientId: string;
-    actionBarHandlers: ActionBarHandlers;
+    onChat: () => void;
+    onShare?: () => void;
 }
 
 export default function ProductModal({
                                          item,
                                          onClose,
                                          clientId,
-                                         actionBarHandlers }: ProductModalProps) {
+                                         onChat,
+                                         onShare }: ProductModalProps) {
 
     if (!item) return null;
 
@@ -38,7 +40,13 @@ export default function ProductModal({
                 {/* 이미지 + 태그 */}
                 <div className="relative w-full">
                     <div className="absolute bottom-0 left-0 z-20">
-                        <ModalActionBar {...actionBarHandlers} />
+                        <ModalActionBar
+                            clientId={clientId}
+                            itemId={item.id}
+                            initialLiked={false}
+                            onChat={onChat}
+                            onShare={onShare}
+                        />
                     </div>
 
                     <img
