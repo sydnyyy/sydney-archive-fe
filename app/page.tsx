@@ -9,6 +9,7 @@ import { TAB_VALUES, TabValue } from "@/constants/tab/tabs";
 import { motion, AnimatePresence } from "framer-motion";
 import { isProductItem, isRestaurantItem, isRecipeItem } from "@/lib/types";
 import { CLIENT_ID_KEY } from "@/constants/auth/storageKeys";
+import { fetchLikeListApi } from "@/lib/like/likeApi";
 
 import ActionTabs from "@/components/common/ActionTabs";
 import ProductModal from "@/components/item/product/ProductModal";
@@ -24,6 +25,7 @@ export default function Page() {
 
     const chatRef = useRef<UserChatViewRef>(null);
     const [isChatOpen, setIsChatOpen] = useState(false);
+    const [likeMap, setLikeMap] = useState<Record<string, boolean>>({});
 
     const [clientId, setClientId] = useState<string>("anonymous");
 
@@ -31,6 +33,18 @@ export default function Page() {
         const clientId = localStorage.getItem(CLIENT_ID_KEY) ?? "anonymous";
         setClientId(clientId);
     }, []);
+
+    useEffect(() => {
+        async function loadLikes() {
+            try {
+                const likes = await fetchLikeListApi(clientId);
+                setLikeMap(likes);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+        loadLikes();
+    }, [clientId]);
 
     const handleItemClick = (item: Item) => {
         setSelectedItem(item);
@@ -91,6 +105,8 @@ export default function Page() {
                             item={selectedItem}
                             onClose={() => setSelectedItem(null)}
                             clientId={clientId}
+                            likeMap={likeMap}
+                            setLikeMap={setLikeMap}
                             onChat={handleChatClick}
                             onShare={handleShare}
                         />
@@ -101,6 +117,8 @@ export default function Page() {
                             item={selectedItem}
                             onClose={() => setSelectedItem(null)}
                             clientId={clientId}
+                            likeMap={likeMap}
+                            setLikeMap={setLikeMap}
                             onChat={handleChatClick}
                             onShare={handleShare}
                         />

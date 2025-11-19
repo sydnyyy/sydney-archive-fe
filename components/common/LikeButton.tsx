@@ -7,11 +7,16 @@ import { addLikeApi, deleteLikeApi } from "@/lib/like/likeApi";
 interface LikeButtonProps {
     clientId: string;
     itemId: string;
-    initialLiked?: boolean;
+    likeMap: Record<string, boolean>;
+    setLikeMap: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
 }
 
-export default function LikeButton({ clientId, itemId, initialLiked = false }: LikeButtonProps) {
-    const [liked, setLiked] = useState(initialLiked);
+export default function LikeButton({
+                                       clientId,
+                                       itemId,
+                                       likeMap, setLikeMap }: LikeButtonProps) {
+
+    const liked = likeMap[itemId] ?? false;
     const [loading, setLoading] = useState(false);
 
     const handleClick = async () => {
@@ -22,7 +27,7 @@ export default function LikeButton({ clientId, itemId, initialLiked = false }: L
             if (liked) await deleteLikeApi(clientId, itemId);
             else await addLikeApi(clientId, itemId);
 
-            setLiked(!liked);
+            setLikeMap(prev => ({ ...prev, [itemId]: !liked }));
         } catch (err) {
             console.error(err);
         } finally {

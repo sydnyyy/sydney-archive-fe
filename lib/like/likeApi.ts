@@ -23,3 +23,22 @@ export async function deleteLikeApi(clientId: string, itemId: string): Promise<v
         throw new Error("좋아요 취소 실패");
     }
 }
+
+export async function fetchLikeListApi(clientId: string): Promise<Record<string, boolean>> {
+    if (!clientId || clientId === "anonymous") {
+        return {};
+    }
+
+    const url = new URL(`${baseUrl}/api/users/${clientId}/likes`);
+
+    const res = await fetch(url.toString(), {
+        method: "GET",
+        cache: "no-store",
+    });
+
+    if (!res.ok) {
+        throw new Error("좋아요 목록 불러오기 실패");
+    }
+
+    return res.json();
+}
