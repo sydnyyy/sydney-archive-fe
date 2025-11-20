@@ -103,7 +103,9 @@ export default function ProductModal({
                             href={p.link}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex flex-col px-1 py-2.5 md:text-base text-sm rounded-lg"
+                            className="
+                                flex flex-col px-1.5 py-2.5 md:text-base text-sm rounded-lg
+                                transition-all hover:bg-gray-100 hover:shadow-md hover:-translate-y-[2px]"
                         >
                             <div className="flex justify-between items-center">
                                 <span className="font-medium">{p.name}</span>
