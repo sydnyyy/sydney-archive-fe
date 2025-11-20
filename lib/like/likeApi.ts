@@ -24,9 +24,9 @@ export async function deleteLikeApi(clientId: string, itemId: string): Promise<v
     }
 }
 
-export async function fetchLikeListApi(clientId: string): Promise<Record<string, boolean>> {
+export async function fetchLikeListApi(clientId: string): Promise<Set<string>> {
     if (!clientId || clientId === "anonymous") {
-        return {};
+        return new Set();
     }
 
     const url = new URL(`${baseUrl}/api/users/${clientId}/likes`);
@@ -40,5 +40,6 @@ export async function fetchLikeListApi(clientId: string): Promise<Record<string,
         throw new Error("좋아요 목록 불러오기 실패");
     }
 
-    return res.json();
+    const json: string[] = await res.json();
+    return new Set(json);
 }

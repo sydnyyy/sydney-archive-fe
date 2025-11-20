@@ -25,7 +25,7 @@ export default function Page() {
 
     const chatRef = useRef<UserChatViewRef>(null);
     const [isChatOpen, setIsChatOpen] = useState(false);
-    const [likeMap, setLikeMap] = useState<Record<string, boolean>>({});
+    const [likedSet, setLikedSet] = useState<Set<string>>(new Set());
 
     const [clientId, setClientId] = useState<string>("anonymous");
 
@@ -38,7 +38,7 @@ export default function Page() {
         async function loadLikes() {
             try {
                 const likes = await fetchLikeListApi(clientId);
-                setLikeMap(likes);
+                setLikedSet(likes);
             } catch (err) {
                 console.error(err);
             }
@@ -105,8 +105,8 @@ export default function Page() {
                             item={selectedItem}
                             onClose={() => setSelectedItem(null)}
                             clientId={clientId}
-                            likeMap={likeMap}
-                            setLikeMap={setLikeMap}
+                            likedSet={likedSet}
+                            setLikedSet={setLikedSet}
                             onChat={handleChatClick}
                             onShare={handleShare}
                         />
@@ -117,8 +117,8 @@ export default function Page() {
                             item={selectedItem}
                             onClose={() => setSelectedItem(null)}
                             clientId={clientId}
-                            likeMap={likeMap}
-                            setLikeMap={setLikeMap}
+                            likedSet={likedSet}
+                            setLikedSet={setLikedSet}
                             onChat={handleChatClick}
                             onShare={handleShare}
                         />

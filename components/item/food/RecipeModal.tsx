@@ -10,8 +10,8 @@ interface RecipeModalProps {
     item: RecipeItem;
     onClose: () => void;
     clientId: string;
-    likeMap: Record<string, boolean>;
-    setLikeMap: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+    likedSet: Set<string>;
+    setLikedSet: React.Dispatch<React.SetStateAction<Set<string>>>;
     onChat: () => void;
     onShare?: () => void;
 }
@@ -20,7 +20,7 @@ export default function RecipeModal({
                                         item,
                                         onClose,
                                         clientId,
-                                        likeMap, setLikeMap,
+                                        likedSet, setLikedSet,
                                         onChat,
                                         onShare }: RecipeModalProps) {
 
@@ -44,8 +44,8 @@ export default function RecipeModal({
                         <ModalActionBar
                             clientId={clientId}
                             itemId={item.id}
-                            likeMap={likeMap}
-                            setLikeMap={setLikeMap}
+                            likedSet={likedSet}
+                            setLikedSet={setLikedSet}
                             onChat={onChat}
                             onShare={onShare}
                         />

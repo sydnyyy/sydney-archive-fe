@@ -11,8 +11,8 @@ interface ProductModalProps {
     item: ProductItem;
     onClose: () => void;
     clientId: string;
-    likeMap: Record<string, boolean>;
-    setLikeMap: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+    likedSet: Set<string>;
+    setLikedSet: React.Dispatch<React.SetStateAction<Set<string>>>;
     onChat: () => void;
     onShare?: () => void;
 }
@@ -21,7 +21,7 @@ export default function ProductModal({
                                          item,
                                          onClose,
                                          clientId,
-                                         likeMap, setLikeMap,
+                                         likedSet, setLikedSet,
                                          onChat,
                                          onShare }: ProductModalProps) {
 
@@ -46,8 +46,8 @@ export default function ProductModal({
                         <ModalActionBar
                             clientId={clientId}
                             itemId={item.id}
-                            likeMap={likeMap}
-                            setLikeMap={setLikeMap}
+                            likedSet={likedSet}
+                            setLikedSet={setLikedSet}
                             onChat={onChat}
                             onShare={onShare}
                         />
