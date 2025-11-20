@@ -101,7 +101,7 @@ export default function ActionTabs({
         <div>
             {/* 웹: 오른쪽 세로 */}
             <div className="hidden lg:block fixed top-45" style={{ right: tabRightPosition }}>
-                <div className="flex flex-col border-2 rounded-xl p-3.5 space-y-7">
+                <div className="flex flex-col p-3.5 space-y-7">
                     {renderButtons()}
                 </div>
             </div>
