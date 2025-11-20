@@ -1,38 +1,44 @@
 "use client";
 
-import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle, useLayoutEffect } from "react";
+import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle, useLayoutEffect, Dispatch, SetStateAction } from "react";
 import { Client } from "@stomp/stompjs";
 import { createStompClient } from "@/lib/chat/socketClient";
-import { ChatMessage } from "@/types/chat";
+import { CHAT_TYPE, ChatMessage } from "@/types/chat";
 import { SystemEvent } from "@/types/system";
 import { getOrCreateClientId, getOrCreateTabId } from "@/utils/clientId";
 import { v4 as uuidv4 } from "uuid";
 import AnimatedMessages from "@/components/chat/common/AnimatedMessages";
 
 import ChatInput from "./ChatInput";
-import ChatButton from "./ChatButton";
 import ChatCloseDialog from "./ChatCloseDialog";
 import SystemEventDialog from "./SystemEventDialog";
 import useAutoReply from "@/hooks/useAutoReply";
 import { useChatMessages } from "@/hooks/useChatMessages";
 import { useChatScroll } from "@/hooks/useChatScroll";
+import { Item } from "@/lib/types";
 
 export interface UserChatViewRef {
-    startItemChat: (itemName: string) => void;
-    addChatMessageWithOptions: (message: { content: string; options: { label: string; value: string }[] }) => void;
+    startItemChat: (itemName?: string) => void;
     isOpen: () => boolean;
     removeLastOptionMessage: () => void;
     addSystemMessage: (content: string) => void;
+    handleChatToggle: () => void;
 }
 
 interface UserChatViewProps {
-    onOptionSelect?: (value: "yes" | "no") => void;
+    isChatOpen: boolean;
+    setIsChatOpen: Dispatch<SetStateAction<boolean>>;
+    clientId: string;
+    selectedItem: Item | null;
 }
 
-const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(({ onOptionSelect }, ref) => {
-    const [isChatOpen, setIsChatOpen] = useState(false);
+const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(
+    (
+        { isChatOpen, setIsChatOpen, clientId, selectedItem },
+        ref
+    ) => {
+
     const [inputMessage, setInputMessage] = useState<string>("");
-    const [clientId, setClientId] = useState<string | null>(null);
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [showCloseDialog, setShowCloseDialog] = useState(false);
     const [hasMoreMessages, setHasMoreMessages] = useState(true);
@@ -54,13 +60,6 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(({ onOptionS
         (older) => setMessages(prev => [...older, ...prev]),
         () => setHasMoreMessages(false)
     );
-
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            const clientId = getOrCreateClientId();
-            setClientId(clientId);
-        }
-    }, []);
 
     const { handleUserMessage } = useAutoReply(
         (msg: ChatMessage) => setMessages(prev => [...prev, msg]),
@@ -119,6 +118,13 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(({ onOptionS
                         },
                     },
                 ],
+
+                // 아이템 open → 채팅 open
+                fetchInitialSystemMessage: async () => {
+                    if (selectedItem) {
+                        addSystemMessage(`${selectedItem.title} 아이템 상담을 시작합니다 🤗`);
+                    }
+                },
             });
 
             // 첫 화면 최신 메시지 로딩
@@ -146,9 +152,8 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(({ onOptionS
             receiver: clientId,
             content,
             sendAt: new Date().toISOString(),
-            type: "SYSTEM",
+            type: CHAT_TYPE.SYSTEM,
         };
-        setMessages(prev => [...prev, systemMessage]);
 
         if (stompClientRef.current) {
             stompClientRef.current.publish({
@@ -159,28 +164,19 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(({ onOptionS
     };
 
     useImperativeHandle(ref, () => ({
-        startItemChat(itemName: string) {
+        // 채팅 open → 아이템 open
+        startItemChat(itemName?: string) {
             setIsChatOpen(true);
-            addSystemMessage(`${itemName} 아이템 상담을 시작합니다 🤗`);
-        },
-        addChatMessageWithOptions(message) {
-            setIsChatOpen(true);
-            setMessages(prev => [
-                ...prev,
-                {
-                    ...message,
-                    sender: "system",
-                    receiver: clientId,
-                    type: "SYSTEM",
-                    sendAt: new Date().toISOString()
-                } as ChatMessage,
-            ]);
+            if (itemName) {
+                addSystemMessage(`${itemName} 아이템 상담을 시작합니다 🤗`);
+            }
         },
         isOpen: () => isChatOpen,
         removeLastOptionMessage() {
             setMessages(prev => prev.filter(msg => !msg.options));
         },
         addSystemMessage,
+        handleChatToggle,
     }));
 
     const sendMessage = () => {
@@ -191,7 +187,7 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(({ onOptionS
             receiver: "wishlist-admin",
             content: inputMessage,
             sendAt: new Date().toISOString(),
-            type: "USER",
+            type: CHAT_TYPE.USER,
         };
         stompClientRef.current.publish({
             destination: "/app/chat.send",
@@ -231,8 +227,6 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(({ onOptionS
 
     return (
         <>
-            <ChatButton onClick={handleChatToggle} />
-
             {isChatOpen && (
                 <div
                     style={{
@@ -262,7 +256,6 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(({ onOptionS
                         <AnimatedMessages
                             messages={messages}
                             myRole="USER"
-                            onOptionClick={onOptionSelect}
                         />
                         <div ref={messagesEndRef} />
                     </div>

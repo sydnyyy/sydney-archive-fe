@@ -4,33 +4,29 @@ import { useState, useEffect, useRef } from "react";
 import { productItems } from "@/lib/items/productItems";
 import { restaurantItems } from "@/lib/items/restaurantItems";
 import { recipeItems } from "@/lib/items/RecipeItems";
-import { CATEGORY, Item } from "@/lib/types";
+import { Item } from "@/lib/types";
+import { TAB_VALUES, TabValue } from "@/constants/tab/tabs";
 import { motion, AnimatePresence } from "framer-motion";
 import { isProductItem, isRestaurantItem, isRecipeItem } from "@/lib/types";
 import { CLIENT_ID_KEY } from "@/constants/auth/storageKeys";
+import { fetchLikeListApi } from "@/lib/like/likeApi";
 
-import CategoryTabs from "@/components/common/CategoryTabs";
-import ProductModal from "@/components/product/ProductModal";
-import RecipeModal from "@/components/food/RecipeModal";
-import RestaurantModal from "@/components/food/RestaurantModal";
+import ActionTabs from "@/components/common/ActionTabs";
+import ProductModal from "@/components/item/product/ProductModal";
+import RecipeModal from "@/components/item/food/RecipeModal";
+import RestaurantModal from "@/components/item/food/RestaurantModal";
 import UserChatView, { UserChatViewRef } from "@/components/chat/user/UserChatView";
-
-const categories = [
-    { label: CATEGORY.PRODUCT, icon: "🎁" },
-    { label: CATEGORY.FOOD, icon: "🍕" },
-] as const;
-
-type CategoryLabel = typeof categories[number]["label"];
+import Footer from "@/components/common/Footer";
 
 export default function Page() {
-    const [activeCategory, setActiveCategory] = useState<CategoryLabel>(CATEGORY.PRODUCT);
+    const [activeTab, setActiveTab] = useState<TabValue>(TAB_VALUES.PRODUCT);
     const [showSidebarText, setShowSidebarText] = useState(false);
     const [selectedItem, setSelectedItem] = useState<Item | null>(null);
-    const [tabRightPosition, setTabRightPosition] = useState<string>('');
-    const chatRef = useRef<UserChatViewRef>(null);
 
-    const [currentChatItem, setCurrentChatItem] = useState<Item | null>(null);
-    const [nextChatItem, setNextChatItem] = useState<Item | null>(null);
+    const chatRef = useRef<UserChatViewRef>(null);
+    const [isChatOpen, setIsChatOpen] = useState(false);
+    const [likedSet, setLikedSet] = useState<Set<string>>(new Set());
+
     const [clientId, setClientId] = useState<string>("anonymous");
 
     useEffect(() => {
@@ -38,52 +34,40 @@ export default function Page() {
         setClientId(clientId);
     }, []);
 
+    useEffect(() => {
+        async function loadLikes() {
+            try {
+                const likes = await fetchLikeListApi(clientId);
+                setLikedSet(likes);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+        loadLikes();
+    }, [clientId]);
+
     const handleItemClick = (item: Item) => {
         setSelectedItem(item);
+        chatRef.current?.startItemChat(item.title);
+    };
 
-        if (chatRef.current?.isOpen()) {
-            if (!currentChatItem) {
-                setCurrentChatItem(item);
-                chatRef.current.startItemChat(item.title);
-            } else if (currentChatItem.id !== item.id) {
-                setNextChatItem(item);
-                chatRef.current.addChatMessageWithOptions({
-                    content: `${currentChatItem.title} 상담을 종료하시겠습니까?`,
-                    options: [
-                        { label: "예", value: "yes" },
-                        { label: "아니오", value: "no" },
-                    ],
-                });
-            }
-            return;
+    const handleChatClick = () => {
+        if (!isChatOpen) {
+            setIsChatOpen(true);
+        } else {
+            chatRef.current?.handleChatToggle?.();
         }
     };
 
-    const handleChatOptionSelect = (choice: "yes" | "no") => {
-        chatRef.current?.removeLastOptionMessage?.();
-
-        if (!currentChatItem || !nextChatItem) return;
-
-        if (choice === "yes") {
-            chatRef.current?.addSystemMessage?.(`${currentChatItem.title} 상담을 종료합니다.`);
-
-            setTimeout(() => {
-                setCurrentChatItem(nextChatItem);
-                chatRef.current?.startItemChat(nextChatItem.title);
-            }, 500);
-        }
-
-        // 다음 아이템 초기화
-        setNextChatItem(null);
+    const handleShare = () => {
+        // TODO 공유 기능
     };
 
-    let filteredItems: Item[];
-    if (activeCategory === CATEGORY.PRODUCT) {
-        filteredItems = productItems;
-    } else if (activeCategory === CATEGORY.FOOD) {
-        filteredItems = [...restaurantItems, ...recipeItems];
-    } else {
+    let filteredItems: Item[] = [];
+    if (activeTab === TAB_VALUES.PRODUCT) {
         filteredItems = [...productItems, ...restaurantItems, ...recipeItems];
+    } else if (activeTab === TAB_VALUES.STUDY) {
+        // TODO: 스터디 아이템 추가
     }
 
     // 스크롤 감지 (사이드 문구)
@@ -93,28 +77,6 @@ export default function Page() {
         };
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
-
-    useEffect(() => {
-        const calculatePosition = () => {
-            const windowWidth = window.innerWidth;
-            const containerWidth = 672;
-
-            const tabWidth = 72;
-            const tabMargin = 0;
-
-            if (windowWidth > containerWidth + tabWidth + tabMargin) {
-                const rightGap = (windowWidth - containerWidth) / 2;
-                const position = rightGap - tabWidth - tabMargin;
-                setTabRightPosition(`${position}px`);
-            } else {
-                setTabRightPosition('-100px');
-            }
-        };
-
-        calculatePosition();
-        window.addEventListener('resize', calculatePosition);
-        return () => window.removeEventListener('resize', calculatePosition);
     }, []);
 
     return (
@@ -143,6 +105,10 @@ export default function Page() {
                             item={selectedItem}
                             onClose={() => setSelectedItem(null)}
                             clientId={clientId}
+                            likedSet={likedSet}
+                            setLikedSet={setLikedSet}
+                            onChat={handleChatClick}
+                            onShare={handleShare}
                         />
                     )}
 
@@ -151,11 +117,15 @@ export default function Page() {
                             item={selectedItem}
                             onClose={() => setSelectedItem(null)}
                             clientId={clientId}
+                            likedSet={likedSet}
+                            setLikedSet={setLikedSet}
+                            onChat={handleChatClick}
+                            onShare={handleShare}
                         />
                     )}
                 </AnimatePresence>
 
-                <div className="w-full max-w-2xl mx-auto">
+                <div className="w-full max-w-[540px] mx-auto">
                     {/* 메인 문구 (스크롤되면서 사라짐) */}
                     <div className="p-6 text-gray-600 leading-relaxed text-sm text-right">
                         내 위시리스트야<br />
@@ -165,11 +135,8 @@ export default function Page() {
                     </div>
 
                     {/* 아이템 리스트 */}
-                    <div className="p-6">
-                        <div className="
-                            grid gap-2 grid-cols-[repeat(auto-fit,minmax(0,1fr))]
-                            max-[1024px]:grid-cols-3 max-[640px]:grid-cols-2 lg:grid-cols-4"
-                        >
+                    <div className="w-full">
+                        <div className="grid gap-1.5 grid-cols-4">
                             {filteredItems.map((item) => (
                                 <div key={item.id} className="flex flex-col items-center">
                                     {isProductItem(item) || isRecipeItem(item) ? (
@@ -193,20 +160,26 @@ export default function Page() {
                 </div>
             </main>
 
-            {/* 탭 메뉴 (스크롤해도 고정) */}
-            <div
-                className={`fixed top-52 hidden lg:block`}
-                style={{ right: tabRightPosition }}
-            >
-                <CategoryTabs
-                    categories={categories}
-                    activeCategory={activeCategory}
-                    setActiveCategory={setActiveCategory}
-                />
-            </div>
+            <ActionTabs
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+                onWishlistClick={() => console.log("wishlist clicked")}  // TODO: 위시리스트 기능 연결
+                onProfileClick={() => console.log("profile clicked")}    // TODO: 프로필 기능 연결
+                onChatClick={handleChatClick}
+                isChatOpen={isChatOpen}
+            />
 
-            {/* 관리자 문의하기 위젯 */}
-            <UserChatView ref={chatRef} onOptionSelect={handleChatOptionSelect} />
+            {isChatOpen && (
+                <UserChatView
+                    ref={chatRef}
+                    isChatOpen={isChatOpen}
+                    setIsChatOpen={setIsChatOpen}
+                    clientId={clientId}
+                    selectedItem={selectedItem}
+                />
+            )}
+
+            <Footer />
         </div>
     );
 }
