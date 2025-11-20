@@ -125,7 +125,7 @@ export default function Page() {
                     )}
                 </AnimatePresence>
 
-                <div className="w-full max-w-2xl mx-auto lg:max-w-3xl">
+                <div className="w-full max-w-[540px] mx-auto">
                     {/* 메인 문구 (스크롤되면서 사라짐) */}
                     <div className="p-6 text-gray-600 leading-relaxed text-sm text-right">
                         내 위시리스트야<br />
@@ -135,7 +135,7 @@ export default function Page() {
                     </div>
 
                     {/* 아이템 리스트 */}
-                    <div className="w-full mx-auto max-w-none p-1">
+                    <div className="w-full">
                         <div className="grid gap-1.5 grid-cols-4">
                             {filteredItems.map((item) => (
                                 <div key={item.id} className="flex flex-col items-center">
