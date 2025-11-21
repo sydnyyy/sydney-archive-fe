@@ -1,6 +1,6 @@
 "use client";
 
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { TAB_VALUES, TabValue } from "@/constants/tab/tabs";
 
 type TabType = "category" | "feature";
@@ -12,7 +12,7 @@ interface TabItem {
 }
 
 const TABS: TabItem[] = [
-    { icon: "/tabs/icon-home-heart.svg", value: TAB_VALUES.PRODUCT, type: "category" },
+    { icon: "/tabs/icon-home-heart.svg", value: TAB_VALUES.ITEM, type: "category" },
     { icon: "/tabs/icon-book.svg", value: TAB_VALUES.STUDY, type: "category" },
     { icon: "/tabs/icon-heart.svg", value: TAB_VALUES.WISHLIST, type: "feature" },
     { icon: "/tabs/icon-user.svg", value: TAB_VALUES.PROFILE, type: "feature" },
@@ -20,41 +20,21 @@ const TABS: TabItem[] = [
 ];
 
 interface ActionTabsProps {
-    activeTab: TabValue;
-    setActiveTab: Dispatch<SetStateAction<TabValue>>;
-    onWishlistClick?: () => void;
-    onProfileClick?: () => void;
-    onChatClick?: () => void;
+    activeTab: string;
+    onTabClick: (tab: string) => void;
     isChatOpen: boolean;
 }
 
 export default function ActionTabs({
                                        activeTab,
-                                       setActiveTab,
-                                       onWishlistClick,
-                                       onProfileClick,
-                                       onChatClick,
+                                       onTabClick,
                                        isChatOpen,
                                    }: ActionTabsProps) {
 
     const [tabRightPosition, setTabRightPosition] = useState("0px");
 
     const handleClick = (tab: TabItem) => {
-        if (tab.type === "category") {
-            setActiveTab(tab.value);
-        } else {
-            switch (tab.value) {
-                case TAB_VALUES.CHAT:
-                    onChatClick?.();
-                    break;
-                case TAB_VALUES.WISHLIST:
-                    onWishlistClick?.();
-                    break;
-                case TAB_VALUES.PROFILE:
-                    onProfileClick?.();
-                    break;
-            }
-        }
+        onTabClick(tab.value);
     };
 
     useEffect(() => {
