@@ -1,5 +1,5 @@
 export const TAB_VALUES = {
-    PRODUCT: "product",
+    ITEM: "item",
     STUDY: "study",
     CHAT: "chat",
     WISHLIST: "wishlist",
