@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle, useLayoutEffect, Dispatch, SetStateAction } from "react";
+import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle, useLayoutEffect } from "react";
 import { Client } from "@stomp/stompjs";
 import { createStompClient } from "@/lib/chat/socketClient";
 import { CHAT_TYPE, ChatMessage } from "@/types/chat";
 import { SystemEvent } from "@/types/system";
-import { getOrCreateClientId, getOrCreateTabId } from "@/utils/clientId";
+import { getOrCreateTabId } from "@/utils/clientId";
 import { v4 as uuidv4 } from "uuid";
 import AnimatedMessages from "@/components/chat/common/AnimatedMessages";
 
@@ -27,7 +27,7 @@ export interface UserChatViewRef {
 
 interface UserChatViewProps {
     isChatOpen: boolean;
-    setIsChatOpen: Dispatch<SetStateAction<boolean>>;
+    setIsChatOpen: (open: boolean) => void;
     clientId: string;
     selectedItem: Item | null;
 }
