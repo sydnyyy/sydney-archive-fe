@@ -27,7 +27,7 @@ export interface UserChatViewRef {
 
 interface UserChatViewProps {
     isChatOpen: boolean;
-    setIsChatOpen: Dispatch<SetStateAction<boolean>>;
+    setIsChatOpen: (open: boolean) => void;
     clientId: string;
     selectedItem: Item | null;
 }
