@@ -1,9 +1,12 @@
-import { ProductItem, createProductItem } from "@/lib/types/product";
+import { BaseItem, CATEGORY, ITEM_TYPE } from "@/lib/types/item.types";
 
-export const productItems: ProductItem[] = [
-    createProductItem({
+export const productItems: BaseItem[] = [
+    {
         id: "1",
+        category: CATEGORY.PRODUCT,
+        type: ITEM_TYPE.PRODUCT,
         title: "미니 파우치",
+        description: "테스트 중",
         image: "/items/IMG_1.jpeg",
         tags: [
             {
@@ -41,10 +44,12 @@ export const productItems: ProductItem[] = [
                 description: "구매 링크 가기"
             },
         ]
-    }),
-    createProductItem({
+    },
+    {
         id: "2",
         title: "러쉬고체향수",
+        category: CATEGORY.PRODUCT,
+        type: ITEM_TYPE.PRODUCT,
         image: "/items/IMG_2.jpeg",
         tags: [
             {
@@ -66,10 +71,12 @@ export const productItems: ProductItem[] = [
                 description: "시트러스 + 우디 향을 좋아한다면 강추 💚 | 구매 링크 가기"
             },
         ]
-    }),
-    createProductItem({
+    },
+    {
         id: "3",
         title: "키링",
+        category: CATEGORY.PRODUCT,
+        type: ITEM_TYPE.PRODUCT,
         image: "/items/IMG_3.jpeg",
         tags: [
             {
@@ -91,6 +98,6 @@ export const productItems: ProductItem[] = [
                 description: "네이버 플레이스 추가하러 가기"
             },
         ]
-    }),
+    },
 ];
 

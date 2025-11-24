@@ -2,17 +2,30 @@
 
 import { useRef } from "react";
 import { motion } from "framer-motion";
-import { RestaurantItem } from "@/lib/types";
+import { BaseItem } from "@/lib/types";
 import { sendAccessEvent } from "@/lib/accesslog/accessEventApi";
 
-interface RestaurantProps {
-    item: RestaurantItem;
-    onSelect: (item: RestaurantItem) => void;
+interface RotatingModalProps {
+    item: BaseItem;
+    onSelect: (item: BaseItem) => void;
     clientId: string;
 }
 
-export default function RestaurantModal({ item, onSelect, clientId }: RestaurantProps) {
+/**
+ * RotatingModal
+ * -----------------------
+ * 카드 회전되는 UI
+ * 현재 사용하지 않음
+ *
+ * Props:
+ * - item: BaseItem, 모달에 표시할 아이템
+ * - onSelect: 아이템 선택 시 호출
+ * - clientId: 클라이언트 식별자
+ */
+
+export default function RotatingModal({ item, onSelect, clientId }: RotatingModalProps) {
     const hoverTimeout = useRef<NodeJS.Timeout | null>(null);
+    const firstProduct = item.products?.[0];
 
     return (
         <div className="relative w-full aspect-square perspective-[1000px] cursor-pointer">
@@ -47,14 +60,21 @@ export default function RestaurantModal({ item, onSelect, clientId }: Restaurant
                     onClick={(e) => {
                         e.stopPropagation();
                         onSelect(item);
-                        if (item.link) {
-                            window.open(item.link, "_blank");
+                        if (firstProduct?.link) {
+                            window.open(firstProduct.link, "_blank");
                         }
                     }}
                 >
                     <h3 className="text-[15px] font-semibold text-gray-700 mb-2">{item.title}</h3>
-                    {item.description && <p className="text-[13px] text-gray-500 mb-2">{item.description}</p>}
-                    {item.location && <p className="text-[13px] text-gray-500">📍 {item.location}</p>}
+
+                    {item.description &&
+                        <p className="text-[13px] text-gray-500 mb-2">{item.description}</p>
+                    }
+
+                    {firstProduct?.link && (
+                        <p className="text-[13px] text-gray-500">📍 {firstProduct.link}</p>
+                    )}
+
                     <p className="text-xs text-gray-400">네이버 플레이스 추가하러 가기</p>
                 </div>
             </motion.div>

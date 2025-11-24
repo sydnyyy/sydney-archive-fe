@@ -6,12 +6,9 @@ import { restaurantItems } from "@/lib/items/restaurantItems";
 import { recipeItems } from "@/lib/items/RecipeItems";
 import { Item } from "@/lib/types";
 import { motion, AnimatePresence } from "framer-motion";
-import { isProductItem, isRecipeItem, isRestaurantItem } from "@/lib/types";
 import { fetchLikeListApi } from "@/lib/like/likeApi";
 
-import ProductModal from "@/components/item/product/ProductModal";
-import RecipeModal from "@/components/item/food/RecipeModal";
-import RestaurantModal from "@/components/item/food/RestaurantModal";
+import BasicModal from "@/components/common/BasicModal";
 import UserChatView, { UserChatViewRef } from "@/components/chat/user/UserChatView";
 import { useChat } from "@/app/context/ChatContext";
 import { useClient } from "@/app/context/ClientContext";
@@ -85,20 +82,8 @@ export default function ItemPage() {
                         </motion.div>
                     )}
 
-                    {selectedItem && isProductItem(selectedItem) && (
-                        <ProductModal
-                            item={selectedItem}
-                            onClose={() => setSelectedItem(null)}
-                            clientId={clientId}
-                            likedSet={likedSet}
-                            setLikedSet={setLikedSet}
-                            onChat={handleChatClick}
-                            onShare={handleShare}
-                        />
-                    )}
-
-                    {selectedItem && isRecipeItem(selectedItem) && (
-                        <RecipeModal
+                    {selectedItem && (
+                        <BasicModal
                             item={selectedItem}
                             onClose={() => setSelectedItem(null)}
                             clientId={clientId}
@@ -124,20 +109,12 @@ export default function ItemPage() {
                         <div className="grid gap-1.5 grid-cols-4">
                             {filteredItems.map((item) => (
                                 <div key={item.id} className="flex flex-col items-center">
-                                    {isProductItem(item) || isRecipeItem(item) ? (
-                                        <img
-                                            src={item.image}
-                                            alt={item.title}
-                                            className="rounded-xl shadow-md cursor-pointer"
-                                            onClick={() => handleItemClick(item)}
-                                        />
-                                    ) : isRestaurantItem(item) ? (
-                                        <RestaurantModal
-                                            item={item}
-                                            onSelect={handleItemClick}
-                                            clientId={clientId}
-                                        />
-                                    ) : null}
+                                    <img
+                                        src={item.image}
+                                        alt={item.title}
+                                        className="rounded-xl shadow-md cursor-pointer"
+                                        onClick={() => handleItemClick(item)}
+                                    />
                                 </div>
                             ))}
                         </div>
