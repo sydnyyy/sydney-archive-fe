@@ -1,10 +1,3 @@
-export * from "./base";
-export * from "./product";
-export * from "./restaurant";
-export * from "./recipe";
+import { BaseItem } from "@/lib/types/item.types";
 
-import type { ProductItem } from "./product";
-import type { RestaurantItem } from "./restaurant";
-import type { RecipeItem } from "./recipe";
-
-export type Item = ProductItem | RestaurantItem | RecipeItem;
+export type Item = BaseItem;

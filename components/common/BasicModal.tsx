@@ -2,13 +2,13 @@
 
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { ProductItem } from "@/lib/types";
 import { sendAccessEvent } from "@/lib/accesslog/accessEventApi";
 import ModalLayout from "@/components/common/ModalLayout";
 import ModalActionBar from "@/components/common/ModalActionBar";
+import { BaseItem } from "@/lib/types/item.types";
 
-interface ProductModalProps {
-    item: ProductItem;
+interface BasicModalProps {
+    item: BaseItem
     onClose: () => void;
     clientId: string;
     likedSet: Set<string>;
@@ -17,13 +17,13 @@ interface ProductModalProps {
     onShare?: () => void;
 }
 
-export default function ProductModal({
+export default function BasicModal({
                                          item,
                                          onClose,
                                          clientId,
                                          likedSet, setLikedSet,
                                          onChat,
-                                         onShare }: ProductModalProps) {
+                                         onShare }: BasicModalProps) {
 
     if (!item) return null;
 
@@ -97,7 +97,7 @@ export default function ProductModal({
 
                 {/* 상품 정보 목록 */}
                 <div className="flex flex-col w-full px-1.5 space-y-1">
-                    {item.products.map((p: any, idx: number) => (
+                    {item.products && item.products.map((p: any, idx: number) => (
                         <a
                             key={idx}
                             href={p.link}
