@@ -21,7 +21,10 @@ export default function ModalActionBar({
                                        }: ModalActionBarProps) {
 
     return (
-        <div className="flex gap-2 bg-[#EDF2EF] backdrop-blur-sm px-2 py-1.5 rounded-tr-xl">
+        <div
+            className="flex gap-2 backdrop-blur-sm px-2 py-1.5 rounded-tr-xl"
+            style={{ backgroundColor: "var(--color-bg-modal)" }}
+        >
             <div className="w-8 h-8 flex items-center justify-center">
                 <LikeButton
                     clientId={clientId}

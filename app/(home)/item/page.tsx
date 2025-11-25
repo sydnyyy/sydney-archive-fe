@@ -74,6 +74,7 @@ export default function ItemPage() {
                             className="
                                 fixed top-57 left-1/2 -translate-x-[610px] mr-10 w-65
                                 text-sm leading-relaxed text-right"
+                            style={{ color: "var(--color-text-tertiary)" }}
                         >
                             내 위시리스트야<br />
                             네가 경험했으면 하는 내 위시리스트<br />
