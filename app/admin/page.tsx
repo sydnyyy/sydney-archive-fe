@@ -46,7 +46,7 @@ export default function AdminPage() {
 
             <div className="flex flex-1 mt-25 overflow-hidden pt-8">
                 {/* 왼쪽 카테고리 */}
-                <div className="w-60 bg-gray-100 p-4 flex flex-col gap-4">
+                <div className="w-60 p-4 flex flex-col gap-4">
                     <CategorySidebar
                         categories={[...categories]}
                         activeCategory={activeCategory}
