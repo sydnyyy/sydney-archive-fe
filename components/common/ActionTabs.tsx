@@ -87,7 +87,10 @@ export default function ActionTabs({
             </div>
 
             {/* 모바일: 하단 가로 */}
-            <div className="block lg:hidden fixed bottom-0 w-full border-t border-gray-400">
+            <div
+                className="block lg:hidden fixed bottom-0 w-full"
+                style={{ borderTop: "1px solid var(--color-border-tab)" }}
+            >
                 <div className="flex justify-around pt-3 pb-5 px-4">
                     {renderButtons()}
                 </div>

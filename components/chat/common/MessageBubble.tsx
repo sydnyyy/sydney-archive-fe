@@ -13,23 +13,39 @@ export default function MessageBubble({ msg, isMine, onOptionClick }: MessageBub
     if (msg.type === "SYSTEM") {
         return (
             <div className="mb-3 flex justify-center">
-                <div className="px-3 py-2 rounded-xl text-sm font-medium bg-[#E1E8E5] text-[#6CA67C]">
+                <div
+                    className="px-3 py-2 rounded-xl text-sm font-medium"
+                    style={{
+                        backgroundColor: "var(--color-chat-system-bg)",
+                        color: "var(--color-chat-system-text)",
+                    }}
+                >
                     {msg.content}
                 </div>
             </div>
         );
     }
 
-    const bubbleClass = `px-3 py-2 rounded-2xl break-words ${
-        isMine ? "bg-[#6CA67C] text-white" : "bg-[#e6ebed] text-black"
-    }`;
+    const bubbleStyle = isMine
+        ? {
+            backgroundColor: "var(--color-chat-mine-bg)",
+            color: "var(--color-chat-mine-text)",
+        }
+        : {
+            backgroundColor: "var(--color-chat-other-bg)",
+            color: "var(--color-chat-other-text)",
+        };
 
     return (
         <div className={`mb-2 flex items-end ${isMine ? "justify-end" : "justify-start"} gap-2`}>
             {isMine ? (
                 <>
-                    <span className="text-xs text-gray-500">{time}</span>
-                    <div className={bubbleClass}>
+                    <span className="text-xs"
+                          style={{ color: "var(--color-chat-time)" }}
+                    >
+                        {time}
+                    </span>
+                    <div className="px-3 py-2 rounded-2xl break-words" style={bubbleStyle}>
                         {msg.content}
                         {msg.options && onOptionClick && (
                             <div className="mt-2 flex gap-2 justify-center">
@@ -48,7 +64,7 @@ export default function MessageBubble({ msg, isMine, onOptionClick }: MessageBub
                 </>
             ) : (
                 <>
-                    <div className={bubbleClass}>
+                    <div className="px-3 py-2 rounded-2xl break-words" style={bubbleStyle}>
                         {msg.content}
                         {msg.options && onOptionClick && (
                             <div className="mt-2 flex gap-2 justify-center">
@@ -64,7 +80,11 @@ export default function MessageBubble({ msg, isMine, onOptionClick }: MessageBub
                             </div>
                         )}
                     </div>
-                    <span className="text-xs text-gray-500">{time}</span>
+                    <span className="text-xs"
+                          style={{ color: "var(--color-chat-time)" }}
+                    >
+                        {time}
+                    </span>
                 </>
             )}
         </div>

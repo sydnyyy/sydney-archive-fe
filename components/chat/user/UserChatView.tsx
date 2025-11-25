@@ -239,7 +239,7 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(
                         boxShadow: "0 8px 24px rgba(0,0,0,0.2)",
                         display: "flex",
                         flexDirection: "column",
-                        backgroundColor: "white",
+                        backgroundColor: "var(--color-chat-bg)",
                         zIndex: 1000,
                     }}>
                     <div
@@ -248,7 +248,13 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(
                         className="flex-1 overflow-y-auto px-2 py-2 space-y-2 hide-scrollbar"
                     >
                         {(!messages.length || !hasMoreMessages) && (
-                            <div className="mt-2 pb-2 pr-2 text-right text-[14px] text-[#6c757d] border-b border-[#eee]">
+                            <div
+                                className="mt-2 pb-2 pr-2 text-right text-[14px] border-b"
+                                style={{
+                                    color: "var(--color-chat-top-text)",
+                                    borderColor: "var(--color-chat-top-border)",
+                                }}
+                            >
                                 문의하실 내용을 남겨주세요!<br />
                                 아이템을 클릭하면 아이템에 대한 상담을 할 수 있어요. 🤗
                             </div>

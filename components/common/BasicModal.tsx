@@ -103,17 +103,21 @@ export default function BasicModal({
                             href={p.link}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="
-                                flex flex-col px-1.5 py-2.5 md:text-base text-sm rounded-lg
-                                transition-all hover:bg-gray-100 hover:shadow-md hover:-translate-y-[2px]"
+                            className="link-item flex flex-col px-1.5 py-2.5 md:text-base text-sm"
                         >
                             <div className="flex justify-between items-center">
                                 <span className="font-medium">{p.name}</span>
-                                {p.price && <span className="text-gray-600">{p.price}</span>}
+                                {p.price &&
+                                    <span
+                                        style={{ color: "var(--color-text-secondary)" }}
+                                    >{p.price}</span>}
                             </div>
 
                             {p.description && (
-                                <span className="text-gray-500 text-xs mt-0.5">{p.description}</span>
+                                <span
+                                    className="text-xs mt-0.5"
+                                    style={{ color: "var(--color-text-tertiary)" }}
+                                >{p.description}</span>
                             )}
                         </a>
                     ))}

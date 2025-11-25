@@ -18,19 +18,19 @@ export default function ChatInput({ inputMessage, onChange, onSend }: ChatInputP
             style={{
                 display: "flex",
                 padding: "10px",
-                borderTop: "1px solid #eee",
+                borderTop: "1px solid var(--color-chat-border)",
             }}
         >
             <input
                 type="text"
                 value={inputMessage}
                 onChange={(e) => onChange(e.target.value)}
+                className="chat-input-placeholder focus:outline-none"
                 style={{
                     flex: 1,
                     padding: "10px",
                     borderRadius: "20px",
-                    border: "1px solid #ccc",
-                    color: "black",
+                    border: "1px solid var(--color-chat-border)",
                 }}
                 placeholder="메시지 입력..."
             />
@@ -41,8 +41,8 @@ export default function ChatInput({ inputMessage, onChange, onSend }: ChatInputP
                     padding: "10px 15px",
                     borderRadius: "20px",
                     border: "none",
-                    backgroundColor: "#6CA67C",
-                    color: "white",
+                    backgroundColor: "var(--color-chat-send-bg)",
+                    color: "var(--color-chat-send-text)",
                     cursor: "pointer",
                 }}
             >

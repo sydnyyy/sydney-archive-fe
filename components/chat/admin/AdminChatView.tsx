@@ -86,13 +86,17 @@ export default function AdminChatView({
             >
                 <input
                     type="text"
-                    className="flex-1 border rounded p-2"
+                    className="flex-1 border rounded p-2 focus:outline-none"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                 />
                 <button
                     type="submit"
-                    className="bg-[#6CA67C] text-[#FFFFFF] px-4 rounded"
+                    className="px-4 rounded"
+                    style={{
+                        backgroundColor: "var(--color-chat-send-bg)",
+                        color: "var(--color-chat-send-text)",
+                    }}
                 >
                     전송
                 </button>

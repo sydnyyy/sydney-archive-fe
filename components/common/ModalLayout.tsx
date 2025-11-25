@@ -29,7 +29,8 @@ export default function ModalLayout({
 
     return (
         <div
-            className="fixed inset-0 flex justify-center items-center z-50 bg-black/50"
+            className="fixed inset-0 flex justify-center items-center z-50"
+            style={{ backgroundColor: "var(--color-overlay)" }}
             onClick={onClose}
         >
             <motion.div
@@ -37,8 +38,8 @@ export default function ModalLayout({
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.18, ease: "easeOut" }}
-                className={`bg-[#EDF2EF] rounded-2xl shadow-lg 
-                            overflow-auto ${widthClass} ${heightClass} p-1.5`}
+                className={`rounded-2xl shadow-lg overflow-auto ${widthClass} ${heightClass} p-1.5`}
+                style={{ backgroundColor: "var(--color-bg-modal)" }}
                 onClick={(e) => e.stopPropagation()}
             >
                 {children}
