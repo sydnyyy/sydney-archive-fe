@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     icons: { icon: "/tags/tag_heart_pin_right.svg" },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function HomeLayout({ children }: { children: React.ReactNode }) {
     return (
         <html lang="ko">
             <body className={`${fontVariables} antialiased`}>
