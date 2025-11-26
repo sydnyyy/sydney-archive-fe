@@ -42,17 +42,6 @@ export default function BasicModal({
             <div className="flex flex-col gap-1.5 w-full">
                 {/* 이미지 + 태그 */}
                 <div className="relative w-full">
-                    <div className="absolute bottom-0 left-0 z-20">
-                        <ModalActionBar
-                            clientId={clientId}
-                            itemId={item.id}
-                            likedSet={likedSet}
-                            setLikedSet={setLikedSet}
-                            onChat={onChat}
-                            onShare={onShare}
-                        />
-                    </div>
-
                     <img
                         src={item.image}
                         alt="상품 이미지"
@@ -93,6 +82,17 @@ export default function BasicModal({
                         </span>
                         </motion.a>
                     ))}
+                </div>
+
+                <div className="flex">
+                    <ModalActionBar
+                        clientId={clientId}
+                        itemId={item.id}
+                        likedSet={likedSet}
+                        setLikedSet={setLikedSet}
+                        onChat={onChat}
+                        onShare={onShare}
+                    />
                 </div>
 
                 {/* 상품 정보 목록 */}
