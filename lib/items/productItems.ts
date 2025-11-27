@@ -6,8 +6,13 @@ export const productItems: BaseItem[] = [
         category: CATEGORY.PRODUCT,
         type: ITEM_TYPE.PRODUCT,
         title: "미니 파우치",
-        description: "테스트 중",
-        image: "/items/IMG_1.jpeg",
+        description:`테스트 중
+                    테스트 중`,
+        images: [
+            "/items/IMG_1.jpeg",
+            "/items/IMG_2.jpeg",
+            "/items/IMG_3.jpeg"
+        ],
         tags: [
             {
                 x: "15%", y: "10%",
@@ -48,9 +53,14 @@ export const productItems: BaseItem[] = [
     {
         id: "2",
         title: "러쉬고체향수",
+        description:`테스트 중
+                    테스트 중`,
         category: CATEGORY.PRODUCT,
         type: ITEM_TYPE.PRODUCT,
-        image: "/items/IMG_2.jpeg",
+        images: [
+            "/items/IMG_2.jpeg",
+            "/items/IMG_1.jpeg",
+        ],
         tags: [
             {
                 x: "60%", y: "35%",
@@ -77,7 +87,9 @@ export const productItems: BaseItem[] = [
         title: "키링",
         category: CATEGORY.PRODUCT,
         type: ITEM_TYPE.PRODUCT,
-        image: "/items/IMG_3.jpeg",
+        images: [
+            "/items/IMG_3.jpeg",
+        ],
         tags: [
             {
                 x: "55%", y: "25%",
