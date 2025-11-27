@@ -51,12 +51,15 @@ export default function BasicModal({
                 )}
 
                 {/* 이미지 + 태그 */}
-                {/*<div className="relative w-full pt-2">*/}
-                    <img
-                        src={item.image}
-                        alt="상품 이미지"
-                        className="w-full h-[220px] sm:h-[350px] object-cover rounded-2xl"
-                    />
+                <div className="pt-2 px-1.5 flex gap-2 overflow-x-auto hide-scrollbar">
+                    {item.images?.map((src, idx) => (
+                        <img
+                            key={idx}
+                            src={src}
+                            alt={`상품 이미지 ${idx + 1}`}
+                            className="max-w-full max-h-[250px] object-contain rounded-2xl"
+                        />
+                    ))}
 
                 {/*    {item.tags && item.tags.map((tag: any, idx: number) => (*/}
                 {/*        <motion.a*/}
@@ -92,7 +95,7 @@ export default function BasicModal({
                 {/*        </span>*/}
                 {/*        </motion.a>*/}
                 {/*    ))}*/}
-                {/*</div>*/}
+                </div>
 
                 <div className="flex">
                     <ModalActionBar
