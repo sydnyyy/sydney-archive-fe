@@ -51,48 +51,48 @@ export default function BasicModal({
                 )}
 
                 {/* 이미지 + 태그 */}
-                <div className="relative w-full pt-2">
+                {/*<div className="relative w-full pt-2">*/}
                     <img
                         src={item.image}
                         alt="상품 이미지"
                         className="w-full h-[220px] sm:h-[350px] object-cover rounded-2xl"
                     />
 
-                    {item.tags && item.tags.map((tag: any, idx: number) => (
-                        <motion.a
-                            key={idx}
-                            className="absolute tag flex flex-col items-center"
-                            href={tag.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{ left: tag.x, top: tag.y }}
-                            animate={{ y: [0, -3, 0], rotate: [0, 2, -2, 0] }}
-                            transition={{
-                                duration: 4.5,
-                                repeat: Infinity,
-                                repeatType: "mirror",
-                                ease: "easeInOut",
-                            }}
-                        >
-                            <img
-                                src={tag.icon}
-                                alt="tag"
-                                className="w-17 h-17 object-contain"
-                            />
-                            <span
-                                className="absolute text-xs px-2 py-0.5 rounded whitespace-nowrap"
-                                style={{
-                                    left: tag.labelX || "100%",
-                                    top: tag.labelY || "0",
-                                    backgroundColor: tag.bgColor || "rgba(255,255,255,0.7)",
-                                    color: tag.color || "black",
-                                }}
-                            >
-                            {tag.label}
-                        </span>
-                        </motion.a>
-                    ))}
-                </div>
+                {/*    {item.tags && item.tags.map((tag: any, idx: number) => (*/}
+                {/*        <motion.a*/}
+                {/*            key={idx}*/}
+                {/*            className="absolute tag flex flex-col items-center"*/}
+                {/*            href={tag.link}*/}
+                {/*            target="_blank"*/}
+                {/*            rel="noopener noreferrer"*/}
+                {/*            style={{ left: tag.x, top: tag.y }}*/}
+                {/*            animate={{ y: [0, -3, 0], rotate: [0, 2, -2, 0] }}*/}
+                {/*            transition={{*/}
+                {/*                duration: 4.5,*/}
+                {/*                repeat: Infinity,*/}
+                {/*                repeatType: "mirror",*/}
+                {/*                ease: "easeInOut",*/}
+                {/*            }}*/}
+                {/*        >*/}
+                {/*            <img*/}
+                {/*                src={tag.icon}*/}
+                {/*                alt="tag"*/}
+                {/*                className="w-17 h-17 object-contain"*/}
+                {/*            />*/}
+                {/*            <span*/}
+                {/*                className="absolute text-xs px-2 py-0.5 rounded whitespace-nowrap"*/}
+                {/*                style={{*/}
+                {/*                    left: tag.labelX || "100%",*/}
+                {/*                    top: tag.labelY || "0",*/}
+                {/*                    backgroundColor: tag.bgColor || "rgba(255,255,255,0.7)",*/}
+                {/*                    color: tag.color || "black",*/}
+                {/*                }}*/}
+                {/*            >*/}
+                {/*            {tag.label}*/}
+                {/*        </span>*/}
+                {/*        </motion.a>*/}
+                {/*    ))}*/}
+                {/*</div>*/}
 
                 <div className="flex">
                     <ModalActionBar
