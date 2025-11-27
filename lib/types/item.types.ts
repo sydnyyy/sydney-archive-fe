@@ -39,6 +39,7 @@ export interface BaseItem {
     title: string;
     description?: string;
     images?: string[];
+    thumbnailIndex?: number;
     tags?: Tag[];
     products?: ProductInfo[];
 }

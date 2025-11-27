@@ -13,6 +13,7 @@ export const productItems: BaseItem[] = [
             "/items/IMG_2.jpeg",
             "/items/IMG_3.jpeg"
         ],
+        thumbnailIndex: 1,
         tags: [
             {
                 x: "15%", y: "10%",
