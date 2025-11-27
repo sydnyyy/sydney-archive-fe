@@ -40,8 +40,18 @@ export default function BasicModal({
     return (
         <ModalLayout onClose={onClose}>
             <div className="flex flex-col gap-1.5 w-full">
+
+                {/* 설명 텍스트 */}
+                {item.description && (
+                    <div
+                        className="px-1.5 pt-2 text-sm whitespace-pre-line"
+                        style={{ color: "var(--color-text-primary)" }}>
+                        {item.description}
+                    </div>
+                )}
+
                 {/* 이미지 + 태그 */}
-                <div className="relative w-full">
+                <div className="relative w-full pt-2">
                     <img
                         src={item.image}
                         alt="상품 이미지"
