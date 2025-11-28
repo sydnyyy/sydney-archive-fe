@@ -26,13 +26,16 @@ const ImageCarousel: FC<ImageCarouselProps> = ({ images, thumbnailIndex = 0, max
                 spaceBetween={0}
             >
                 {images.map((src, idx) => (
-                    <SwiperSlide key={idx} className="!flex justify-center items-center px-1.5">
+                    <SwiperSlide
+                        key={idx}
+                        className="!flex justify-center items-center px-1.5"
+                        style={{ height: maxHeight }}
+                    >
                         <img
                             key={idx}
                             src={src}
                             alt={`상품 이미지 ${idx + 1}`}
-                            className="rounded-2xl object-contain w-full h-full"
-                            style={{ maxHeight: maxHeight, width: 'auto' }}
+                            className="rounded-2xl object-contain w-auto h-auto max-w-full max-h-full"
                         />
                     </SwiperSlide>
                 ))}
