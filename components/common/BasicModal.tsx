@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { motion } from "framer-motion";
 import { sendAccessEvent } from "@/lib/accesslog/accessEventApi";
 import ModalLayout from "@/components/common/ModalLayout";
 import ModalActionBar from "@/components/common/ModalActionBar";
 import { BaseItem } from "@/lib/types/item.types";
+import ImageCarousel from "@/components/common/ImageCarousel";
 
 interface BasicModalProps {
     item: BaseItem
@@ -50,53 +50,15 @@ export default function BasicModal({
                     </div>
                 )}
 
-                {/* 이미지 + 태그 */}
-                <div className="pt-2 px-1.5 flex gap-2 overflow-x-auto hide-scrollbar">
-                    {item.images?.map((src, idx) => (
-                        <img
-                            key={idx}
-                            src={src}
-                            alt={`상품 이미지 ${idx + 1}`}
-                            className="max-w-full max-h-[250px] object-contain rounded-2xl"
-                        />
-                    ))}
+                {/* 이미지 슬라이더 */}
+                {item.images && (
+                    <ImageCarousel
+                        images={item.images}
+                        thumbnailIndex={item.thumbnailIndex}
+                    />
+                )}
 
-                {/*    {item.tags && item.tags.map((tag: any, idx: number) => (*/}
-                {/*        <motion.a*/}
-                {/*            key={idx}*/}
-                {/*            className="absolute tag flex flex-col items-center"*/}
-                {/*            href={tag.link}*/}
-                {/*            target="_blank"*/}
-                {/*            rel="noopener noreferrer"*/}
-                {/*            style={{ left: tag.x, top: tag.y }}*/}
-                {/*            animate={{ y: [0, -3, 0], rotate: [0, 2, -2, 0] }}*/}
-                {/*            transition={{*/}
-                {/*                duration: 4.5,*/}
-                {/*                repeat: Infinity,*/}
-                {/*                repeatType: "mirror",*/}
-                {/*                ease: "easeInOut",*/}
-                {/*            }}*/}
-                {/*        >*/}
-                {/*            <img*/}
-                {/*                src={tag.icon}*/}
-                {/*                alt="tag"*/}
-                {/*                className="w-17 h-17 object-contain"*/}
-                {/*            />*/}
-                {/*            <span*/}
-                {/*                className="absolute text-xs px-2 py-0.5 rounded whitespace-nowrap"*/}
-                {/*                style={{*/}
-                {/*                    left: tag.labelX || "100%",*/}
-                {/*                    top: tag.labelY || "0",*/}
-                {/*                    backgroundColor: tag.bgColor || "rgba(255,255,255,0.7)",*/}
-                {/*                    color: tag.color || "black",*/}
-                {/*                }}*/}
-                {/*            >*/}
-                {/*            {tag.label}*/}
-                {/*        </span>*/}
-                {/*        </motion.a>*/}
-                {/*    ))}*/}
-                </div>
-
+                {/* 액션바 */}
                 <div className="flex">
                     <ModalActionBar
                         clientId={clientId}
