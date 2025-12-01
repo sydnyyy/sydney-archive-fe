@@ -106,19 +106,25 @@ export default function ItemPage() {
                     </div>
 
                     {/* 아이템 리스트 */}
-                    <div className="w-full">
-                        <div className="grid gap-1.5 grid-cols-4">
-                            {filteredItems.map((item) => (
+                    <div className="w-full grid gap-1.5 grid-cols-4">
+                        {filteredItems.map((item) => {
+                            const thumbnailSrc = item.images?.[item.thumbnailIndex ?? 0] ?? "/placeholder.png";
+
+                            return (
                                 <div key={item.id} className="flex flex-col items-center">
-                                    <img
-                                        src={item.image}
-                                        alt={item.title}
-                                        className="rounded-xl shadow-md cursor-pointer"
+                                    <div
                                         onClick={() => handleItemClick(item)}
-                                    />
+                                        className="w-full aspect-square rounded-xl overflow-hidden flex items-center justify-center"
+                                    >
+                                        <img
+                                            src={thumbnailSrc}
+                                            alt={item.title}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
                                 </div>
-                            ))}
-                        </div>
+                            );
+                        })}
                     </div>
                 </div>
             </main>

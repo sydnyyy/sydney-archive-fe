@@ -7,7 +7,9 @@ export const recipeItems: BaseItem[] = [
         category: CATEGORY.FOOD,
         type: ITEM_TYPE.RECIPE,
         title: "수육",
-        image: "/items/IMG_4.jpeg",
+        images: [
+            "/items/IMG_4.jpeg",
+        ],
         description: `
             <b>조리 시간</b><br>
             총 조리 시간 약 45분<br><br>

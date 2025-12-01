@@ -52,18 +52,14 @@ html {
   transform: rotateY(180deg);
 }
 
-/* =========================
-   스크롤바 숨기기
-   ========================= */
+/* 스크롤바 숨기기 */
 .hide-scrollbar {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  scrollbar-gutter: stable both-edges;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE, Edge */
 }
 
 .hide-scrollbar::-webkit-scrollbar {
-  width: 0;
-  height: 0;
+  display: none; /* Chrome, Safari, Opera */
 }
 
 /* 링크 기본 스타일 */

@@ -38,7 +38,7 @@ export default function ModalLayout({
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.18, ease: "easeOut" }}
-                className={`rounded-2xl shadow-lg overflow-auto ${widthClass} ${heightClass} p-1.5`}
+                className={`rounded-2xl shadow-lg overflow-auto ${widthClass} ${heightClass} p-1.5 hide-scrollbar`}
                 style={{ backgroundColor: "var(--color-bg-modal)" }}
                 onClick={(e) => e.stopPropagation()}
             >

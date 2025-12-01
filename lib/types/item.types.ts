@@ -13,18 +13,6 @@ export const ITEM_TYPE = {
 
 export type ItemType = typeof ITEM_TYPE[keyof typeof ITEM_TYPE];
 
-export type Tag = {
-    x: string;
-    y: string;
-    icon: string;
-    label: string;
-    link: string;
-    labelX?: string;
-    labelY?: string;
-    color?: string;
-    bgColor?: string;
-};
-
 export interface ProductInfo {
     name: string;
     price?: string;
@@ -38,7 +26,7 @@ export interface BaseItem {
     type: ItemType;
     title: string;
     description?: string;
-    image?: string;
-    tags?: Tag[];
+    images?: string[];
+    thumbnailIndex?: number;
     products?: ProductInfo[];
 }

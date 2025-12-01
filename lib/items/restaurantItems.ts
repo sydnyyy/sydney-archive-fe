@@ -6,7 +6,9 @@ export const restaurantItems: BaseItem[] = [
         category: CATEGORY.FOOD,
         type: ITEM_TYPE.RESTAURANT,
         title: "터프이너프 로스터스",
-        image: "/items/IMG_6164.jpeg",
+        images: [
+            "/items/IMG_6164.jpeg",
+        ],
         products: [
             {
                 name: "[경기 평택] 터프이너프 로스터스",
@@ -20,7 +22,9 @@ export const restaurantItems: BaseItem[] = [
         category: CATEGORY.FOOD,
         type: ITEM_TYPE.RESTAURANT,
         title: "태리주택",
-        image: "/items/IMG_6614.jpeg",
+        images: [
+            "/items/IMG_6614.jpeg",
+        ],
         products: [
             {
                 name: "[경기 수원] 태리주택",
@@ -34,7 +38,9 @@ export const restaurantItems: BaseItem[] = [
         category: CATEGORY.FOOD,
         type: ITEM_TYPE.RESTAURANT,
         title: "브뤼셀프라이",
-        image: "/items/IMG_6552.jpeg",
+        images: [
+            "/items/IMG_6552.jpeg",
+        ],
         products: [
             {
                 name: "[경기 수원] 브뤼셀프라이",
