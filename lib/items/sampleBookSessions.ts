@@ -8,7 +8,7 @@ export const sampleSessions: BookSession[] = [
         period: "2025.12.01 ~ 2025.12.07",
         meetingDate: "2025-12-10",
         imageUrl: "/items/IMG_7507.jpeg",
-        purchaseLink: "https://bookstore.com/book-a",
+        purchaseLink: "https://product.kyobobook.co.kr/detail/S000217115740",
         currentReservations: 3,
     },
     {
@@ -18,7 +18,7 @@ export const sampleSessions: BookSession[] = [
         period: "2025.12.05 ~ 2025.12.12",
         meetingDate: "2025-12-12",
         imageUrl: "/items/IMG_2.jpeg",
-        purchaseLink: "https://bookstore.com/book-b",
+        purchaseLink: "https://product.kyobobook.co.kr/detail/S000217551208",
         currentReservations: 1,
     },
     {
@@ -28,7 +28,6 @@ export const sampleSessions: BookSession[] = [
         period: "2025.12.10 ~ 2025.12.15",
         meetingDate: "2025-12-15",
         imageUrl: "/items/IMG_7507.jpeg",
-        purchaseLink: "https://bookstore.com/book-c",
         currentReservations: 0,
     },
 ];
