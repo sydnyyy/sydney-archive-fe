@@ -49,7 +49,7 @@ export default function ReadingList({ onClose }: ReadingListProps) {
                             {isSelected && (
                                 <div
                                     className="
-                                        px-5 py-2.5 mx-2
+                                        px-3 py-2.5 mx-2
                                         bg-[var(--color-bg-main)]
                                         text-[var(--color-text-primary)]
                                         rounded-b-lg rounded-t-none
@@ -57,21 +57,21 @@ export default function ReadingList({ onClose }: ReadingListProps) {
                                 >
                                     <div className="flex gap-3 justify-center">
                                         <button
-                                            className="px-4 py-2 text-sm font-semibold rounded transition-colors border"
+                                            className="flex-1 py-2 text-sm font-semibold rounded transition-colors border"
                                             onClick={() => handlePurchase(session)}
                                         >
                                             구매 링크
                                         </button>
 
                                         <button
-                                            className="px-4 py-2 text-sm font-semibold rounded border"
+                                            className="flex-1 py-2 text-sm font-semibold rounded border"
                                             onClick={handleChangeSchedule}
                                         >
                                             일정 변경
                                         </button>
 
                                         <button
-                                            className="px-4 py-2 text-sm font-semibold rounded border"
+                                            className="flex-1 py-2 text-sm font-semibold rounded border"
                                             onClick={() => handleReserve(session)}
                                         >
                                             예약하기
