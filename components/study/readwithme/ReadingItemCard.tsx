@@ -17,7 +17,6 @@ export default function ReadingItemCard({ session, onSelect, isSelected }: Readi
         ? 'rounded-t-lg rounded-b-none' // 선택됨 → 하단 모서리 제거
         : 'rounded-lg'; // 선택 안 됨 → 전체 라운딩 유지
 
-    // isSelected 상태에 따라 동적으로 Tailwind CSS 클래스를 적용합니다.
     const cardClasses = `
         flex items-center justify-between
         bg-[var(--color-bg-main)]
