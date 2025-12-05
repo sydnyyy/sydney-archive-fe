@@ -8,11 +8,11 @@ import { ChatMessage } from "@/types/chat";
 import { createStompClient } from "@/lib/chat/socketClient";
 import { getOrCreateTabId } from "@/utils/clientId";
 
-const categories = ["상품 관리", "채팅 관리"] as const;
+const categories = [ "Item", "Ready With Me", "Study With Me", "Chat" ] as const;
 type Category = typeof categories[number];
 
 export default function AdminPage() {
-    const [activeCategory, setActiveCategory] = useState<Category>("상품 관리");
+    const [activeCategory, setActiveCategory] = useState<Category>("Item");
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const stompClientRef = useRef<any>(null);
     const adminId = "wishlist-admin";
@@ -56,11 +56,11 @@ export default function AdminPage() {
 
                 {/* 오른쪽 콘텐츠 */}
                 <div className="flex-1 p-6 overflow-auto">
-                    {activeCategory === "상품 관리" && (
-                        <div>상품 관리 화면 (추후 컴포넌트 추가)</div>
+                    {activeCategory !== "Chat" && (
+                        <div>추후 컴포넌트 추가</div>
                     )}
 
-                    {activeCategory === "채팅 관리" && (
+                    {activeCategory === "Chat" && (
                         <AdminChatManagement
                             adminId={adminId}
                             stompClient={stompClientRef.current}
