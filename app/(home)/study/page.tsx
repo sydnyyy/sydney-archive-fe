@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import ReadingList from "@/components/study/readwithme/ReadingList";
+import ReadingList from "@/components/reading-session/user/ReadingList";
 
 export default function StudyPage() {
     const [isReadWithMeModalOpen, setIsReadWithMeModalOpen] = useState(false);
