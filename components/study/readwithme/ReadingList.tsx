@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ModalLayout from "@/components/common/ModalLayout";
 import ReadingItemCard from "./ReadingItemCard";
 import { ReadingSession } from "@/lib/types/reading-session.types";
+import { fetchReadingSessionsApi } from "@/lib/reading-session/readingSessionApi";
 
 interface ReadingListProps {
     onClose: () => void;
@@ -24,14 +25,24 @@ const handleReserve = (session: ReadingSession) => {
 };
 
 export default function ReadingList({ onClose }: ReadingListProps) {
+    const [sessions, setSessions] = useState<ReadingSession[]>([]);
     const [selectedSession, setSelectedSession] = useState<ReadingSession | null>(null);
+
+    useEffect(() => {
+        fetchReadingSessionsApi()
+            .then((data) => setSessions(data))
+            .catch((err) => {
+                console.error(err);
+                alert("Reading-Session 불러오기 실패");
+            })
+    }, []);
 
     return (
         <ModalLayout onClose={onClose}>
             <div className="flex flex-col gap-2 w-full">
                 <h2 className="text-xl font-medium mt-1 mb-1 mx-4">📚 Read with me</h2>
 
-                {sampleSessions.map((session) => {
+                {sessions.map((session) => {
                     const isSelected = selectedSession?.id === session.id;
 
                     return (
