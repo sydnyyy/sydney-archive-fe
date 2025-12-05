@@ -1,8 +1,8 @@
 import React from "react";
-import { BookSession } from "@/lib/types/study.types";
+import { ReadingSession } from "@/lib/types/reading-session.types";
 
 interface ReadingItemCardProps {
-    session: BookSession;
+    session: ReadingSession;
     onSelect: () => void;
     isSelected: boolean;
 }
@@ -44,7 +44,7 @@ export default function ReadingItemCard({ session, onSelect, isSelected }: Readi
             <div className="ml-5 flex-1">
                 <div className="font-medium text-base">{session.title}</div>
                 <div className="text-sm mt-1">{session.author}</div>
-                <div className="text-sm mt-1">{session.period}</div>
+                <div className="text-sm mt-1">{session.startDate} ~ {session.endDate}</div>
                 <div className="text-sm mt-1">{session.meetingDate}</div>
             </div>
         </div>

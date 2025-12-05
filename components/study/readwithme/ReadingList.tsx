@@ -1,14 +1,13 @@
 import { useState } from "react";
 import ModalLayout from "@/components/common/ModalLayout";
 import ReadingItemCard from "./ReadingItemCard";
-import { sampleSessions } from "@/lib/items/sampleBookSessions";
-import { BookSession } from "@/lib/types/study.types";
+import { ReadingSession } from "@/lib/types/reading-session.types";
 
 interface ReadingListProps {
     onClose: () => void;
 }
 
-const handlePurchase = (session: BookSession) => {
+const handlePurchase = (session: ReadingSession) => {
     if (session.purchaseLink) {
         window.open(session.purchaseLink, "_blank");
     } else {
@@ -20,12 +19,12 @@ const handleChangeSchedule = () => {
     alert("일정 변경 기능 호출");
 };
 
-const handleReserve = (session: BookSession) => {
+const handleReserve = (session: ReadingSession) => {
     alert(`예약 기능 호출`);
 };
 
 export default function ReadingList({ onClose }: ReadingListProps) {
-    const [selectedSession, setSelectedSession] = useState<BookSession | null>(null);
+    const [selectedSession, setSelectedSession] = useState<ReadingSession | null>(null);
 
     return (
         <ModalLayout onClose={onClose}>
