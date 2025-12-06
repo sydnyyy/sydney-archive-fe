@@ -13,3 +13,17 @@ export async function fetchReadingSessionsApi(): Promise<ReadingSession[]> {
 
     return res.json();
 }
+
+export async function createReadingSessionApi(body: any): Promise<ReadingSession> {
+    const res = await fetch(`${baseUrl}/api/reading-sessions`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+    });
+
+    if (!res.ok) {
+        throw new Error("Reading-Session 생성 실패");
+    }
+
+    return res.json();
+}
