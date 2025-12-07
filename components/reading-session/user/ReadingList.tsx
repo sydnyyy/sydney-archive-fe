@@ -34,6 +34,7 @@ export default function ReadingList({ onClose }: ReadingListProps) {
             .catch((err) => {
                 console.error(err);
                 alert("Reading-Session 불러오기 실패");
+                onClose();
             })
     }, []);
 
