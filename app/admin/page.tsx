@@ -7,6 +7,7 @@ import AdminChatManagement from "@/components/chat/admin/AdminChatManagement";
 import { ChatMessage } from "@/types/chat";
 import { createStompClient } from "@/lib/chat/socketClient";
 import { getOrCreateTabId } from "@/utils/clientId";
+import ReadingSessionAdminPage from "@/components/reading-session/admin/ReadingSessionAdminPage";
 
 const categories = [ "Item", "Ready With Me", "Study With Me", "Chat" ] as const;
 type Category = typeof categories[number];
@@ -56,8 +57,9 @@ export default function AdminPage() {
 
                 {/* 오른쪽 콘텐츠 */}
                 <div className="flex-1 p-6 overflow-auto">
-                    {activeCategory !== "Chat" && (
-                        <div>추후 컴포넌트 추가</div>
+
+                    {activeCategory === "Ready With Me" && (
+                        <ReadingSessionAdminPage />
                     )}
 
                     {activeCategory === "Chat" && (
@@ -67,6 +69,10 @@ export default function AdminPage() {
                             messages={messages}
                             setMessages={setMessages}
                         />
+                    )}
+
+                    {activeCategory !== "Chat" && activeCategory !== "Ready With Me" && (
+                        <div>추후 컴포넌트 추가</div>
                     )}
                 </div>
             </div>
