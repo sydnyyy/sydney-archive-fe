@@ -5,6 +5,7 @@ import { ReadingSession } from "@/lib/types/reading-session.types";
 import { fetchReadingSessionsApi } from "@/lib/reading-session/readingSessionApi";
 import ReadingSessionAdminList from "./ReadingSessionAdminList";
 import ReadingSessionAdminModal from "./ReadingSessionAdminModal";
+import Calendar from "@/components/calendar/Calendar";
 
 export default function ReadingSessionAdminPage() {
     const [sessions, setSessions] = useState<ReadingSession[]>([]);
@@ -21,12 +22,12 @@ export default function ReadingSessionAdminPage() {
 
     return (
         <div className="flex w-full h-full">
-            {/* 왼쪽 (달력 들어갈 영역) */}
+            {/* 왼쪽 (캘린더) */}
             <div
                 className="w-1/3 border-r p-5"
                 style={{ borderColor: "var(--color-border-primary)" }}
             >
-                <p >달력 예정</p>
+                <Calendar sessions={sessions} />
             </div>
 
             {/* 오른쪽 (세션 리스트) */}
