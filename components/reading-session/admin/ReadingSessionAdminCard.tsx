@@ -43,7 +43,7 @@ export default function ReadingSessionAdminCard({ session, onClick }: Props) {
                 {/* 하단: 기간, 예약자 */}
                 <div className="text-sm">
                     <p>기간 {session.startDate} ~ {session.endDate}</p>
-                    <p>미팅 {session.meetingDate}</p>
+                    <p>미팅 {session.meetingAt}</p>
                     <p>예약자 {session.currentReservations || 0}명</p>
                 </div>
             </div>

@@ -7,7 +7,7 @@ export interface ReadingSession {
 
     startDate: string;
     endDate: string;
-    meetingDate: string;
+    meetingAt: string;
 
     readingSessionStatus: string;
 
