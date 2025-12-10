@@ -1,6 +1,6 @@
-import { BaseItem, CATEGORY, ITEM_TYPE } from "@/lib/types/item.types";
+import { Item, CATEGORY, ITEM_TYPE } from "@/lib/types/item/item";
 
-export const productItems: BaseItem[] = [
+export const productItems: Item[] = [
     {
         id: "1",
         category: CATEGORY.PRODUCT,

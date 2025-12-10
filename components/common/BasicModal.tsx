@@ -4,11 +4,11 @@ import { useEffect, useRef } from "react";
 import { sendAccessEvent } from "@/lib/accesslog/accessEventApi";
 import ModalLayout from "@/components/common/ModalLayout";
 import ModalActionBar from "@/components/common/ModalActionBar";
-import { BaseItem } from "@/lib/types/item.types";
+import { Item } from "@/lib/types/item/item";
 import ImageCarousel from "@/components/common/ImageCarousel";
 
 interface BasicModalProps {
-    item: BaseItem
+    item: Item
     onClose: () => void;
     clientId: string;
     likedSet: Set<string>;

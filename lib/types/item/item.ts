@@ -20,7 +20,7 @@ export interface ProductInfo {
     description?: string;
 }
 
-export interface BaseItem {
+export interface Item {
     id: string;
     category: CategoryType;
     type: ItemType;

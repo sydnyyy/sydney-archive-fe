@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { productItems } from "@/lib/items/productItems";
 import { restaurantItems } from "@/lib/items/restaurantItems";
 import { recipeItems } from "@/lib/items/RecipeItems";
-import { Item } from "@/lib/types";
+import { Item } from "@/lib/types/item/item";
 import { motion, AnimatePresence } from "framer-motion";
 import { fetchLikeListApi } from "@/lib/like/likeApi";
 
