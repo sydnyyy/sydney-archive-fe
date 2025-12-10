@@ -1,9 +1,8 @@
-import { Item, CATEGORY, ITEM_TYPE } from "@/lib/types/item/item";
+import { Item, ITEM_TYPE } from "@/lib/types/item/item";
 
 export const productItems: Item[] = [
     {
         id: "1",
-        category: CATEGORY.PRODUCT,
         type: ITEM_TYPE.PRODUCT,
         title: "미니 파우치",
         description:`테스트 중
@@ -37,7 +36,6 @@ export const productItems: Item[] = [
         title: "러쉬고체향수",
         description:`테스트 중
                     테스트 중`,
-        category: CATEGORY.PRODUCT,
         type: ITEM_TYPE.PRODUCT,
         images: [
             "/items/IMG_1.jpeg",
@@ -60,7 +58,6 @@ export const productItems: Item[] = [
     {
         id: "3",
         title: "키링",
-        category: CATEGORY.PRODUCT,
         type: ITEM_TYPE.PRODUCT,
         images: [
             "/items/IMG_3.jpeg",

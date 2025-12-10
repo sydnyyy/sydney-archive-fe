@@ -1,10 +1,9 @@
-import { Item, CATEGORY, ITEM_TYPE } from "@/lib/types/item/item";
+import { Item, ITEM_TYPE } from "@/lib/types/item/item";
 
 
 export const recipeItems: Item[] = [
     {
         id: "4",
-        category: CATEGORY.FOOD,
         type: ITEM_TYPE.RECIPE,
         title: "수육",
         images: [

@@ -1,10 +1,3 @@
-export const CATEGORY = {
-    PRODUCT: "product",
-    FOOD: "food",
-} as const;
-
-export type CategoryType = typeof CATEGORY[keyof typeof CATEGORY];
-
 export const ITEM_TYPE = {
     PRODUCT: "product",
     RESTAURANT: "restaurant",
@@ -22,7 +15,6 @@ export interface ProductInfo {
 
 export interface Item {
     id: string;
-    category: CategoryType;
     type: ItemType;
     title: string;
     description?: string;

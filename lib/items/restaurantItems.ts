@@ -1,9 +1,8 @@
-import { Item, CATEGORY, ITEM_TYPE } from "@/lib/types/item/item";
+import { Item, ITEM_TYPE } from "@/lib/types/item/item";
 
 export const restaurantItems: Item[] = [
     {
         id: "5",
-        category: CATEGORY.FOOD,
         type: ITEM_TYPE.RESTAURANT,
         title: "터프이너프 로스터스",
         images: [
@@ -19,7 +18,6 @@ export const restaurantItems: Item[] = [
     },
     {
         id: "6",
-        category: CATEGORY.FOOD,
         type: ITEM_TYPE.RESTAURANT,
         title: "태리주택",
         images: [
@@ -35,7 +33,6 @@ export const restaurantItems: Item[] = [
     },
     {
         id: "7",
-        category: CATEGORY.FOOD,
         type: ITEM_TYPE.RESTAURANT,
         title: "브뤼셀프라이",
         images: [
