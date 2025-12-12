@@ -4,11 +4,12 @@ import { useEffect, useRef } from "react";
 import { sendAccessEvent } from "@/lib/accesslog/accessEventApi";
 import ModalLayout from "@/components/common/ModalLayout";
 import ModalActionBar from "@/components/common/ModalActionBar";
-import { Item } from "@/lib/types/item/item";
 import ImageCarousel from "@/components/common/ImageCarousel";
+import { ItemWithUser } from "@/lib/types/item/item-with-user";
+import BookModalContent from "@/components/item/BookModalContent";
 
 interface BasicModalProps {
-    item: Item
+    item: ItemWithUser;
     onClose: () => void;
     clientId: string;
     likedSet: Set<string>;
@@ -32,14 +33,33 @@ export default function BasicModal({
     useEffect(() => {
         if (!item) return;
         if (!hasSentLog.current) {
-            sendAccessEvent(clientId ?? "anonymous", item.id);
+            sendAccessEvent(clientId ?? "anonymous", item.itemId);
             hasSentLog.current = true;
         }
-    }, [clientId, item.id]);
+    }, [clientId, item.itemId]);
 
     return (
         <ModalLayout onClose={onClose}>
             <div className="flex flex-col gap-1.5 w-full">
+
+                <div className="flex items-center px-1.5 pt-2 gap-2">
+                    <img
+                        src={item.profileImageUrl}
+                        alt="profile"
+                        className="w-10 h-10 rounded-lg object-cover"
+                    />
+
+                    <div className="flex items-baseline gap-2">
+                        <span
+                            className="text-sm relative top-[10px]"
+                            style={{ color: "var(--color-text-tertiary)" }}
+                        >
+                            {item.displayName}
+                        </span>
+
+                        {item.itemType === "BOOK" && <BookModalContent item={item} />}
+                    </div>
+                </div>
 
                 {/* 설명 텍스트 */}
                 {item.description && (
@@ -51,9 +71,9 @@ export default function BasicModal({
                 )}
 
                 {/* 이미지 슬라이더 */}
-                {item.images && (
+                {item.imageUrls && (
                     <ImageCarousel
-                        images={item.images}
+                        images={item.imageUrls}
                         thumbnailIndex={item.thumbnailIndex}
                     />
                 )}
@@ -62,7 +82,7 @@ export default function BasicModal({
                 <div className="flex">
                     <ModalActionBar
                         clientId={clientId}
-                        itemId={item.id}
+                        itemId={item.itemId}
                         likedSet={likedSet}
                         setLikedSet={setLikedSet}
                         onChat={onChat}
@@ -71,32 +91,32 @@ export default function BasicModal({
                 </div>
 
                 {/* 상품 정보 목록 */}
-                <div className="flex flex-col w-full px-1.5 space-y-1">
-                    {item.products && item.products.map((p: any, idx: number) => (
-                        <a
-                            key={idx}
-                            href={p.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="link-item flex flex-col px-1.5 py-2.5 md:text-base text-sm"
-                        >
-                            <div className="flex justify-between items-center">
-                                <span className="font-medium">{p.name}</span>
-                                {p.price &&
-                                    <span
-                                        style={{ color: "var(--color-text-secondary)" }}
-                                    >{p.price}</span>}
-                            </div>
+                {/*<div className="flex flex-col w-full px-1.5 space-y-1">*/}
+                {/*    {item.products && item.products.map((p: any, idx: number) => (*/}
+                {/*        <a*/}
+                {/*            key={idx}*/}
+                {/*            href={p.link}*/}
+                {/*            target="_blank"*/}
+                {/*            rel="noopener noreferrer"*/}
+                {/*            className="link-item flex flex-col px-1.5 py-2.5 md:text-base text-sm"*/}
+                {/*        >*/}
+                {/*            <div className="flex justify-between items-center">*/}
+                {/*                <span className="font-medium">{p.name}</span>*/}
+                {/*                {p.price &&*/}
+                {/*                    <span*/}
+                {/*                        style={{ color: "var(--color-text-secondary)" }}*/}
+                {/*                    >{p.price}</span>}*/}
+                {/*            </div>*/}
 
-                            {p.description && (
-                                <span
-                                    className="text-xs mt-0.5"
-                                    style={{ color: "var(--color-text-tertiary)" }}
-                                >{p.description}</span>
-                            )}
-                        </a>
-                    ))}
-                </div>
+                {/*            {p.description && (*/}
+                {/*                <span*/}
+                {/*                    className="text-xs mt-0.5"*/}
+                {/*                    style={{ color: "var(--color-text-tertiary)" }}*/}
+                {/*                >{p.description}</span>*/}
+                {/*            )}*/}
+                {/*        </a>*/}
+                {/*    ))}*/}
+                {/*</div>*/}
             </div>
         </ModalLayout>
     );
