@@ -27,7 +27,6 @@ export default function ItemPage() {
             try {
                 const fetched = await fetchItemApi();
                 setItems(fetched);
-                console.log("items:", fetched);
             } catch (err) {
                 console.error(err);
             }
