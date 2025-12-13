@@ -1,20 +1,19 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { productItems } from "@/lib/items/productItems";
-import { restaurantItems } from "@/lib/items/restaurantItems";
-import { recipeItems } from "@/lib/items/RecipeItems";
-import { Item } from "@/lib/types";
+import { ItemWithUser } from "@/lib/types/item/item-with-user";
 import { motion, AnimatePresence } from "framer-motion";
-import { fetchLikeListApi } from "@/lib/like/likeApi";
+import { fetchLikeListApi } from "@/lib/api/like/likeApi";
 
 import BasicModal from "@/components/common/BasicModal";
 import UserChatView, { UserChatViewRef } from "@/components/chat/user/UserChatView";
 import { useChat } from "@/app/(home)/context/ChatContext";
 import { useClient } from "@/app/(home)/context/ClientContext";
+import { fetchItemApi } from "@/lib/api/item/itemApi";
 
 export default function ItemPage() {
-    const [selectedItem, setSelectedItem] = useState<Item | null>(null);
+    const [items, setItems] = useState<ItemWithUser[]>([]);
+    const [selectedItem, setSelectedItem] = useState<ItemWithUser | null>(null);
     const [showSidebarText, setShowSidebarText] = useState(false);
     const [likedSet, setLikedSet] = useState<Set<string>>(new Set());
 
@@ -22,6 +21,19 @@ export default function ItemPage() {
 
     const { isChatOpen, setIsChatOpen } = useChat();
     const { clientId } = useClient();
+
+    useEffect(() => {
+        async function loadItems() {
+            try {
+                const fetched = await fetchItemApi();
+                setItems(fetched);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        loadItems();
+    }, []);
 
     useEffect(() => {
         async function loadLikes() {
@@ -32,10 +44,11 @@ export default function ItemPage() {
                 console.error(err);
             }
         }
+
         loadLikes();
     }, [clientId]);
 
-    const handleItemClick = (item: Item) => {
+    const handleItemClick = (item: ItemWithUser) => {
         setSelectedItem(item);
         chatRef.current?.startItemChat(item.title);
     };
@@ -51,8 +64,6 @@ export default function ItemPage() {
     const handleShare = () => {
         // TODO: 공유 기능
     };
-
-    const filteredItems: Item[] = [...productItems, ...restaurantItems, ...recipeItems];
 
     // 스크롤 감지 (사이드 문구)
     useEffect(() => {
@@ -107,11 +118,11 @@ export default function ItemPage() {
 
                     {/* 아이템 리스트 */}
                     <div className="w-full grid gap-1.5 grid-cols-4">
-                        {filteredItems.map((item) => {
-                            const thumbnailSrc = item.images?.[item.thumbnailIndex ?? 0] ?? "/placeholder.png";
+                        {items.map((item) => {
+                            const thumbnailSrc = item.imageUrls?.[item.thumbnailIndex ?? 0] ?? "/placeholder.png";
 
                             return (
-                                <div key={item.id} className="flex flex-col items-center">
+                                <div key={item.itemId} className="flex flex-col items-center">
                                     <div
                                         onClick={() => handleItemClick(item)}
                                         className="w-full aspect-square rounded-xl overflow-hidden flex items-center justify-center"

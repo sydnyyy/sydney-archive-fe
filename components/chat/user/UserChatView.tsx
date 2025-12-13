@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle, useLayoutEffect } from "react";
 import { Client } from "@stomp/stompjs";
-import { createStompClient } from "@/lib/chat/socketClient";
+import { createStompClient } from "@/lib/api/chat/socketClient";
 import { CHAT_TYPE, ChatMessage } from "@/types/chat";
 import { SystemEvent } from "@/types/system";
 import { getOrCreateTabId } from "@/utils/clientId";
@@ -15,7 +15,7 @@ import SystemEventDialog from "./SystemEventDialog";
 import useAutoReply from "@/hooks/useAutoReply";
 import { useChatMessages } from "@/hooks/useChatMessages";
 import { useChatScroll } from "@/hooks/useChatScroll";
-import { Item } from "@/lib/types";
+import { Item } from "@/lib/types/item/item";
 
 export interface UserChatViewRef {
     startItemChat: (itemName?: string) => void;

@@ -6,7 +6,7 @@ import Footer from "@/components/common/Footer";
 import { useChat } from "@/app/(home)/context/ChatContext";
 import { useClient } from "@/app/(home)/context/ClientContext";
 import UserChatView from "@/components/chat/user/UserChatView";
-import { Item } from "@/lib/types";
+import { Item } from "@/lib/types/item/item";
 
 interface LayoutWrapperProps {
     children: React.ReactNode;

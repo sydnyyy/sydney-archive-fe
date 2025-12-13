@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { addLikeApi, deleteLikeApi } from "@/lib/like/likeApi";
+import { addLikeApi, deleteLikeApi } from "@/lib/api/like/likeApi";
 
 interface LikeButtonProps {
     clientId: string;
