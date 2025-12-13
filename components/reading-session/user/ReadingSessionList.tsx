@@ -4,7 +4,7 @@ import ReadingItemCard from "./ReadingItemCard";
 import { ReadingSession } from "@/lib/types/reading-session.types";
 import { fetchReadingSessionsApi } from "@/lib/api/reading-session/readingSessionApi";
 
-interface ReadingListProps {
+interface ReadingSessionListProps {
     onClose: () => void;
 }
 
@@ -24,7 +24,7 @@ const handleReserve = (session: ReadingSession) => {
     alert(`예약 기능 호출`);
 };
 
-export default function ReadingList({ onClose }: ReadingListProps) {
+export default function ReadingSessionList({ onClose }: ReadingSessionListProps) {
     const [sessions, setSessions] = useState<ReadingSession[]>([]);
     const [selectedSession, setSelectedSession] = useState<ReadingSession | null>(null);
 

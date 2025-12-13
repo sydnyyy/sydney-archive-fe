@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import ReadingList from "@/components/reading-session/user/ReadingList";
+import ReadingSessionList from "@/components/reading-session/user/ReadingSessionList";
 
 export default function StudyPage() {
     const [isReadWithMeModalOpen, setIsReadWithMeModalOpen] = useState(false);
@@ -45,7 +45,7 @@ export default function StudyPage() {
                     </div>
 
                     {isReadWithMeModalOpen && (
-                        <ReadingList onClose={() => setIsReadWithMeModalOpen(false)} />
+                        <ReadingSessionList onClose={() => setIsReadWithMeModalOpen(false)} />
                     )}
                 </div>
             </main>
