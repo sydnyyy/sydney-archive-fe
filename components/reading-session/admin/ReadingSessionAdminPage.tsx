@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { ReadingSession } from "@/lib/types/reading-session.types";
 import { fetchReadingSessionsApi } from "@/lib/api/reading-session/readingSessionApi";
 import ReadingSessionAdminList from "./ReadingSessionAdminList";
-import ReadingSessionAdminModal from "./ReadingSessionAdminModal";
+import ReadingSessionAdminDetailModal from "./ReadingSessionAdminDetailModal";
 import Calendar from "@/components/calendar/Calendar";
 
 export default function ReadingSessionAdminPage() {
@@ -42,7 +42,7 @@ export default function ReadingSessionAdminPage() {
 
             {/* 상세 모달 */}
             {selectedSession && (
-                <ReadingSessionAdminModal
+                <ReadingSessionAdminDetailModal
                     session={selectedSession}
                     onClose={() => setSelectedSession(null)}
                 />

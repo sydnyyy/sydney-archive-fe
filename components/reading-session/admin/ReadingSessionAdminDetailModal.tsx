@@ -6,7 +6,7 @@ interface Props {
     onClose: () => void;
 }
 
-export default function ReadingSessionAdminModal({ session, onClose }: Props) {
+export default function ReadingSessionAdminDetailModal({ session, onClose }: Props) {
     return (
         <ModalLayout onClose={onClose}>
             <div className="flex flex-col gap-2 p-3 w-full">
@@ -23,7 +23,7 @@ export default function ReadingSessionAdminModal({ session, onClose }: Props) {
                 <p>저자: {session.author}</p>
                 <p>시작일: {session.startDate}</p>
                 <p>종료일: {session.endDate}</p>
-                <p>미팅 날짜: {session.meetingDate}</p>
+                <p>미팅 날짜: {session.meetingAt}</p>
                 <p>상태: {session.readingSessionStatus}</p>
 
                 <button
