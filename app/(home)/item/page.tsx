@@ -3,13 +3,13 @@
 import { useState, useEffect, useRef } from "react";
 import { ItemWithUser } from "@/lib/types/item/item-with-user";
 import { motion, AnimatePresence } from "framer-motion";
-import { fetchLikeListApi } from "@/lib/like/likeApi";
+import { fetchLikeListApi } from "@/lib/api/like/likeApi";
 
 import BasicModal from "@/components/common/BasicModal";
 import UserChatView, { UserChatViewRef } from "@/components/chat/user/UserChatView";
 import { useChat } from "@/app/(home)/context/ChatContext";
 import { useClient } from "@/app/(home)/context/ClientContext";
-import { fetchItemApi } from "@/lib/item/itemApi";
+import { fetchItemApi } from "@/lib/api/item/itemApi";
 
 export default function ItemPage() {
     const [items, setItems] = useState<ItemWithUser[]>([]);

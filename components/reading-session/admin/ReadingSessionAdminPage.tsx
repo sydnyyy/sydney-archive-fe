@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ReadingSession } from "@/lib/types/reading-session.types";
-import { fetchReadingSessionsApi } from "@/lib/reading-session/readingSessionApi";
+import { fetchReadingSessionsApi } from "@/lib/api/reading-session/readingSessionApi";
 import ReadingSessionAdminList from "./ReadingSessionAdminList";
 import ReadingSessionAdminModal from "./ReadingSessionAdminModal";
 import Calendar from "@/components/calendar/Calendar";

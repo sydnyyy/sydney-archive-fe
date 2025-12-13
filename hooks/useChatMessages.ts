@@ -1,5 +1,5 @@
 import { ChatMessage } from "@/types/chat";
-import { fetchMessagesApi } from "@/lib/chat/fetchMessageApi";
+import { fetchMessagesApi } from "@/lib/api/chat/fetchMessageApi";
 
 export const useChatMessages = () => {
 

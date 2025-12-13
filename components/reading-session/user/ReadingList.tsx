@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import ModalLayout from "@/components/common/ModalLayout";
 import ReadingItemCard from "./ReadingItemCard";
 import { ReadingSession } from "@/lib/types/reading-session.types";
-import { fetchReadingSessionsApi } from "@/lib/reading-session/readingSessionApi";
+import { fetchReadingSessionsApi } from "@/lib/api/reading-session/readingSessionApi";
 
 interface ReadingListProps {
     onClose: () => void;
