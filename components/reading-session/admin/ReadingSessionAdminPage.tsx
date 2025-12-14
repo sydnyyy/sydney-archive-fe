@@ -23,17 +23,13 @@ export default function ReadingSessionAdminPage() {
     return (
         <div className="flex w-full h-full">
             {/* 왼쪽 (캘린더) */}
-            <div
-                className="w-1/3 border-r p-5"
-                style={{ borderColor: "var(--color-border-primary)" }}
-            >
+            <div className="w-1/3 p-5">
                 <Calendar sessions={sessions} />
             </div>
 
             {/* 오른쪽 (세션 리스트) */}
-            <div className="flex-1 p-5">
+            <div className="flex-1 p-5 overflow-y-auto hide-scrollbar">
                 <h2 className="text-xl font-semibold mb-3">📚 Reading Sessions</h2>
-
                 <ReadingSessionAdminList
                     sessions={sessions}
                     onSelect={setSelectedSession}
