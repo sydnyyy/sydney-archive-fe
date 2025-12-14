@@ -8,6 +8,7 @@ interface ModalLayoutProps {
     onClose: () => void;
     widthClass?: string;
     heightClass?: string;
+    scrollable?: boolean;
 }
 
 export default function ModalLayout({
@@ -15,6 +16,7 @@ export default function ModalLayout({
                                         onClose,
                                         widthClass = "max-w-[440px]",
                                         heightClass = "max-h-[60%]",
+                                        scrollable = true,
                                     }: ModalLayoutProps) {
 
     return (
@@ -31,7 +33,7 @@ export default function ModalLayout({
                 className={`
                     rounded-xl p-1
                     ${widthClass} ${heightClass}
-                    overflow-auto hide-scrollbar
+                    ${scrollable ? "overflow-auto hide-scrollbar" : "overflow-hidden"}
                 `}
                 style={{ backgroundColor: "var(--color-bg-modal)" }}
                 onClick={(e) => e.stopPropagation()}
