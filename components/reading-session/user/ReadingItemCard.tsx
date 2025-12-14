@@ -42,10 +42,9 @@ export default function ReadingItemCard({ session, onSelect, isSelected }: Readi
             )}
 
             <div className="ml-5 flex-1">
-                <div className="font-medium text-base">{session.title}</div>
-                <div className="text-sm mt-1">{session.author}</div>
-                <div className="text-sm mt-1">{session.startDate} ~ {session.endDate}</div>
-                <div className="text-sm mt-1">{session.meetingDate}</div>
+                <div className="font-semibold text-base">{session.title} - {session.author}</div>
+                <div className="text-sm mt-1">기간 {session.startDate} ~ {session.endDate}</div>
+                <div className="text-sm mt-1">미팅 {session.meetingAt}</div>
             </div>
         </div>
     );
