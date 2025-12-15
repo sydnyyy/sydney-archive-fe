@@ -26,26 +26,31 @@ export default function ReadingSessionPage({ onClose }: ReadingSessionPageProps)
     return (
         <ModalLayout
             onClose={onClose}
-            widthClass="w-[760px] min-w-[760px]"
-            heightClass="h-[440px]"
+            widthClass="w-[760px] max-w-[95vw]"
+            heightClass="h-[85vh] md:h-[52vh]"
             scrollable={false}
         >
-            <h2 className="text-xl font-semibold p-3">📚 Reading Sessions</h2>
-            <div className="flex w-full h-full overflow-hidden">
+            <div className="flex flex-col h-full overflow-hidden">
+                <h2 className="text-lg font-semibold p-3">
+                    📚 Reading Sessions
+                </h2>
 
-                {/* 왼쪽 (캘린더) */}
-                <div className="w-[320px] p-3 shrink-0 h-full">
-                    <Calendar sessions={sessions} />
-                    <p className="text-xs text-[var(--color-text-tertiary)] mt-4">
-                        날짜를 클릭하면 세션을 볼 수 있어요
-                    </p>
+                <div className="flex flex-col md:flex-row w-full h-full overflow-hidden">
+
+                    {/* 왼쪽 (캘린더) */}
+                    <div className="w-full md:w-[320px] p-3 shrink-0">
+                        <Calendar sessions={sessions} />
+                        <p className="text-xs text-[var(--color-text-tertiary)] mt-3 mb-3">
+                            날짜를 클릭하면 세션을 볼 수 있어요
+                        </p>
+                    </div>
+
+                    {/* 오른쪽 (세션 리스트) */}
+                    <div className="flex-1 overflow-y-auto hide-scrollbar">
+                        <ReadingSessionList sessions={sessions}/>
+                    </div>
+
                 </div>
-
-                {/* 오른쪽 (세션 리스트) */}
-                <div className="flex-1 p-0 h-full overflow-y-auto hide-scrollbar">
-                    <ReadingSessionList sessions={sessions}/>
-                </div>
-
             </div>
         </ModalLayout>
     );
