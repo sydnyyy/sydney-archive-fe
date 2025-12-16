@@ -14,7 +14,7 @@ interface ModalLayoutProps {
 export default function ModalLayout({
                                         children,
                                         onClose,
-                                        widthClass = "max-w-[440px]",
+                                        widthClass = "w-[440px]",
                                         heightClass = "max-h-[60%]",
                                         scrollable = true,
                                     }: ModalLayoutProps) {
@@ -32,7 +32,8 @@ export default function ModalLayout({
                 transition={{ duration: 0.18, ease: "easeOut" }}
                 className={`
                     rounded-xl p-1
-                    ${widthClass} ${heightClass}
+                    ${widthClass} max-w-[95vw]
+                    ${heightClass}
                     ${scrollable ? "overflow-auto hide-scrollbar" : "overflow-hidden"}
                 `}
                 style={{ backgroundColor: "var(--color-bg-modal)" }}

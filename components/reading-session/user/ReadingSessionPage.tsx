@@ -26,7 +26,7 @@ export default function ReadingSessionPage({ onClose }: ReadingSessionPageProps)
     return (
         <ModalLayout
             onClose={onClose}
-            widthClass="w-[760px] max-w-[95vw]"
+            widthClass="w-[760px]"
             heightClass="h-[85vh] md:h-[52vh]"
             scrollable={false}
         >

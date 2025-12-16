@@ -10,7 +10,7 @@ export default function ReadingSessionAdminDetailModal({ session, onClose }: Pro
     return (
         <ModalLayout
             onClose={onClose}
-            widthClass="w-[660px] max-w-[95vw]"
+            widthClass="w-[660px]"
         >
 
             <div className="flex gap-4 p-3 w-full">
