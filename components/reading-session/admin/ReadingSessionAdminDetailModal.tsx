@@ -30,7 +30,7 @@ export default function ReadingSessionAdminDetailModal({ session, onClose }: Pro
                     <p>상태 {session.readingSessionStatus}</p>
                     <p>기간 {session.startDate} ~ {session.endDate}</p>
                     <p>미팅 날짜 {session.meetingAt}</p>
-                    <p>설명 </p>
+                    <p>설명 {session.description}</p>
 
                     <div className="mt-auto flex gap-2 pt-4">
                         <button
