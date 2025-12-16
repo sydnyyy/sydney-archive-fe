@@ -7,11 +7,13 @@ interface CalendarGridProps {
     month: number;
     days: CalendarDay[];
     sessions: ReadingSession[];
+    selectedDate: Date | null;
+    onDateSelect: (date: Date | null) => void;
 }
 
 const dayLabels = ["일", "월", "화", "수", "목", "금", "토"];
 
-export default function CalendarGrid({ days, sessions }: CalendarGridProps) {
+export default function CalendarGrid({ days, sessions, selectedDate, onDateSelect }: CalendarGridProps) {
     return (
         <div>
             {/* 요일 */}
@@ -30,7 +32,13 @@ export default function CalendarGrid({ days, sessions }: CalendarGridProps) {
                 style={{ gridTemplateRows: `repeat(${days.length / 7}, 48px)` }}
             >
                 {days.map((d, i) => (
-                    <CalendarCell key={i} day={d} sessions={sessions} />
+                    <CalendarCell
+                        key={i}
+                        day={d}
+                        sessions={sessions}
+                        selectedDate={selectedDate}
+                        onDateSelect={onDateSelect}
+                    />
                 ))}
             </div>
         </div>

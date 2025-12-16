@@ -8,9 +8,11 @@ import { ReadingSession } from "@/lib/types/reading-session.types";
 
 interface CalendarProps {
     sessions: ReadingSession[];
+    selectedDate: Date | null;
+    onDateSelect: (date: Date | null) => void;
 }
 
-export default function Calendar({ sessions }: CalendarProps) {
+export default function Calendar({ sessions, selectedDate, onDateSelect }: CalendarProps) {
     const today = new Date();
 
     const [year, setYear] = useState(today.getFullYear());
@@ -50,6 +52,8 @@ export default function Calendar({ sessions }: CalendarProps) {
                 month={month}
                 days={days}
                 sessions={sessions}
+                selectedDate={selectedDate}
+                onDateSelect={onDateSelect}
             />
         </div>
     );

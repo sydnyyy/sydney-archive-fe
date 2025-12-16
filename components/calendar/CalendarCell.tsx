@@ -5,9 +5,11 @@ import { isDateInSessionRange, isMeetingDay, isToday } from "@/utils/dateUtils";
 interface CalendarCellProps {
     day: CalendarDay;
     sessions: ReadingSession[];
+    selectedDate: Date | null;
+    onDateSelect: (date: Date | null) => void;
 }
 
-export default function CalendarCell({ day, sessions }: CalendarCellProps) {
+export default function CalendarCell({ day, sessions, selectedDate, onDateSelect }: CalendarCellProps) {
     const cellDate = day.date;
 
     const rangeSession = sessions.find(s => isDateInSessionRange(cellDate, s));
@@ -18,8 +20,22 @@ export default function CalendarCell({ day, sessions }: CalendarCellProps) {
         ? "var(--color-text-primary)"
         : "var(--color-text-quaternary)";
 
+    const isSelected =
+        selectedDate && cellDate.toDateString() === selectedDate.toDateString();
+
     return (
-        <div className="relative h-12 flex items-center justify-center">
+        <div
+            className="relative h-12 flex items-center justify-center cursor-pointer"
+            onClick={() => {
+                if (!day.isCurrentMonth) return;
+
+                if (selectedDate && cellDate.toDateString() === selectedDate.toDateString()) {
+                    onDateSelect(null);
+                } else {
+                    onDateSelect(cellDate)
+                }
+            }}
+        >
 
             {rangeSession && (
                 <div
@@ -33,7 +49,12 @@ export default function CalendarCell({ day, sessions }: CalendarCellProps) {
 
             <div
                 className="relative z-20 w-8 h-8 flex items-center justify-center rounded-full text-sm font-medium"
-                style={{ color: textColor }}
+                style={{
+                    color: textColor,
+                    backgroundColor: isSelected
+                        ? "var(--color-calendar-selected-bg)"
+                        : "transparent",
+                }}
             >
                 {isCurrentDay && (
                     <div
