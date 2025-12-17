@@ -9,6 +9,8 @@ export interface ReadingSession {
     endDate: string;
     meetingAt: string;
 
+    description?: string;
+
     readingSessionStatus: string;
 
     purchaseLink?: string;

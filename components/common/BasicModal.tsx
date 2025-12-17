@@ -42,22 +42,24 @@ export default function BasicModal({
         <ModalLayout onClose={onClose}>
             <div className="flex flex-col gap-1.5 w-full">
 
-                <div className="flex items-center px-1.5 pt-2 gap-2">
-                    <img
-                        src={item.profileImageUrl}
-                        alt="profile"
-                        className="w-10 h-10 rounded-lg object-cover"
-                    />
+                <div className="flex items-center justify-between px-1.5 pt-2 gap-2">
+                    <div className="flex items-center gap-2">
+                        {item.itemType === "BOOK" && <BookModalContent item={item} />}
+                    </div>
 
-                    <div className="flex items-baseline gap-2">
+                    <div className="flex items-center gap-2">
                         <span
-                            className="text-sm relative top-[10px]"
+                            className="text-xs relative top-[10px]"
                             style={{ color: "var(--color-text-tertiary)" }}
                         >
                             {item.displayName}
                         </span>
 
-                        {item.itemType === "BOOK" && <BookModalContent item={item} />}
+                        <img
+                            src={item.profileImageUrl}
+                            alt="profile"
+                            className="w-10 h-10 rounded-lg object-cover"
+                        />
                     </div>
                 </div>
 

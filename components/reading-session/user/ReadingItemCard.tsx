@@ -7,46 +7,83 @@ interface ReadingItemCardProps {
     isSelected: boolean;
 }
 
+const handlePurchase = (session: ReadingSession) => {
+    if (session.purchaseLink) {
+        window.open(session.purchaseLink, "_blank");
+    } else {
+        alert("구매 링크가 없습니다.");
+    }
+};
+
+const handleReserve = (session: ReadingSession) => {
+    alert(`예약 기능 호출`);
+};
+
 export default function ReadingItemCard({ session, onSelect, isSelected }: ReadingItemCardProps) {
-
-    const hoverEffectClass = isSelected
-        ? '' // 선택된 경우 → 호버 효과 제거
-        : 'hover:-translate-y-1'; // 선택되지 않은 경우 → 호버 시 위로 뜨는 효과 적용
-
-    const roundingClass = isSelected
-        ? 'rounded-t-lg rounded-b-none' // 선택됨 → 하단 모서리 제거
-        : 'rounded-lg'; // 선택 안 됨 → 전체 라운딩 유지
-
-    const cardClasses = `
-        flex items-center justify-between
-        bg-[var(--color-bg-main)]
-        text-[var(--color-text-primary)]
-        px-5 py-2.5 mx-2
-        cursor-pointer
-        transform transition-transform duration-200
-        ${roundingClass} // 라운딩 조건부 적용
-        ${hoverEffectClass} // 호버 효과 조건부 적용
-    `;
 
     return (
         <div
             onClick={onSelect}
-            className={cardClasses}
+            className={`
+                flex flex-col
+                bg-[var(--color-bg-main)]
+                text-[var(--color-text-primary)]
+                px-3 py-2.5 mx-2
+                cursor-pointer
+                transform transition-transform duration-200
+                rounded-lg
+                ${!isSelected ? 'hover:-translate-y-1' : ''}
+            `}
         >
-            {session.imageUrl && (
-                <img
-                    src={session.imageUrl}
-                    alt={session.title}
-                    className="w-17 h-20 object-cover rounded"
-                />
+            <div className="flex">
+                {session.imageUrl && (
+                    <img
+                        src={session.imageUrl}
+                        alt={session.title}
+                        className="w-15 h-17 object-cover rounded"
+                    />
+                )}
+
+                <div className="ml-5">
+                    <div className="font-semibold text-base">{session.title} - {session.author}</div>
+                    <div className="text-sm mt-1">기간 {session.startDate} ~ {session.endDate}</div>
+                    <div className="text-sm mt-1">미팅 {session.meetingAt}</div>
+                </div>
+            </div>
+
+            {session.description && (
+                <div className="text-sm mt-1 text-[var(--color-text-tertiary)]">
+                    {isSelected
+                        ? session.description
+                        : session.description.length > 30
+                            ? session.description.slice(0, 30) + " …"
+                            : session.description}
+                </div>
             )}
 
-            <div className="ml-5 flex-1">
-                <div className="font-medium text-base">{session.title}</div>
-                <div className="text-sm mt-1">{session.author}</div>
-                <div className="text-sm mt-1">{session.startDate} ~ {session.endDate}</div>
-                <div className="text-sm mt-1">{session.meetingDate}</div>
-            </div>
+            {isSelected && (
+                <div className="flex gap-2 mt-3">
+                    <button
+                        className="flex-1 py-2 text-sm font-semibold rounded border border-[var(--color-border-primary)]"
+                        onClick={() => handlePurchase(session)}
+                    >
+                        구매 링크
+                    </button>
+
+                    <button
+                        className="flex-1 py-2 text-sm font-semibold rounded border border-[var(--color-border-primary)]"
+                    >
+                        단체 채팅
+                    </button>
+
+                    <button
+                        className="flex-1 py-2 text-sm font-semibold rounded border border-[var(--color-border-primary)]"
+                        onClick={() => handleReserve(session)}
+                    >
+                        예약하기
+                    </button>
+                </div>
+            )}
         </div>
     );
 }

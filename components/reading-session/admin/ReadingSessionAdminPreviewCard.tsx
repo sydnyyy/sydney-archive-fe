@@ -5,7 +5,7 @@ interface Props {
     onClick: () => void;
 }
 
-export default function ReadingSessionAdminCard({ session, onClick }: Props) {
+export default function ReadingSessionAdminPreviewCard({ session, onClick }: Props) {
     return (
         <div
             className="
