@@ -7,18 +7,18 @@ import AdminChatManagement from "@/components/chat/admin/AdminChatManagement";
 import { ChatMessage } from "@/types/chat";
 import { createStompClient } from "@/lib/api/chat/socketClient";
 import { getOrCreateTabId } from "@/utils/clientId";
-import ReadingSessionAdminPage from "@/components/reading-session/admin/ReadingSessionAdminPage";
 
-const categories = [ "Item", "Ready With Me", "Study With Me", "Chat" ] as const;
+const categories = [ "Item", "Chat" ] as const;
 type Category = typeof categories[number];
 
 export default function AdminPage() {
+
     const [activeCategory, setActiveCategory] = useState<Category>("Item");
     const [messages, setMessages] = useState<ChatMessage[]>([]);
+
     const stompClientRef = useRef<any>(null);
     const adminId = "wishlist-admin";
 
-    // 관리자 화면 진입 시 웹소켓 연결
     useEffect(() => {
         const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
         const tabId = getOrCreateTabId();
@@ -46,6 +46,7 @@ export default function AdminPage() {
             <FixedHeader />
 
             <div className="flex flex-1 mt-25 overflow-hidden pt-8">
+
                 {/* 왼쪽 카테고리 */}
                 <div className="w-60 p-4 flex flex-col gap-4">
                     <CategorySidebar
@@ -58,8 +59,8 @@ export default function AdminPage() {
                 {/* 오른쪽 콘텐츠 */}
                 <div className="flex-1 p-6 overflow-auto">
 
-                    {activeCategory === "Ready With Me" && (
-                        <ReadingSessionAdminPage />
+                    {activeCategory === "Item" && (
+                        <div>추후 컴포넌트 추가</div>
                     )}
 
                     {activeCategory === "Chat" && (
@@ -71,9 +72,6 @@ export default function AdminPage() {
                         />
                     )}
 
-                    {activeCategory !== "Chat" && activeCategory !== "Ready With Me" && (
-                        <div>추후 컴포넌트 추가</div>
-                    )}
                 </div>
             </div>
         </div>

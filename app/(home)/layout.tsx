@@ -3,7 +3,7 @@ import "../globals.css";
 import { fontVariables } from "../_shared/fonts";
 import { ClientProvider } from "@/app/(home)/context/ClientContext";
 import { ChatProvider } from "@/app/(home)/context/ChatContext";
-import LayoutWrapper from "./LayoutWrapper";
+import MainNavigation from "@/components/common/MainNavigation";
 
 export const metadata: Metadata = {
     title: "Wishlist",
@@ -16,7 +16,8 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
             <body className={`${fontVariables} antialiased`}>
                 <ClientProvider>
                     <ChatProvider>
-                        <LayoutWrapper>{children}</LayoutWrapper>
+                        {children}
+                        <MainNavigation />
                     </ChatProvider>
                 </ClientProvider>
             </body>

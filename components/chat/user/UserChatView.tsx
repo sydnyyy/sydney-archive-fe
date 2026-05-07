@@ -29,7 +29,7 @@ interface UserChatViewProps {
     isChatOpen: boolean;
     setIsChatOpen: (open: boolean) => void;
     clientId: string;
-    selectedItem: Item | null;
+    selectedItem?: Item | null;
 }
 
 const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(
