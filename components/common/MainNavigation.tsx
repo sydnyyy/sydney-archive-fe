@@ -6,11 +6,17 @@ import {
     HeartIcon,
     ChatBubbleOvalLeftEllipsisIcon,
 } from "@heroicons/react/24/outline";
-import {useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
+import UserChatView from "@/components/chat/user/UserChatView";
+import { useClient } from "@/app/(home)/context/ClientContext";
+import { useChat } from "@/app/(home)/context/ChatContext";
 
 export default function MainNavigation() {
 
     const router = useRouter();
+
+    const { isChatOpen, setIsChatOpen } = useChat();
+    const { clientId } = useClient();
 
     const navItems = [
         {
@@ -42,7 +48,7 @@ export default function MainNavigation() {
                     className={`flex flex-col items-center justify-center ${
                         isMobile ? "flex-11" : "w-full h-16"
                     }`}
-                    onClick={() => router.push(action)}
+                    onClick={() => action !== "/chat" ? router.push(action) : setIsChatOpen(!isChatOpen)}
                 >
                     <Icon className="h-6 w-6" />
                 </button>
@@ -50,7 +56,7 @@ export default function MainNavigation() {
         });
 
     return (
-        <div>
+        <>
             {/* 웹: 좌측 */}
             <nav className="hidden md:flex fixed left-0 top-0 bottom-0 w-20 flex-col items-center pt-[52vh] z-40">
                 <div className="flex flex-col items-center">
@@ -62,6 +68,14 @@ export default function MainNavigation() {
             <nav className="fixed bottom-0 left-0 right-0 z-40 h-14 flex md:hidden">
                 {renderNavButtons(true)}
             </nav>
-        </div>
+
+            {isChatOpen && (
+                <UserChatView
+                    isChatOpen={isChatOpen}
+                    setIsChatOpen={setIsChatOpen}
+                    clientId={clientId}
+                />
+            )}
+        </>
     );
 }
