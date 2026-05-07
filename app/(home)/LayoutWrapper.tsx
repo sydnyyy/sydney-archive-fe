@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import ActionTabs from "@/components/common/ActionTabs";
+import MainNavigation from "@/components/common/MainNavigation";
 import { useChat } from "@/app/(home)/context/ChatContext";
 import { useClient } from "@/app/(home)/context/ClientContext";
 import UserChatView from "@/components/chat/user/UserChatView";
@@ -41,11 +41,7 @@ export default function LayoutWrapper({ children, selectedItem = null }: LayoutW
         <>
             {children}
 
-            <ActionTabs
-                activeTab={activeTab}
-                onTabClick={handleTabClick}
-                isChatOpen={isChatOpen}
-            />
+            <MainNavigation />
 
             {isChatOpen && (
                 <UserChatView
