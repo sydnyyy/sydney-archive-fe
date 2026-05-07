@@ -2,7 +2,6 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import ActionTabs from "@/components/common/ActionTabs";
-import Footer from "@/components/common/Footer";
 import { useChat } from "@/app/(home)/context/ChatContext";
 import { useClient } from "@/app/(home)/context/ClientContext";
 import UserChatView from "@/components/chat/user/UserChatView";
@@ -56,8 +55,6 @@ export default function LayoutWrapper({ children, selectedItem = null }: LayoutW
                     selectedItem={selectedItem}
                 />
             )}
-
-            <Footer />
         </>
     );
 }
