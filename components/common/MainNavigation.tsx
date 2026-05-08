@@ -8,15 +8,15 @@ import {
 } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
 import UserChatView from "@/components/chat/user/UserChatView";
-import { useClient } from "@/app/(home)/context/ClientContext";
 import { useChat } from "@/app/(home)/context/ChatContext";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function MainNavigation() {
 
     const router = useRouter();
 
     const { isChatOpen, setIsChatOpen } = useChat();
-    const { clientId } = useClient();
+    const { sid } = useAuthStore();
 
     const navItems = [
         {
@@ -69,11 +69,11 @@ export default function MainNavigation() {
                 {renderNavButtons(true)}
             </nav>
 
-            {isChatOpen && (
+            {isChatOpen && sid && (
                 <UserChatView
                     isChatOpen={isChatOpen}
                     setIsChatOpen={setIsChatOpen}
-                    clientId={clientId}
+                    clientId={sid}
                 />
             )}
         </>
