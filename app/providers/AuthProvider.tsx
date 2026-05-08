@@ -5,9 +5,11 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { fetchGuestSid } from "@/lib/api/auth/auth.command";
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
-    const { sid, setSid } = useAuthStore();
+    const { sid, setSid, _hasHydrated } = useAuthStore();
 
     useEffect(() => {
+        if (!_hasHydrated) return;
+
         const initGuestSession = async () => {
             if (sid) return;
 
@@ -20,7 +22,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         };
 
         initGuestSession();
-    }, []);
+    }, [_hasHydrated]);
 
     return <>{children}</>;
 }
