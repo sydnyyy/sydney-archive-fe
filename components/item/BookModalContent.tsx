@@ -10,7 +10,7 @@ export default function BookModalContent({ item }: BookModalContentProps) {
             className="text-base font-semibold"
             style={{ color: "var(--color-text-primary)" }}
         >
-            {item.title} - {item.author}
+            {item.title}
         </span>
     );
 }
