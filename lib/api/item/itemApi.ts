@@ -1,9 +1,9 @@
 import { ItemWithUser } from "@/lib/types/item/item-with-user";
 
-const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export async function fetchItemApi(): Promise<ItemWithUser[]> {
-    const res = await fetch(`${baseUrl}/api/items`, {
+    const res = await fetch(`${API_BASE_URL}/api/items`, {
         method: "GET",
     });
 
