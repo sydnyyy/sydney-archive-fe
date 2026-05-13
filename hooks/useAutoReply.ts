@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 export default function useAutoReply(
     sendMessage: (message: ChatMessage) => void,
     isAdminJoinedRef: { current: boolean },
-    clientId: string
+    sid: string
 ) {
     const timerRef = useRef<NodeJS.Timeout | null>(null);
     const handleUserMessage = () => {
@@ -17,7 +17,7 @@ export default function useAutoReply(
                 sendMessage({
                     id: uuidv4(),
                     sender: "SYSTEM",
-                    receiver: clientId,
+                    receiver: sid,
                     content: "문의 감사합니다. 곧 답변드리겠습니다 🙏",
                     sendAt: new Date().toISOString(),
                     type: "SYSTEM",

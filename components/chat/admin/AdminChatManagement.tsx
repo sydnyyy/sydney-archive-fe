@@ -33,17 +33,17 @@ export default function AdminChatManagement({
             <div className="grid grid-cols-3 gap-4">
                 {chatRooms.map((room) => (
                     <ChatRoomCard
-                        key={room.clientId}
+                        key={room.sid}
                         room={room}
-                        selected={modalClient === room.clientId}
-                        onClick={() => setModalClient(room.clientId)}
+                        selected={modalClient === room.sid}
+                        onClick={() => setModalClient(room.sid)}
                     />
                 ))}
             </div>
 
             {modalClient && (
                 <ChatModal
-                    clientId={modalClient}
+                    sid={modalClient}
                     adminId={adminId}
                     stompClient={stompClient}
                     messages={messages}

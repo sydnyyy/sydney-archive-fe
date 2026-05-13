@@ -7,36 +7,36 @@ import ModalActionBar from "@/components/common/ModalActionBar";
 import ImageCarousel from "@/components/common/ImageCarousel";
 import { ItemWithUser } from "@/lib/types/item/item-with-user";
 import BookModalContent from "@/components/item/BookModalContent";
+import { useAuthStore } from "@/store/useAuthStore";
 
 interface BasicModalProps {
     item: ItemWithUser;
     onClose: () => void;
-    clientId: string;
     likedSet: Set<string>;
     setLikedSet: React.Dispatch<React.SetStateAction<Set<string>>>;
-    onChat: () => void;
+    onChat?: () => void;
     onShare?: () => void;
 }
 
 export default function BasicModal({
                                          item,
                                          onClose,
-                                         clientId,
                                          likedSet, setLikedSet,
                                          onChat,
                                          onShare }: BasicModalProps) {
 
     if (!item) return null;
 
+    const { sid } = useAuthStore();
     const hasSentLog = useRef(false);
 
     useEffect(() => {
         if (!item) return;
-        if (!hasSentLog.current) {
-            sendAccessEvent(clientId ?? "anonymous", item.itemId);
+        if (!hasSentLog.current && sid) {
+            sendAccessEvent(sid, item.itemId);
             hasSentLog.current = true;
         }
-    }, [clientId, item.itemId]);
+    }, [item.itemId]);
 
     return (
         <ModalLayout onClose={onClose}>
@@ -52,11 +52,11 @@ export default function BasicModal({
                             className="text-xs relative top-[10px]"
                             style={{ color: "var(--color-text-tertiary)" }}
                         >
-                            {item.displayName}
+                            {item.ownerDisplayName}
                         </span>
 
                         <img
-                            src={item.profileImageUrl}
+                            src={item.ownerProfileImageUrl}
                             alt="profile"
                             className="w-10 h-10 rounded-lg object-cover"
                         />
@@ -83,11 +83,9 @@ export default function BasicModal({
                 {/* 액션바 */}
                 <div className="flex">
                     <ModalActionBar
-                        clientId={clientId}
                         itemId={item.itemId}
                         likedSet={likedSet}
                         setLikedSet={setLikedSet}
-                        onChat={onChat}
                         onShare={onShare}
                     />
                 </div>

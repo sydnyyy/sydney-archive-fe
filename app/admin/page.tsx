@@ -6,10 +6,11 @@ import CategorySidebar from "@/components/admin/CategorySidebar";
 import AdminChatManagement from "@/components/chat/admin/AdminChatManagement";
 import { ChatMessage } from "@/types/chat";
 import { createStompClient } from "@/lib/api/chat/socketClient";
-import { getOrCreateTabId } from "@/utils/clientId";
 
 const categories = [ "Item", "Chat" ] as const;
 type Category = typeof categories[number];
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export default function AdminPage() {
 
@@ -20,11 +21,8 @@ export default function AdminPage() {
     const adminId = "wishlist-admin";
 
     useEffect(() => {
-        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-        const tabId = getOrCreateTabId();
-
         stompClientRef.current = createStompClient({
-            url: `${baseUrl}/ws?client_id=admin&tab_id=${tabId}`,
+            url: `${API_BASE_URL}/ws?sid=admin`,
             role: "admin",
             subscribePaths: [
                 {

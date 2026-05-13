@@ -17,6 +17,6 @@ export interface ChatMessage {
 }
 
 export interface AdminChatRoom {
-    clientId: string;
+    sid: string;
     lastMessageAt: string;
 }

@@ -73,7 +73,7 @@ export default function MainNavigation() {
                 <UserChatView
                     isChatOpen={isChatOpen}
                     setIsChatOpen={setIsChatOpen}
-                    clientId={sid}
+                    sid={sid}
                 />
             )}
         </>

@@ -42,7 +42,7 @@ export default function ChatRoomCard({ room, selected, onClick }: Props) {
         >
 
         <p className="font-medium mb-2">
-                ⏸️ {room.clientId} 님
+            {room.sid} 님
             </p>
             <p className="text-xs mb-1">
                 현재 문의 중인 상품 ID: {}
