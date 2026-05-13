@@ -7,7 +7,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import BasicModal from "@/components/common/BasicModal";
 import { UserChatViewRef } from "@/components/chat/user/UserChatView";
 import { fetchItemApi } from "@/lib/api/item/itemApi";
-import { useAuthStore } from "@/store/useAuthStore";
 
 export default function ItemPage() {
     const [items, setItems] = useState<ItemWithUser[]>([]);
@@ -16,8 +15,6 @@ export default function ItemPage() {
     const [likedSet, setLikedSet] = useState<Set<string>>(new Set());
 
     const chatRef = useRef<UserChatViewRef>(null);
-
-    const { sid } = useAuthStore();
 
     useEffect(() => {
         async function loadItems() {
