@@ -3,12 +3,9 @@
 import { useState, useEffect, useRef } from "react";
 import { ItemWithUser } from "@/lib/types/item/item-with-user";
 import { motion, AnimatePresence } from "framer-motion";
-import { fetchLikeListApi } from "@/lib/api/like/likeApi";
 
 import BasicModal from "@/components/common/BasicModal";
-import UserChatView, { UserChatViewRef } from "@/components/chat/user/UserChatView";
-import { useChat } from "@/app/(home)/context/ChatContext";
-import { useClient } from "@/app/(home)/context/ClientContext";
+import { UserChatViewRef } from "@/components/chat/user/UserChatView";
 import { fetchItemApi } from "@/lib/api/item/itemApi";
 
 export default function ItemPage() {
@@ -18,9 +15,6 @@ export default function ItemPage() {
     const [likedSet, setLikedSet] = useState<Set<string>>(new Set());
 
     const chatRef = useRef<UserChatViewRef>(null);
-
-    const { isChatOpen, setIsChatOpen } = useChat();
-    const { clientId } = useClient();
 
     useEffect(() => {
         async function loadItems() {
@@ -35,30 +29,9 @@ export default function ItemPage() {
         loadItems();
     }, []);
 
-    useEffect(() => {
-        async function loadLikes() {
-            try {
-                const likes = await fetchLikeListApi(clientId);
-                setLikedSet(likes);
-            } catch (err) {
-                console.error(err);
-            }
-        }
-
-        loadLikes();
-    }, [clientId]);
-
     const handleItemClick = (item: ItemWithUser) => {
         setSelectedItem(item);
         chatRef.current?.startItemChat(item.title);
-    };
-
-    const handleChatClick = () => {
-        if (!isChatOpen) {
-            setIsChatOpen(true);
-        } else {
-            chatRef.current?.handleChatToggle?.();
-        }
     };
 
     const handleShare = () => {
@@ -98,10 +71,8 @@ export default function ItemPage() {
                         <BasicModal
                             item={selectedItem}
                             onClose={() => setSelectedItem(null)}
-                            clientId={clientId}
                             likedSet={likedSet}
                             setLikedSet={setLikedSet}
-                            onChat={handleChatClick}
                             onShare={handleShare}
                         />
                     )}
@@ -139,16 +110,6 @@ export default function ItemPage() {
                     </div>
                 </div>
             </main>
-
-            {isChatOpen && (
-                <UserChatView
-                    ref={chatRef}
-                    isChatOpen={isChatOpen}
-                    setIsChatOpen={setIsChatOpen}
-                    clientId={clientId}
-                    selectedItem={selectedItem}
-                />
-            )}
         </div>
     );
 }

@@ -1,6 +1,6 @@
 export interface SystemEvent {
     type: string;
-    clientId: string;
+    sid: string;
     sessionId: string;
     shouldTerminate: boolean;
 }

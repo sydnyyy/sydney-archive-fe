@@ -1,12 +1,16 @@
-export async function sendAccessEvent(clientId: string, cardId: string) {
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+export async function sendAccessEvent(
+    sid: string,
+    itemId: string
+): Promise<void> {
     try {
-        const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-        await fetch(`${baseUrl}/api/access`, {
+        await fetch(`${API_BASE_URL}/api/access`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                clientId,
-                cardId,
+                sid,
+                itemId,
                 accessTime: new Date().toISOString(),
             }),
         });

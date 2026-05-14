@@ -1,9 +1,9 @@
 import { ReadingSession } from "@/lib/types/reading-session.types";
 
-const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export async function fetchReadingSessionsApi(): Promise<ReadingSession[]> {
-    const res = await fetch(`${baseUrl}/api/reading-sessions`, {
+    const res = await fetch(`${API_BASE_URL}/api/reading-sessions`, {
         method: "GET",
     });
 
@@ -15,7 +15,7 @@ export async function fetchReadingSessionsApi(): Promise<ReadingSession[]> {
 }
 
 export async function createReadingSessionApi(body: any): Promise<ReadingSession> {
-    const res = await fetch(`${baseUrl}/api/reading-sessions`, {
+    const res = await fetch(`${API_BASE_URL}/api/reading-sessions`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),

@@ -1,7 +1,10 @@
-const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export async function addLikeApi(clientId: string, itemId: string): Promise<void> {
-    const url = new URL(`${baseUrl}/api/like/${clientId}/${itemId}`);
+export async function addLikeApi(
+    sid: string,
+    itemId: string
+): Promise<void> {
+    const url = new URL(`${API_BASE_URL}/api/like/${sid}/${itemId}`);
 
     const res = await fetch(url.toString(), {
         method: "POST",
@@ -12,8 +15,11 @@ export async function addLikeApi(clientId: string, itemId: string): Promise<void
     }
 }
 
-export async function deleteLikeApi(clientId: string, itemId: string): Promise<void> {
-    const url = new URL(`${baseUrl}/api/like/${clientId}/${itemId}`);
+export async function deleteLikeApi(
+    sid: string,
+    itemId: string
+): Promise<void> {
+    const url = new URL(`${API_BASE_URL}/api/like/${sid}/${itemId}`);
 
     const res = await fetch(url.toString(), {
         method: "DELETE",
@@ -24,12 +30,10 @@ export async function deleteLikeApi(clientId: string, itemId: string): Promise<v
     }
 }
 
-export async function fetchLikeListApi(clientId: string): Promise<Set<string>> {
-    if (!clientId || clientId === "anonymous") {
-        return new Set();
-    }
+export async function fetchLikeListApi(sid: string): Promise<Set<string>> {
+    if (!sid) return new Set();
 
-    const url = new URL(`${baseUrl}/api/users/${clientId}/likes`);
+    const url = new URL(`${API_BASE_URL}/api/users/${sid}/likes`);
 
     const res = await fetch(url.toString(), {
         method: "GET",

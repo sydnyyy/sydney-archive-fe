@@ -3,6 +3,8 @@ export const ITEM_TYPE = {
     RESTAURANT: "RESTAURANT",
     RECIPE: "RECIPE",
     BOOK: "BOOK",
+    TRAVEL: "travel",
+    ETC: "ETC"
 } as const;
 
 export type ItemType = typeof ITEM_TYPE[keyof typeof ITEM_TYPE];
@@ -22,8 +24,4 @@ export interface Item {
 
     imageUrls?: string[];
     thumbnailIndex?: number;
-    // products?: ProductInfo[];
-
-    // book item only
-    author?: string;
 }

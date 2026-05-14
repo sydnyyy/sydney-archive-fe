@@ -7,7 +7,7 @@ import { useChatMessages } from "@/hooks/useChatMessages";
 import { useChatScroll } from "@/hooks/useChatScroll";
 
 interface AdminChatViewProps {
-    clientId: string;
+    sid: string;
     adminId: string;
     stompClient: any;
     messages: ChatMessage[];
@@ -15,7 +15,7 @@ interface AdminChatViewProps {
 }
 
 export default function AdminChatView({
-                                       clientId,
+                                       sid,
                                        adminId,
                                        stompClient,
                                        messages,
@@ -28,28 +28,28 @@ export default function AdminChatView({
     const { messagesContainerRef, messagesEndRef, handleScroll } = useChatScroll(
         messages,
         isInitialLoadDone,
-        () => loadPreviousMessages(clientId, true, messages),
+        () => loadPreviousMessages(sid, true, messages),
         (older: ChatMessage[]) => setMessages((prev) => [...older, ...prev])
     );
 
     // 첫 화면 최신 메시지 로딩
     useEffect(() => {
-        if (!clientId) return;
+        if (!sid) return;
 
-        loadMessages(clientId, true).then((initialMessages) => {
+        loadMessages(sid, true).then((initialMessages) => {
             if (initialMessages?.length) {
                 setMessages(initialMessages);
                 setIsInitialLoadDone(true);
             }
         });
-    }, [clientId]);
+    }, [sid]);
 
     const sendMessage = async () => {
         if (!input.trim()) return;
 
         const chatMessage: ChatMessage = {
             sender: adminId,
-            receiver: clientId,
+            receiver: sid,
             content: input.trim(),
             sendAt: new Date().toISOString(),
             type: CHAT_TYPE.ADMIN,
