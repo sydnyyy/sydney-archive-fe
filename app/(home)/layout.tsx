@@ -12,15 +12,13 @@ export const metadata: Metadata = {
 
 export default function HomeLayout({ children }: { children: React.ReactNode }) {
     return (
-        <html lang="ko">
-            <body className={`${fontVariables} antialiased`}>
-                <AuthProvider>
-                    <ChatProvider>
-                        {children}
-                        <MainNavigation />
-                    </ChatProvider>
-                </AuthProvider>
-            </body>
-        </html>
+        <div className={`${fontVariables} antialiased`}>
+            <AuthProvider>
+                <ChatProvider>
+                    {children}
+                    <MainNavigation />
+                </ChatProvider>
+            </AuthProvider>
+        </div>
     );
 }
