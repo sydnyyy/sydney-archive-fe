@@ -2,7 +2,7 @@
 
 import React, { createContext, useCallback, useContext, useState } from "react";
 import { Admin } from "@/types/domain/user/user";
-import { issueAccessTokenApi } from "@/lib/api/auth/admin.auth.command";
+import { issueAccessTokenApi, logoutApi } from "@/lib/api/auth/admin.auth.command";
 import { fetchCurrentAdminApi } from "@/lib/api/user/admin.query";
 
 interface AdminAuthContextValue {
@@ -10,6 +10,7 @@ interface AdminAuthContextValue {
     loading: boolean;
     accessToken: string | null;
     loginSync: (sid: string) => Promise<void>;
+    logout: () => void;
 }
 
 const AdminAuthContext = createContext<AdminAuthContextValue | null>(null);
@@ -43,6 +44,17 @@ export default function AdminAuthProvider({ children }: { children: React.ReactN
         }
     }, [clearAuth]);
 
+    const logout = useCallback(async () => {
+        try {
+            await logoutApi();
+        } catch (error) {
+            console.warn("Server-side logout failed, clearing local state anyway.", error);
+        } finally {
+            clearAuth();
+            window.location.href = "/";
+        }
+    }, [clearAuth]);
+
     return (
         <AdminAuthContext.Provider
             value={{
@@ -50,6 +62,7 @@ export default function AdminAuthProvider({ children }: { children: React.ReactN
                 loading,
                 accessToken,
                 loginSync,
+                logout
             }}
         >
             {children}

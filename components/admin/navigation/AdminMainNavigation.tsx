@@ -8,10 +8,17 @@ import {
     UserIcon,
 } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import AdminLoginModal from "@/components/admin/auth/AdminLoginModal";
+import { useAdminAuth } from "@/app/providers/AdminAuthProvider";
+import AdminLogoutModal from "@/components/admin/auth/AdminLogoutModal";
 
 export default function AdminMainNavigation() {
 
     const router = useRouter();
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
+    const { admin } = useAdminAuth();
 
     const navItems = [
         {
@@ -47,7 +54,10 @@ export default function AdminMainNavigation() {
                     className={`flex flex-col items-center justify-center ${
                         isMobile ? "flex-11" : "w-full h-16"
                     }`}
-                    onClick={() => router.push(action)}
+                    onClick={() =>
+                        action === "/admin/login"
+                            ? setIsLoginModalOpen(true)
+                            : router.push(action)}
                 >
                     <Icon className="h-6 w-6" />
                 </button>
@@ -67,6 +77,22 @@ export default function AdminMainNavigation() {
             <nav className="fixed bottom-0 left-0 right-0 z-40 h-14 flex md:hidden">
                 {renderNavButtons(true)}
             </nav>
+
+            {isLoginModalOpen && (
+                (!admin) ? (
+                    <AdminLoginModal
+                        onClose={() => {
+                            setIsLoginModalOpen(false);
+                        }}
+                    />
+                    ) : (
+                    <AdminLogoutModal
+                        onClose={() => {
+                            setIsLoginModalOpen(false);
+                        }}
+                    />
+                )
+            )}
         </>
     );
 }

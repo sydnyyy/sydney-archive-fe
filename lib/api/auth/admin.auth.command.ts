@@ -23,3 +23,18 @@ export async function issueAccessTokenApi(sid: string): Promise<string> {
     const data = await res.json();
     return data.accessToken;
 }
+
+export async function logoutApi(): Promise<void> {
+    const res = await fetch(
+        `${API_BASE_URL}/api/admin/auth/logout`,
+        {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" }
+        }
+    );
+
+    if (!res.ok) {
+        throw new Error("logout failed");
+    }
+}
