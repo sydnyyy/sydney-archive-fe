@@ -1,77 +1,21 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import FixedHeader from "@/components/admin/FixedHeader";
-import CategorySidebar from "@/components/admin/CategorySidebar";
-import AdminChatManagement from "@/components/chat/admin/AdminChatManagement";
-import { ChatMessage } from "@/types/chat";
-import { createStompClient } from "@/lib/api/chat/socketClient";
-
-const categories = [ "Item", "Chat" ] as const;
-type Category = typeof categories[number];
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function AdminPage() {
 
-    const [activeCategory, setActiveCategory] = useState<Category>("Item");
-    const [messages, setMessages] = useState<ChatMessage[]>([]);
-
-    const stompClientRef = useRef<any>(null);
-    const adminId = "wishlist-admin";
+    const router = useRouter();
 
     useEffect(() => {
-        stompClientRef.current = createStompClient({
-            url: `${API_BASE_URL}/ws?sid=admin`,
-            role: "admin",
-            subscribePaths: [
-                {
-                    path: "/topic/admin.chat",
-                    onMessage: (msg: ChatMessage) => {
-                        setMessages((prev) => [...prev, msg]);
-                    },
-                },
-            ],
-        });
-
-        return () => {
-            stompClientRef.current?.deactivate();
-        };
-    }, []);
+        router.replace("/admin/item");
+    }, [router]);
 
     return (
-        <div className="flex flex-col h-screen">
-            <FixedHeader />
-
-            <div className="flex flex-1 mt-25 overflow-hidden pt-8">
-
-                {/* 왼쪽 카테고리 */}
-                <div className="w-60 p-4 flex flex-col gap-4">
-                    <CategorySidebar
-                        categories={[...categories]}
-                        activeCategory={activeCategory}
-                        onSelect={setActiveCategory}
-                    />
-                </div>
-
-                {/* 오른쪽 콘텐츠 */}
-                <div className="flex-1 p-6 overflow-auto">
-
-                    {activeCategory === "Item" && (
-                        <div>추후 컴포넌트 추가</div>
-                    )}
-
-                    {activeCategory === "Chat" && (
-                        <AdminChatManagement
-                            adminId={adminId}
-                            stompClient={stompClientRef.current}
-                            messages={messages}
-                            setMessages={setMessages}
-                        />
-                    )}
-
-                </div>
-            </div>
+        <div className="min-h-screen flex items-center justify-center">
+            <p className="text-lg">
+                이동 중... 잠시만 기다려주세요.
+            </p>
         </div>
     );
 }
