@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "../globals.css";
 import { fontVariables } from "../_shared/fonts";
 import MainNavigation from "@/components/common/MainNavigation";
-import AuthProvider from "@/app/providers/AuthProvider";
+import GuestAuthProvider from "@/app/providers/GuestAuthProvider";
 import { ChatProvider } from "@/app/(home)/context/ChatContext";
 
 export const metadata: Metadata = {
@@ -13,12 +13,12 @@ export const metadata: Metadata = {
 export default function HomeLayout({ children }: { children: React.ReactNode }) {
     return (
         <div className={`${fontVariables} antialiased`}>
-            <AuthProvider>
+            <GuestAuthProvider>
                 <ChatProvider>
                     {children}
                     <MainNavigation />
                 </ChatProvider>
-            </AuthProvider>
+            </GuestAuthProvider>
         </div>
     );
 }
