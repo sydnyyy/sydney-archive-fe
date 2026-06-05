@@ -14,11 +14,11 @@ export default function AdminLogoutModal({ onClose }: AdminLogoutModalProps) {
         try {
             setIsProcessing(true);
             logout();
-            onClose();
         } catch (err) {
             console.error(err);
         } finally {
             setIsProcessing(false);
+            onClose();
         }
     };
 
