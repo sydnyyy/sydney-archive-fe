@@ -14,16 +14,16 @@ interface BasicModalProps {
     onClose: () => void;
     likedSet: Set<string>;
     setLikedSet: React.Dispatch<React.SetStateAction<Set<string>>>;
-    onChat?: () => void;
     onShare?: () => void;
 }
 
 export default function BasicModal({
-                                         item,
-                                         onClose,
-                                         likedSet, setLikedSet,
-                                         onChat,
-                                         onShare }: BasicModalProps) {
+                                       item,
+                                       onClose,
+                                       likedSet,
+                                       setLikedSet,
+                                       onShare
+}: BasicModalProps) {
 
     if (!item) return null;
 
