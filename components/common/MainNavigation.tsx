@@ -9,14 +9,14 @@ import {
 import { useRouter } from "next/navigation";
 import UserChatView from "@/components/chat/user/UserChatView";
 import { useChat } from "@/app/(home)/context/ChatContext";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useGuestAuthStore } from "@/store/useGuestAuthStore";
 
 export default function MainNavigation() {
 
     const router = useRouter();
 
     const { isChatOpen, setIsChatOpen } = useChat();
-    const { sid } = useAuthStore();
+    const { sid } = useGuestAuthStore();
 
     const navItems = [
         {

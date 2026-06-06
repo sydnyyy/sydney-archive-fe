@@ -10,7 +10,7 @@ interface AuthState {
     setHasHydrated: (state: boolean) => void;
 }
 
-export const useAuthStore = create<AuthState>() (
+export const useGuestAuthStore = create<AuthState>() (
     persist(
         (set) => ({
             sid: null,

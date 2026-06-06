@@ -7,7 +7,7 @@ import ModalActionBar from "@/components/common/ModalActionBar";
 import ImageCarousel from "@/components/common/ImageCarousel";
 import { ItemWithUser } from "@/lib/types/item/item-with-user";
 import BookModalContent from "@/components/item/BookModalContent";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useGuestAuthStore } from "@/store/useGuestAuthStore";
 
 interface BasicModalProps {
     item: ItemWithUser;
@@ -27,7 +27,7 @@ export default function BasicModal({
 
     if (!item) return null;
 
-    const { sid } = useAuthStore();
+    const { sid } = useGuestAuthStore();
     const hasSentLog = useRef(false);
 
     useEffect(() => {
