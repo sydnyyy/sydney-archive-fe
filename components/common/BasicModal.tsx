@@ -7,27 +7,27 @@ import ModalActionBar from "@/components/common/ModalActionBar";
 import ImageCarousel from "@/components/common/ImageCarousel";
 import { ItemWithUser } from "@/lib/types/item/item-with-user";
 import BookModalContent from "@/components/item/BookModalContent";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useGuestAuthStore } from "@/store/useGuestAuthStore";
 
 interface BasicModalProps {
     item: ItemWithUser;
     onClose: () => void;
     likedSet: Set<string>;
     setLikedSet: React.Dispatch<React.SetStateAction<Set<string>>>;
-    onChat?: () => void;
     onShare?: () => void;
 }
 
 export default function BasicModal({
-                                         item,
-                                         onClose,
-                                         likedSet, setLikedSet,
-                                         onChat,
-                                         onShare }: BasicModalProps) {
+                                       item,
+                                       onClose,
+                                       likedSet,
+                                       setLikedSet,
+                                       onShare
+}: BasicModalProps) {
 
     if (!item) return null;
 
-    const { sid } = useAuthStore();
+    const { sid } = useGuestAuthStore();
     const hasSentLog = useRef(false);
 
     useEffect(() => {

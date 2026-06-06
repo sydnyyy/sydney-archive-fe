@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import LikeButton from "./LikeButton";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useGuestAuthStore } from "@/store/useGuestAuthStore";
 
 interface ModalActionBarProps {
     itemId: string;
@@ -17,7 +17,7 @@ export default function ModalActionBar({
                                            onShare,
                                        }: ModalActionBarProps) {
 
-    const { sid } = useAuthStore();
+    const { sid } = useGuestAuthStore();
 
     return (
         <div
