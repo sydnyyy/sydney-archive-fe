@@ -19,9 +19,16 @@ export interface ProductInfo {
 export interface Item {
     itemId: string;
     itemType: ItemType;
-    title: string;
+    title?: string;
     description?: string;
 
     imageUrls?: string[];
     thumbnailIndex?: number;
+
+    permission: Permission
+}
+
+interface Permission {
+    canEdit: boolean;
+    canDelete: boolean;
 }

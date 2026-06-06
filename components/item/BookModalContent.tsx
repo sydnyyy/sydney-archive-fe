@@ -1,7 +1,7 @@
-import {ItemWithUser} from "@/lib/types/item/item-with-user";
+import { Item } from "@/types/domain/item/item";
 
 interface BookModalContentProps {
-    item: ItemWithUser;
+    item: Item;
 }
 
 export default function BookModalContent({ item }: BookModalContentProps) {

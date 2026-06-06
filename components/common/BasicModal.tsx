@@ -5,12 +5,12 @@ import { sendAccessEvent } from "@/lib/api/accesslog/accessEventApi";
 import ModalLayout from "@/components/common/ModalLayout";
 import ModalActionBar from "@/components/common/ModalActionBar";
 import ImageCarousel from "@/components/common/ImageCarousel";
-import { ItemWithUser } from "@/lib/types/item/item-with-user";
 import BookModalContent from "@/components/item/BookModalContent";
 import { useGuestAuthStore } from "@/store/useGuestAuthStore";
+import { Item } from "@/types/domain/item/item";
 
 interface BasicModalProps {
-    item: ItemWithUser;
+    item: Item;
     onClose: () => void;
     likedSet: Set<string>;
     setLikedSet: React.Dispatch<React.SetStateAction<Set<string>>>;
@@ -45,21 +45,6 @@ export default function BasicModal({
                 <div className="flex items-center justify-between px-1.5 pt-2 gap-2">
                     <div className="flex items-center gap-2">
                         {item.itemType === "BOOK" && <BookModalContent item={item} />}
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                        <span
-                            className="text-xs relative top-[10px]"
-                            style={{ color: "var(--color-text-tertiary)" }}
-                        >
-                            {item.ownerDisplayName}
-                        </span>
-
-                        <img
-                            src={item.ownerProfileImageUrl}
-                            alt="profile"
-                            className="w-10 h-10 rounded-lg object-cover"
-                        />
                     </div>
                 </div>
 
