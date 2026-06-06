@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 interface ModalLayoutProps {
     children: ReactNode;
-    onClose: () => void;
+    onClose?: () => void;
     widthClass?: string;
     heightClass?: string;
     scrollable?: boolean;
