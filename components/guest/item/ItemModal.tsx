@@ -8,6 +8,7 @@ import ImageCarousel from "@/components/common/ImageCarousel";
 import BookModalContent from "@/components/guest/item/BookModalContent";
 import { useGuestAuthStore } from "@/store/useGuestAuthStore";
 import { Item } from "@/types/domain/item/item";
+import CloseButton from "@/components/common/button/CloseButton";
 
 interface ItemModalProps {
     item: Item;
@@ -41,6 +42,10 @@ export default function ItemModal({
     return (
         <ModalLayout onClose={onClose}>
             <div className="flex flex-col gap-1.5 w-full">
+
+                <div className="flex flex-col pl-3 pt-3">
+                    <CloseButton onClose={onClose} />
+                </div>
 
                 <div className="flex items-center justify-between px-1.5 pt-2 gap-2">
                     <div className="flex items-center gap-2">
