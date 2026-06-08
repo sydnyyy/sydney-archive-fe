@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 import BasicModal from "@/components/common/BasicModal";
 import { UserChatViewRef } from "@/components/chat/user/UserChatView";
-import { fetchItemsApi } from "@/lib/api/item/itemApi";
+import { fetchItemsApi } from "@/lib/api/item/item.query";
 import { Item } from "@/types/domain/item/item";
 
 export default function ItemPage() {
