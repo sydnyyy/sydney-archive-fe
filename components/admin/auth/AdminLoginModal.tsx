@@ -2,7 +2,7 @@ import ModalLayout from "@/components/common/ModalLayout";
 import OAuth2ProviderButton from "@/components/admin/auth/OAuth2ProviderButton";
 
 interface AdminLoginModalProps {
-    onClose: () => void;
+    onClose?: () => void;
 }
 
 export default function AdminLoginModal({ onClose }: AdminLoginModalProps) {
@@ -26,12 +26,14 @@ export default function AdminLoginModal({ onClose }: AdminLoginModalProps) {
                         />
                     </div>
 
-                    <button
-                        onClick={onClose}
-                        className="text-sm text-[var(--color-text-secondary)] underline"
-                    >
-                        닫기
-                    </button>
+                    {onClose && (
+                        <button
+                            onClick={onClose}
+                            className="text-sm text-[var(--color-text-secondary)] underline"
+                        >
+                            닫기
+                        </button>
+                    )}
                 </div>
             </ModalLayout>
         </div>
