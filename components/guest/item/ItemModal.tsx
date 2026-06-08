@@ -3,13 +3,13 @@
 import { useEffect, useRef } from "react";
 import { sendAccessEvent } from "@/lib/api/accesslog/accessEventApi";
 import ModalLayout from "@/components/common/ModalLayout";
-import ModalActionBar from "@/components/common/ModalActionBar";
+import ModalActionBar from "@/components/guest/item/ModalActionBar";
 import ImageCarousel from "@/components/common/ImageCarousel";
-import BookModalContent from "@/components/item/BookModalContent";
+import BookModalContent from "@/components/guest/item/BookModalContent";
 import { useGuestAuthStore } from "@/store/useGuestAuthStore";
 import { Item } from "@/types/domain/item/item";
 
-interface BasicModalProps {
+interface ItemModalProps {
     item: Item;
     onClose: () => void;
     likedSet: Set<string>;
@@ -17,13 +17,13 @@ interface BasicModalProps {
     onShare?: () => void;
 }
 
-export default function BasicModal({
+export default function ItemModal({
                                        item,
                                        onClose,
                                        likedSet,
                                        setLikedSet,
                                        onShare
-}: BasicModalProps) {
+}: ItemModalProps) {
 
     if (!item) return null;
 
