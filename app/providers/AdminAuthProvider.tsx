@@ -26,7 +26,7 @@ export default function AdminAuthProvider({ children }: { children: React.ReactN
         setAccessToken(null);
     }, []);
 
-    const loginSync = useCallback(async (sid: string) => {
+    const loginSync = useCallback(async (sid?: string) => {
         try {
             setLoading(true);
 
