@@ -13,10 +13,5 @@ export interface Item {
     imageUrls?: string[];
     thumbnailIndex?: number;
 
-    permission: Permission
-}
-
-interface Permission {
-    canEdit: boolean;
-    canDelete: boolean;
+    permission: Permission;
 }
