@@ -10,6 +10,8 @@ import ItemSaveButton from "@/components/admin/item/button/ItemSaveButton";
 import ItemUpdateButton from "@/components/admin/item/button/ItemUpdateButton";
 import ItemDeleteButton from "@/components/admin/item/button/ItemDeleteButton";
 import ItemCancelButton from "@/components/admin/item/button/ItemCancelButton";
+import {VISIBILITY_STATUS} from "@/types/domain/common/VisibilityStatus";
+import VisibilityToggleButton from "@/components/common/button/VisibilityToggleButton";
 
 interface AdminItemModalProps {
     item?: Item | null;
@@ -34,7 +36,8 @@ export default function AdminItemModal({
         description: item?.description || "",
         imageUrls: item?.imageUrls || [],
         thumbnailIndex: item?.thumbnailIndex || 0,
-        permission: item?.permission || { canEdit: true, canDelete: true }
+        permission: item?.permission || { canEdit: true, canDelete: true },
+        visibilityStatus: item?.visibilityStatus || VISIBILITY_STATUS.PRIVATE
     });
 
     const { accessToken } = useAdminAuth();
@@ -42,6 +45,11 @@ export default function AdminItemModal({
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleToggleVisibility = async () => {
+        const nextStatus = formData.visibilityStatus === 'PUBLIC' ? VISIBILITY_STATUS.PRIVATE : VISIBILITY_STATUS.PUBLIC;
+        setFormData((prev) => ({ ...prev, visibilityStatus: nextStatus }));
     };
 
     const handleCancel = () => {
@@ -68,6 +76,7 @@ export default function AdminItemModal({
                     description: formData.description || "",
                     imageUrls: formData.imageUrls,
                     thumbnailIndex: formData.thumbnailIndex,
+                    visibilityStatus: formData.visibilityStatus
                 };
 
                 savedItem = await createItemApi(requestBody, accessToken);
@@ -78,6 +87,7 @@ export default function AdminItemModal({
                     description: formData.description || "",
                     imageUrls: formData.imageUrls,
                     thumbnailIndex: formData.thumbnailIndex,
+                    visibilityStatus: formData.visibilityStatus
                 };
 
                 savedItem = await updateItemApi(currentItem.itemId, requestBody, accessToken);
@@ -130,6 +140,13 @@ export default function AdminItemModal({
 
                 <div className="flex flex-col pl-3 pt-3">
                     <CloseButton onClose={onClose} />
+                </div>
+
+                <div className="flex justify-end px-3 py-1">
+                    <VisibilityToggleButton
+                        status={formData.visibilityStatus}
+                        onToggle={handleToggleVisibility}
+                    />
                 </div>
 
                 <div className="flex flex-col gap-1 px-1.5 pt-2">

@@ -1,3 +1,5 @@
+import {VisibilityStatus} from "@/types/domain/common/VisibilityStatus";
+
 export interface ProductInfo {
     name: string;
     price?: string;
@@ -14,4 +16,5 @@ export interface Item {
     thumbnailIndex?: number;
 
     permission: Permission;
+    visibilityStatus: VisibilityStatus;
 }
