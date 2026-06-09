@@ -5,7 +5,6 @@ import { sendAccessEvent } from "@/lib/api/accesslog/accessEventApi";
 import ModalLayout from "@/components/common/ModalLayout";
 import ModalActionBar from "@/components/guest/item/ModalActionBar";
 import ImageCarousel from "@/components/common/ImageCarousel";
-import BookModalContent from "@/components/guest/item/BookModalContent";
 import { useGuestAuthStore } from "@/store/useGuestAuthStore";
 import { Item } from "@/types/domain/item/item";
 import CloseButton from "@/components/common/button/CloseButton";
@@ -45,12 +44,6 @@ export default function ItemModal({
 
                 <div className="flex flex-col pl-3 pt-3">
                     <CloseButton onClose={onClose} />
-                </div>
-
-                <div className="flex items-center justify-between px-1.5 pt-2 gap-2">
-                    <div className="flex items-center gap-2">
-                        {item.itemType === "BOOK" && <BookModalContent item={item} />}
-                    </div>
                 </div>
 
                 {/* 설명 텍스트 */}

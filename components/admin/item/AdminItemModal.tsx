@@ -1,4 +1,4 @@
-import {Item, ITEM_TYPE} from "@/types/domain/item/item";
+import {Item} from "@/types/domain/item/item";
 import ModalLayout from "@/components/common/ModalLayout";
 import ImageCarousel from "@/components/common/ImageCarousel";
 import { useState } from "react";
@@ -30,7 +30,6 @@ export default function AdminItemModal({
 
     const [formData, setFormData] = useState<Item>({
         itemId: item?.itemId || "",
-        itemType: item?.itemType || ITEM_TYPE.PRODUCT,
         title: item?.title || "",
         description: item?.description || "",
         imageUrls: item?.imageUrls || [],
@@ -65,7 +64,6 @@ export default function AdminItemModal({
 
             if (isCreateMode) {
                 const requestBody: ItemCreateRequest = {
-                    itemType: formData.itemType,
                     title: formData.title || undefined,
                     description: formData.description || "",
                     imageUrls: formData.imageUrls,
@@ -76,7 +74,6 @@ export default function AdminItemModal({
             }
             else {
                 const requestBody: ItemUpdateRequest = {
-                    itemType: formData.itemType,
                     title: formData.title || undefined,
                     description: formData.description || "",
                     imageUrls: formData.imageUrls,

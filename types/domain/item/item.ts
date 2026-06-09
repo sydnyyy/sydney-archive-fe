@@ -1,14 +1,3 @@
-export const ITEM_TYPE = {
-    PRODUCT: "PRODUCT",
-    RESTAURANT: "RESTAURANT",
-    RECIPE: "RECIPE",
-    BOOK: "BOOK",
-    TRAVEL: "travel",
-    ETC: "ETC"
-} as const;
-
-export type ItemType = typeof ITEM_TYPE[keyof typeof ITEM_TYPE];
-
 export interface ProductInfo {
     name: string;
     price?: string;
@@ -18,7 +7,6 @@ export interface ProductInfo {
 
 export interface Item {
     itemId: string;
-    itemType: ItemType;
     title?: string;
     description?: string;
 

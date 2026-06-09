@@ -1,7 +1,4 @@
-import {ItemType} from "@/types/domain/item/item";
-
 export interface ItemCreateRequest {
-    itemType: ItemType;
     title?: string;
     description: string;
     imageUrls?: string[];
@@ -9,7 +6,6 @@ export interface ItemCreateRequest {
 }
 
 export interface ItemUpdateRequest {
-    itemType: ItemType;
     title?: string;
     description: string;
     imageUrls?: string[];
