@@ -1,6 +1,6 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export async function issueAccessTokenApi(sid: string): Promise<string> {
+export async function issueAccessTokenApi(sid?: string): Promise<string> {
     const res = await fetch(
         `${API_BASE_URL}/api/admin/auth/token/issue?sid=${sid}`,
         {

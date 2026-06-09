@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useCallback, useContext, useState } from "react";
+import React, {createContext, useCallback, useContext, useEffect, useState} from "react";
 import { Admin } from "@/types/domain/user/user";
 import { issueAccessTokenApi, logoutApi } from "@/lib/api/auth/admin.auth.command";
 import { fetchCurrentAdminApi } from "@/lib/api/user/admin.query";
@@ -21,12 +21,16 @@ export default function AdminAuthProvider({ children }: { children: React.ReactN
     const [accessToken, setAccessToken] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
+    useEffect(() => {
+        loginSync();
+    }, []);
+
     const clearAuth = useCallback(() => {
         setAdmin(null);
         setAccessToken(null);
     }, []);
 
-    const loginSync = useCallback(async (sid: string) => {
+    const loginSync = useCallback(async (sid?: string) => {
         try {
             setLoading(true);
 

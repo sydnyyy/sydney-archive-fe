@@ -14,7 +14,7 @@ import SystemEventDialog from "./SystemEventDialog";
 import useAutoReply from "@/hooks/useAutoReply";
 import { useChatMessages } from "@/hooks/useChatMessages";
 import { useChatScroll } from "@/hooks/useChatScroll";
-import { Item } from "@/lib/types/item/item";
+import { Item } from "@/types/domain/item/item";
 
 export interface UserChatViewRef {
     startItemChat: (itemName?: string) => void;

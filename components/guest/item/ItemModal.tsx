@@ -3,27 +3,27 @@
 import { useEffect, useRef } from "react";
 import { sendAccessEvent } from "@/lib/api/accesslog/accessEventApi";
 import ModalLayout from "@/components/common/ModalLayout";
-import ModalActionBar from "@/components/common/ModalActionBar";
+import ModalActionBar from "@/components/guest/item/ModalActionBar";
 import ImageCarousel from "@/components/common/ImageCarousel";
-import { ItemWithUser } from "@/lib/types/item/item-with-user";
-import BookModalContent from "@/components/item/BookModalContent";
 import { useGuestAuthStore } from "@/store/useGuestAuthStore";
+import { Item } from "@/types/domain/item/item";
+import CloseButton from "@/components/common/button/CloseButton";
 
-interface BasicModalProps {
-    item: ItemWithUser;
+interface ItemModalProps {
+    item: Item;
     onClose: () => void;
     likedSet: Set<string>;
     setLikedSet: React.Dispatch<React.SetStateAction<Set<string>>>;
     onShare?: () => void;
 }
 
-export default function BasicModal({
+export default function ItemModal({
                                        item,
                                        onClose,
                                        likedSet,
                                        setLikedSet,
                                        onShare
-}: BasicModalProps) {
+}: ItemModalProps) {
 
     if (!item) return null;
 
@@ -42,25 +42,8 @@ export default function BasicModal({
         <ModalLayout onClose={onClose}>
             <div className="flex flex-col gap-1.5 w-full">
 
-                <div className="flex items-center justify-between px-1.5 pt-2 gap-2">
-                    <div className="flex items-center gap-2">
-                        {item.itemType === "BOOK" && <BookModalContent item={item} />}
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                        <span
-                            className="text-xs relative top-[10px]"
-                            style={{ color: "var(--color-text-tertiary)" }}
-                        >
-                            {item.ownerDisplayName}
-                        </span>
-
-                        <img
-                            src={item.ownerProfileImageUrl}
-                            alt="profile"
-                            className="w-10 h-10 rounded-lg object-cover"
-                        />
-                    </div>
+                <div className="flex flex-col pl-3 pt-3">
+                    <CloseButton onClose={onClose} />
                 </div>
 
                 {/* 설명 텍스트 */}

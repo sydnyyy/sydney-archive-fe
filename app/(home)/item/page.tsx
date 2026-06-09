@@ -1,16 +1,16 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { ItemWithUser } from "@/lib/types/item/item-with-user";
 import { motion, AnimatePresence } from "framer-motion";
 
-import BasicModal from "@/components/common/BasicModal";
+import ItemModal from "@/components/guest/item/ItemModal";
 import { UserChatViewRef } from "@/components/chat/user/UserChatView";
-import { fetchItemApi } from "@/lib/api/item/itemApi";
+import { fetchItemsApi } from "@/lib/api/item/item.query";
+import { Item } from "@/types/domain/item/item";
 
 export default function ItemPage() {
-    const [items, setItems] = useState<ItemWithUser[]>([]);
-    const [selectedItem, setSelectedItem] = useState<ItemWithUser | null>(null);
+    const [items, setItems] = useState<Item[]>([]);
+    const [selectedItem, setSelectedItem] = useState<Item | null>(null);
     const [showSidebarText, setShowSidebarText] = useState(false);
     const [likedSet, setLikedSet] = useState<Set<string>>(new Set());
 
@@ -19,7 +19,7 @@ export default function ItemPage() {
     useEffect(() => {
         async function loadItems() {
             try {
-                const fetched = await fetchItemApi();
+                const fetched = await fetchItemsApi();
                 setItems(fetched);
             } catch (err) {
                 console.error(err);
@@ -29,7 +29,7 @@ export default function ItemPage() {
         loadItems();
     }, []);
 
-    const handleItemClick = (item: ItemWithUser) => {
+    const handleItemClick = (item: Item) => {
         setSelectedItem(item);
         chatRef.current?.startItemChat(item.title);
     };
@@ -68,7 +68,7 @@ export default function ItemPage() {
                     )}
 
                     {selectedItem && (
-                        <BasicModal
+                        <ItemModal
                             item={selectedItem}
                             onClose={() => setSelectedItem(null)}
                             likedSet={likedSet}
