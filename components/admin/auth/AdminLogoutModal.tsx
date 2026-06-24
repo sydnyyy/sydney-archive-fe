@@ -33,7 +33,9 @@ export default function AdminLogoutModal({ onClose }: AdminLogoutModalProps) {
                     <h2 className="text-center text-lg font-bold">관리자 로그아웃</h2>
                     <div className="flex-1 flex flex-col justify-center items-center">
                         {isProcessing ? (
-                            <Spinner />
+                            <div className="flex items-center justify-center">
+                                <Spinner />
+                            </div>
                         ) : (
                             <button
                                 onClick={handleLogoutSubmit}

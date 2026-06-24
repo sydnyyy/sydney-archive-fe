@@ -39,7 +39,7 @@ export default function AdminLoginModal({ onClose }: AdminLoginModalProps) {
 
                     <div className="flex-1 flex flex-col justify-center items-center">
                         {isLoading ? (
-                            <div className="flex flex-col items-center gap-4">
+                            <div className="flex items-center justify-center">
                                 <Spinner />
                             </div>
                         ) : loginSession ? (
