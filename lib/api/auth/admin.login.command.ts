@@ -24,3 +24,27 @@ export async function fetchLoginSessionApi(previousSid?: string): Promise<LoginS
 
     return await response.json();
 }
+
+export async function fetchLoginSessionAvailabilityApi(sid: string): Promise<boolean> {
+    const response = await fetch(
+        `${API_BASE_URL}/api/admin/login/sessions/status?sid=${encodeURIComponent(sid)}`,
+        {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        }
+    );
+
+    if (!response.ok) {
+        const errorData: ApiErrorResponse = await response.json();
+        const error = new Error(errorData.message || "로그인 세션 상태 조회를 실패했습니다.");
+        (error as any).code = errorData.code;
+        (error as any).status = errorData.status;
+        throw error;
+    }
+
+    const data = await response.json();
+
+    return data.available;
+}
