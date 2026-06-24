@@ -1,6 +1,7 @@
 import ModalLayout from "@/components/common/ModalLayout";
 import { useState } from "react";
 import { useAdminAuth } from "@/app/providers/AdminAuthProvider";
+import {Spinner} from "@/components/common/Spinner";
 
 interface AdminLogoutModalProps {
     onClose: () => void;
@@ -32,7 +33,7 @@ export default function AdminLogoutModal({ onClose }: AdminLogoutModalProps) {
                     <h2 className="text-center text-lg font-bold">관리자 로그아웃</h2>
                     <div className="flex-1 flex flex-col justify-center items-center">
                         {isProcessing ? (
-                            <div className="w-10 h-10 border-4 border-[var(--color-border-primary)] border-t-transparent rounded-full animate-spin"></div>
+                            <Spinner />
                         ) : (
                             <button
                                 onClick={handleLogoutSubmit}
