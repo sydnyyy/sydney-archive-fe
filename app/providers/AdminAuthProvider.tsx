@@ -9,7 +9,7 @@ interface AdminAuthContextValue {
     admin: Admin | null;
     loading: boolean;
     accessToken: string | null;
-    loginSync: (sid: string) => Promise<void>;
+    loginSync: () => Promise<void>;
     logout: () => void;
 }
 
@@ -30,11 +30,11 @@ export default function AdminAuthProvider({ children }: { children: React.ReactN
         setAccessToken(null);
     }, []);
 
-    const loginSync = useCallback(async (sid?: string) => {
+    const loginSync = useCallback(async() => {
         try {
             setLoading(true);
 
-            const newAccessToken = await issueAccessTokenApi(sid);
+            const newAccessToken = await issueAccessTokenApi();
             setAccessToken(newAccessToken);
 
             const fetchedAdmin = await fetchCurrentAdminApi(newAccessToken);
