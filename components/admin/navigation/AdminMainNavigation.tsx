@@ -80,11 +80,7 @@ export default function AdminMainNavigation() {
 
             {isLoginModalOpen && (
                 (!admin) ? (
-                    <AdminLoginModal
-                        onClose={() => {
-                            setIsLoginModalOpen(false);
-                        }}
-                    />
+                    <AdminLoginModal />
                     ) : (
                     <AdminLogoutModal
                         onClose={() => {
