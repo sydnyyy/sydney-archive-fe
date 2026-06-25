@@ -6,15 +6,14 @@ import {useAdminLoginStore} from "@/hooks/auth/useAdminLoginStore";
 import {usePlatform} from "@/hooks/platform/usePlatform";
 import {useEffect} from "react";
 import {Spinner} from "@/components/common/Spinner";
+import {useSse} from "@/hooks/sse/useSse";
 
-interface AdminLoginModalProps {
-    onClose?: () => void;
-}
-
-export default function AdminLoginModal({ onClose }: AdminLoginModalProps) {
+export default function AdminLoginModal() {
 
     const { loginSession, isLoading, refreshSession } = useAdminLoginStore();
     const { platform } = usePlatform();
+
+    useSse(loginSession?.sid);
 
     useEffect(() => {
         if (platform === undefined) return;
@@ -77,15 +76,6 @@ export default function AdminLoginModal({ onClose }: AdminLoginModalProps) {
                             </div>
                         ) : ( <div>이용할 수 없습니다.</div> )}
                     </div>
-
-                    {onClose && (
-                        <button
-                            onClick={onClose}
-                            className="text-sm text-[var(--color-text-secondary)] underline"
-                        >
-                            닫기
-                        </button>
-                    )}
                 </div>
             </ModalLayout>
         </div>

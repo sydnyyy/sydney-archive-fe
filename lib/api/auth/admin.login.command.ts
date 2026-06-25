@@ -7,9 +7,8 @@ export async function fetchLoginSessionApi(previousSid?: string): Promise<LoginS
         `${API_BASE_URL}/api/admin/login/sessions`,
         {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ previousSid })
         }
     );
@@ -30,9 +29,7 @@ export async function fetchLoginSessionAvailabilityApi(sid: string): Promise<boo
         `${API_BASE_URL}/api/admin/login/sessions/status?sid=${encodeURIComponent(sid)}`,
         {
             method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
+            headers: { "Content-Type": "application/json" },
         }
     );
 
@@ -47,4 +44,27 @@ export async function fetchLoginSessionAvailabilityApi(sid: string): Promise<boo
     const data = await response.json();
 
     return data.available;
+}
+
+export async function completeLoginSessionApi(
+    sid: string,
+    version: number
+): Promise<void> {
+    const response = await fetch(
+        `${API_BASE_URL}/api/admin/login/sessions/complete`,
+        {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ sid, version })
+        }
+    );
+
+    if (!response.ok) {
+        const errorData: ApiErrorResponse = await response.json();
+        const error = new Error(errorData.message || "로그인을 실패했습니다.");
+        (error as any).code = errorData.code;
+        (error as any).status = errorData.status;
+        throw error;
+    }
 }

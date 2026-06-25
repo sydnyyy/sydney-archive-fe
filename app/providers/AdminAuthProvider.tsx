@@ -4,12 +4,15 @@ import React, {createContext, useCallback, useContext, useEffect, useState} from
 import { Admin } from "@/types/domain/user/user";
 import { issueAccessTokenApi, logoutApi } from "@/lib/api/auth/admin.auth.command";
 import { fetchCurrentAdminApi } from "@/lib/api/user/admin.query";
+import {completeLoginSessionApi} from "@/lib/api/auth/admin.login.command";
+import {useAdminLoginStore} from "@/hooks/auth/useAdminLoginStore";
 
 interface AdminAuthContextValue {
     admin: Admin | null;
     loading: boolean;
     accessToken: string | null;
     loginSync: () => Promise<void>;
+    completeLoginSessionAndLoginSync: (sid: string, version: number) => Promise<void>;
     logout: () => void;
 }
 
@@ -20,6 +23,8 @@ export default function AdminAuthProvider({ children }: { children: React.ReactN
     const [admin, setAdmin] = useState<Admin | null>(null);
     const [accessToken, setAccessToken] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
+
+    const { clearSession } = useAdminLoginStore();
 
     useEffect(() => {
         loginSync();
@@ -43,6 +48,28 @@ export default function AdminAuthProvider({ children }: { children: React.ReactN
         } catch (error) {
             console.error("Auth synchronization failed: ", error);
             clearAuth();
+            clearSession();
+        } finally {
+            setLoading(false);
+        }
+    }, [clearAuth]);
+
+    const completeLoginSessionAndLoginSync = useCallback(async(sid: string, version: number) => {
+        try {
+            setLoading(true);
+
+            await completeLoginSessionApi(sid, version);
+
+            const newAccessToken = await issueAccessTokenApi();
+            setAccessToken(newAccessToken);
+
+            const fetchedAdmin = await fetchCurrentAdminApi(newAccessToken);
+            setAdmin(fetchedAdmin);
+
+        } catch (error) {
+            console.error("Auth synchronization failed: ", error);
+            clearAuth();
+            clearSession();
         } finally {
             setLoading(false);
         }
@@ -66,6 +93,7 @@ export default function AdminAuthProvider({ children }: { children: React.ReactN
                 loading,
                 accessToken,
                 loginSync,
+                completeLoginSessionAndLoginSync,
                 logout
             }}
         >
