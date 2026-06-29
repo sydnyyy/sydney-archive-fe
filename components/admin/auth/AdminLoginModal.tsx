@@ -10,16 +10,17 @@ import {useSse} from "@/hooks/sse/useSse";
 
 export default function AdminLoginModal() {
 
-    const { loginSession, isLoading, refreshSession } = useAdminLoginStore();
+    const { loginSession, isLoading, refreshSession, _hasHydrated } = useAdminLoginStore();
     const { platform } = usePlatform();
 
     useSse(loginSession?.sid);
 
     useEffect(() => {
-        if (platform === undefined) return;
+        if (!platform) return;
+        if (!_hasHydrated) return;
 
         refreshSession();
-    }, [platform, refreshSession]);
+    }, [platform, _hasHydrated]);
 
     if (platform === undefined) return null;
 

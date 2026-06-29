@@ -24,7 +24,7 @@ export default function AdminAuthProvider({ children }: { children: React.ReactN
     const [accessToken, setAccessToken] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
-    const { clearSession } = useAdminLoginStore();
+    const { alsid, clearSession, removeSessionSid } = useAdminLoginStore();
 
     useEffect(() => {
         loginSync();
@@ -39,11 +39,15 @@ export default function AdminAuthProvider({ children }: { children: React.ReactN
         try {
             setLoading(true);
 
-            const newAccessToken = await issueAccessTokenApi();
+            const newAccessToken = await issueAccessTokenApi(alsid);
             setAccessToken(newAccessToken);
 
             const fetchedAdmin = await fetchCurrentAdminApi(newAccessToken);
             setAdmin(fetchedAdmin);
+
+            if (fetchedAdmin) {
+                removeSessionSid();
+            }
 
         } catch (error) {
             console.error("Auth synchronization failed: ", error);
@@ -60,11 +64,16 @@ export default function AdminAuthProvider({ children }: { children: React.ReactN
 
             await completeLoginSessionApi(sid, version);
 
-            const newAccessToken = await issueAccessTokenApi();
+            const newAccessToken = await issueAccessTokenApi(sid);
             setAccessToken(newAccessToken);
 
             const fetchedAdmin = await fetchCurrentAdminApi(newAccessToken);
             setAdmin(fetchedAdmin);
+
+            if (fetchedAdmin) {
+                removeSessionSid();
+            }
+
 
         } catch (error) {
             console.error("Auth synchronization failed: ", error);
