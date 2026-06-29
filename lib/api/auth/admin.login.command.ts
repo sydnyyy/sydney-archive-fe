@@ -2,14 +2,18 @@ import {LoginSession} from "@/types/domain/auth/Auth";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export async function fetchLoginSessionApi(previousSid?: string): Promise<LoginSession> {
+export async function fetchLoginSessionApi(
+    previousSid: string | null
+): Promise<LoginSession> {
     const response = await fetch(
         `${API_BASE_URL}/api/admin/login/sessions`,
         {
             method: "POST",
             credentials: "include",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ previousSid })
+            ...(previousSid !== null && {
+                body: JSON.stringify({ previousSid }),
+            }),
         }
     );
 
