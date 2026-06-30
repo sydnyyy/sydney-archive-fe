@@ -1,7 +1,5 @@
-import AdminLoginModal from "@/components/admin/auth/AdminLoginModal";
+import {redirect} from "next/navigation";
 
 export default function AdminPage() {
-    return (
-        <AdminLoginModal />
-    );
+    redirect("/admin/item");
 }

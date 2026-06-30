@@ -16,7 +16,7 @@ import AdminLogoutModal from "@/components/admin/auth/AdminLogoutModal";
 export default function AdminMainNavigation() {
 
     const router = useRouter();
-    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+    const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
     const { admin } = useAdminAuth();
 
@@ -56,7 +56,7 @@ export default function AdminMainNavigation() {
                     }`}
                     onClick={() =>
                         action === "/admin/login"
-                            ? setIsLoginModalOpen(true)
+                            ? setIsAuthModalOpen(true)
                             : router.push(action)}
                 >
                     <Icon className="h-6 w-6" />
@@ -78,17 +78,13 @@ export default function AdminMainNavigation() {
                 {renderNavButtons(true)}
             </nav>
 
-            {isLoginModalOpen && (
+            {isAuthModalOpen && (
                 (!admin) ? (
-                    <AdminLoginModal
-                        onClose={() => {
-                            setIsLoginModalOpen(false);
-                        }}
-                    />
+                    <AdminLoginModal />
                     ) : (
                     <AdminLogoutModal
                         onClose={() => {
-                            setIsLoginModalOpen(false);
+                            setIsAuthModalOpen(false);
                         }}
                     />
                 )

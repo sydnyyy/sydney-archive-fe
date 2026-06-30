@@ -1,14 +1,19 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export async function issueAccessTokenApi(sid?: string): Promise<string> {
+export async function issueAccessTokenApi(
+    loginSessionSid: string | null
+): Promise<string> {
     const res = await fetch(
-        `${API_BASE_URL}/api/admin/auth/token/issue?sid=${sid}`,
+        `${API_BASE_URL}/api/admin/auth/token/issue`,
         {
             method: "POST",
             credentials: "include",
             headers: {
                 "Content-Type": "application/json",
             },
+            ...(loginSessionSid !== null && {
+                body: JSON.stringify({ loginSessionSid })
+            })
         }
     );
 

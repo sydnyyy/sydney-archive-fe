@@ -6,6 +6,8 @@ import AdminMainNavigation from "@/components/admin/navigation/AdminMainNavigati
 import AdminAuthProvider, {useAdminAuth} from "@/app/providers/AdminAuthProvider";
 import {usePathname, useRouter} from "next/navigation";
 import {useEffect, useState} from "react";
+import AdminLoginModal from "@/components/admin/auth/AdminLoginModal";
+import {Spinner} from "@/components/common/Spinner";
 
 export const dynamic = "force-dynamic";
 
@@ -14,43 +16,30 @@ function AdminAuthGuard({ children }: { children: React.ReactNode }) {
     const router = useRouter();
     const pathname = usePathname();
     const { admin, loading } = useAdminAuth();
-    const [isReady, setIsReady] = useState(false);
 
     useEffect(() => {
+        if (loading) return;
+        if (!admin) return;
+
         if (pathname === "/admin") {
-            if (admin) {
-                router.replace("/admin/item");
-            } else {
-                setIsReady(true);
-            }
-            return;
-        }
-
-        if (pathname.startsWith("/admin/oauth/")) {
-            setIsReady(true);
-            return;
-        }
-
-        if (!loading) {
-            if (!admin) {
-                router.replace("/admin");
-            } else {
-                setIsReady(true);
-            }
-        } else {
-            if (admin) {
-                setIsReady(true);
-            }
+            router.replace("/admin/item");
         }
     }, [admin, loading, pathname, router]);
 
-    if (!isReady) {
+    if (loading) {
         return (
-            <div className="h-screen w-screen flex items-center justify-center text-sm">
-                인증 확인 중...
+            <div className="flex items-center justify-center min-h-screen">
+                <Spinner />
             </div>
         );
     }
+
+    if (!admin) {
+        return (
+            <AdminLoginModal />
+        );
+    }
+
     return <>{children}</>;
 }
 
