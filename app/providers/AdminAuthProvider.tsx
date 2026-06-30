@@ -91,7 +91,6 @@ export default function AdminAuthProvider({ children }: { children: React.ReactN
             console.warn("Server-side logout failed, clearing local state anyway.", error);
         } finally {
             clearAuth();
-            window.location.href = "/";
         }
     }, [clearAuth]);
 
