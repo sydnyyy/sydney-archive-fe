@@ -1,4 +1,4 @@
-import { AdminChatRoom } from "@/types/chat";
+import { AdminChatRoom } from "@/types/domain/chat/chat";
 import { formatKST } from "@/utils/formatKSTShort";
 
 interface Props {
@@ -7,7 +7,7 @@ interface Props {
     onClick: () => void;
 }
 
-export default function ChatRoomCard({ room, selected, onClick }: Props) {
+export default function AdminChatRoomCard({ room, selected, onClick }: Props) {
     return (
         <div
             onClick={onClick}
@@ -42,7 +42,7 @@ export default function ChatRoomCard({ room, selected, onClick }: Props) {
         >
 
         <p className="font-medium mb-2">
-            {room.sid} 님
+            {room.userSid} 님
             </p>
             <p className="text-xs mb-1">
                 현재 문의 중인 상품 ID: {}

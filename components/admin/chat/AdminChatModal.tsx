@@ -1,24 +1,25 @@
 "use client";
 
-import { ChatMessage } from "@/types/chat";
+import { ChatMessage } from "@/types/domain/chat/chat";
 import AdminChatView from "./AdminChatView";
 
 interface Props {
-    sid: string;
-    adminId: string;
+    userSid: string;
+    adminSid: string;
     stompClient: any;
     messages: ChatMessage[];
     setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
     onClose: () => void;
 }
 
-export default function ChatModal({
-                                      sid,
-                                      adminId,
-                                      stompClient,
-                                      messages,
-                                      setMessages,
-                                      onClose }: Props) {
+export default function AdminChatModal({
+                                           userSid,
+                                           adminSid,
+                                           stompClient,
+                                           messages,
+                                           setMessages,
+                                           onClose
+}: Props) {
     return (
         <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
             <div
@@ -32,7 +33,7 @@ export default function ChatModal({
                     className="flex justify-between items-center p-3 border-b"
                     style={{ borderColor: "var(--color-border-tab)" }}
                 >
-                    <h3 className="font-bold">{sid} 채팅</h3>
+                    <h3 className="font-bold">{userSid}</h3>
                     <button
                         onClick={onClose}
                         style={{
@@ -52,8 +53,8 @@ export default function ChatModal({
                 </div>
 
                 <AdminChatView
-                    sid={sid}
-                    adminId={adminId}
+                    userSid={userSid}
+                    adminSid={adminSid}
                     stompClient={stompClient}
                     messages={messages}
                     setMessages={setMessages}

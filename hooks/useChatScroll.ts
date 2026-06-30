@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useLayoutEffect } from "react";
-import { ChatMessage } from "@/types/chat";
+import { ChatMessage } from "@/types/domain/chat/chat";
 
 export function useChatScroll(
     messages: ChatMessage[],

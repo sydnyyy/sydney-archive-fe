@@ -1,5 +1,5 @@
 import MessageBubble from "./MessageBubble";
-import { ChatMessage } from "@/types/chat";
+import { ChatMessage } from "@/types/domain/chat/chat";
 import { AnimatePresence, motion } from "framer-motion";
 
 export default function AnimatedMessages({

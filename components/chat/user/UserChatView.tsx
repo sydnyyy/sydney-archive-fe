@@ -3,8 +3,8 @@
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle, useLayoutEffect } from "react";
 import { Client } from "@stomp/stompjs";
 import { createStompClient } from "@/lib/api/chat/socketClient";
-import { CHAT_TYPE, ChatMessage } from "@/types/chat";
-import { SystemEvent } from "@/types/system";
+import { CHAT_TYPE, ChatMessage } from "@/types/domain/chat/chat";
+import { SystemEvent } from "@/types/domain/chat/system";
 import { v4 as uuidv4 } from "uuid";
 import AnimatedMessages from "@/components/chat/common/AnimatedMessages";
 
@@ -27,14 +27,13 @@ export interface UserChatViewRef {
 interface UserChatViewProps {
     isChatOpen: boolean;
     setIsChatOpen: (open: boolean) => void;
-    sid: string;
+    userSid: string;
     selectedItem?: Item | null;
 }
 
-const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(
-    (
-        { isChatOpen, setIsChatOpen, sid, selectedItem },
-        ref
+const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>((
+    {
+        isChatOpen, setIsChatOpen, userSid, selectedItem }, ref
     ) => {
 
     const [inputMessage, setInputMessage] = useState<string>("");
@@ -53,8 +52,8 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(
         messages,
         isInitialLoadDone,
         async () => {
-            if (!sid) return [];
-            return await loadPreviousMessages(sid, false, messages);
+            if (!userSid) return [];
+            return await loadPreviousMessages(userSid, false, messages);
         },
         (older) => setMessages(prev => [...older, ...prev]),
         () => setHasMoreMessages(false)
@@ -63,7 +62,7 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(
     const { handleUserMessage } = useAutoReply(
         (msg: ChatMessage) => setMessages(prev => [...prev, msg]),
         isAdminJoined,
-        sid || ""
+        userSid || ""
     );
 
     useLayoutEffect(() => {
@@ -91,12 +90,12 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(
     };
 
     useEffect(() => {
-        if (isChatOpen && sid && !stompClientRef.current) {
+        if (isChatOpen && userSid && !stompClientRef.current) {
             const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
             // const tabId = getOrCreateTabId();
 
             stompClientRef.current = createStompClient({
-                url: `${baseUrl}/ws?sid=${sid}`,
+                url: `${baseUrl}/ws?sid=${userSid}`,
                 reconnectDelay: keepConnectionRef.current ? 5000 : 0,
                 role: "user",
                 subscribePaths: [
@@ -127,7 +126,7 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(
             });
 
             // 첫 화면 최신 메시지 로딩
-            loadMessages(sid, false).then((initialMessages) => {
+            loadMessages(userSid, false).then((initialMessages) => {
                 if (initialMessages?.length) {
                     setMessages(initialMessages);
                     setIsInitialLoadDone(true);
@@ -140,15 +139,15 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(
                 resetChatState();
             }
         };
-    }, [isChatOpen, sid]);
+    }, [isChatOpen, userSid]);
 
     const addSystemMessage = (content: string) => {
-        if (!sid) return;
+        if (!userSid) return;
 
         const systemMessage: ChatMessage = {
             id: uuidv4(),
-            sender: "system",
-            receiver: sid,
+            senderSid: "system",
+            receiverSid: userSid,
             content,
             sendAt: new Date().toISOString(),
             type: CHAT_TYPE.SYSTEM,
@@ -179,11 +178,11 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(
     }));
 
     const sendMessage = () => {
-        if (!stompClientRef.current || inputMessage.trim() === "" || !sid) return;
+        if (!stompClientRef.current || inputMessage.trim() === "" || !userSid) return;
 
         const chatMessage: ChatMessage = {
-            sender: sid,
-            receiver: "wishlist-admin",
+            senderSid: userSid,
+            receiverSid: "admin",
             content: inputMessage,
             sendAt: new Date().toISOString(),
             type: CHAT_TYPE.USER,
@@ -197,7 +196,7 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>(
     };
 
     const handleIncomingMessageWithAdminCheck = (message: ChatMessage) => {
-        if (message.sender === "wishlist-admin") {
+        if (message.senderSid === "admin") {
             isAdminJoined.current = true;
         }
 

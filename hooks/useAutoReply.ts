@@ -1,11 +1,11 @@
 import { useEffect, useRef } from "react";
-import { ChatMessage } from "@/types/chat";
+import { ChatMessage } from "@/types/domain/chat/chat";
 import { v4 as uuidv4 } from "uuid";
 
 export default function useAutoReply(
     sendMessage: (message: ChatMessage) => void,
     isAdminJoinedRef: { current: boolean },
-    sid: string
+    userSid: string
 ) {
     const timerRef = useRef<NodeJS.Timeout | null>(null);
     const handleUserMessage = () => {
@@ -16,8 +16,8 @@ export default function useAutoReply(
             if (!isAdminJoinedRef.current) {
                 sendMessage({
                     id: uuidv4(),
-                    sender: "SYSTEM",
-                    receiver: sid,
+                    senderSid: "system",
+                    receiverSid: userSid,
                     content: "문의 감사합니다. 곧 답변드리겠습니다 🙏",
                     sendAt: new Date().toISOString(),
                     type: "SYSTEM",

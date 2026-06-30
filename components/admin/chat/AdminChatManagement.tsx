@@ -1,24 +1,24 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import ChatRoomCard from "@/components/chat/admin/ChatRoomCard";
-import ChatModal from "@/components/chat/admin/ChatModal";
-import { AdminChatRoom, ChatMessage } from "@/types/chat";
+import AdminChatRoomCard from "@/components/admin/chat/AdminChatRoomCard";
+import AdminChatModal from "@/components/admin/chat/AdminChatModal";
+import { AdminChatRoom, ChatMessage } from "@/types/domain/chat/chat";
 
 interface Props {
-    adminId: string;
+    adminSid: string;
     stompClient: any;
     messages: ChatMessage[];
     setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
 }
 
 export default function AdminChatManagement({
-                                                adminId,
+                                                adminSid,
                                                 stompClient,
                                                 messages,
                                                 setMessages }: Props) {
     const [chatRooms, setChatRooms] = useState<AdminChatRoom[]>([]);
-    const [modalClient, setModalClient] = useState<string | null>(null);
+    const [chatUserSid, setChatUserSid] = useState<string | null>(null);
 
     useEffect(() => {
         const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
@@ -32,23 +32,23 @@ export default function AdminChatManagement({
         <div className="p-6">
             <div className="grid grid-cols-3 gap-4">
                 {chatRooms.map((room) => (
-                    <ChatRoomCard
-                        key={room.sid}
+                    <AdminChatRoomCard
+                        key={room.userSid}
                         room={room}
-                        selected={modalClient === room.sid}
-                        onClick={() => setModalClient(room.sid)}
+                        selected={chatUserSid === room.userSid}
+                        onClick={() => setChatUserSid(room.userSid)}
                     />
                 ))}
             </div>
 
-            {modalClient && (
-                <ChatModal
-                    sid={modalClient}
-                    adminId={adminId}
+            {chatUserSid && (
+                <AdminChatModal
+                    userSid={chatUserSid}
+                    adminSid={adminSid}
                     stompClient={stompClient}
                     messages={messages}
                     setMessages={setMessages}
-                    onClose={() => setModalClient(null)}
+                    onClose={() => setChatUserSid(null)}
                 />
             )}
         </div>

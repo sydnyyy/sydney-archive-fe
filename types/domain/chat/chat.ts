@@ -8,8 +8,8 @@ export type ChatType = typeof CHAT_TYPE[keyof typeof CHAT_TYPE];
 
 export interface ChatMessage {
     id?: string;
-    sender: string;
-    receiver: string;
+    senderSid: string;
+    receiverSid: string;
     content: string;
     sendAt: string;
     type: ChatType;
@@ -17,6 +17,6 @@ export interface ChatMessage {
 }
 
 export interface AdminChatRoom {
-    sid: string;
+    userSid: string;
     lastMessageAt: string;
 }

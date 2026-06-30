@@ -1,4 +1,4 @@
-import { ChatMessage } from "@/types/chat";
+import { ChatMessage } from "@/types/domain/chat/chat";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 

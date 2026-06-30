@@ -1,25 +1,26 @@
 "use client";
 
-import { CHAT_TYPE, ChatMessage } from "@/types/chat";
+import { CHAT_TYPE, ChatMessage } from "@/types/domain/chat/chat";
 import { useState, useEffect } from "react";
 import AnimatedMessages from "@/components/chat/common/AnimatedMessages";
 import { useChatMessages } from "@/hooks/useChatMessages";
 import { useChatScroll } from "@/hooks/useChatScroll";
 
 interface AdminChatViewProps {
-    sid: string;
-    adminId: string;
+    userSid: string;
+    adminSid: string;
     stompClient: any;
     messages: ChatMessage[];
     setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
 }
 
 export default function AdminChatView({
-                                       sid,
-                                       adminId,
-                                       stompClient,
-                                       messages,
-                                       setMessages, }: AdminChatViewProps) {
+                                          userSid,
+                                          adminSid,
+                                          stompClient,
+                                          messages,
+                                          setMessages,
+                                      }: AdminChatViewProps) {
 
     const [input, setInput] = useState("");
     const { loadMessages, loadPreviousMessages } = useChatMessages();
@@ -28,28 +29,28 @@ export default function AdminChatView({
     const { messagesContainerRef, messagesEndRef, handleScroll } = useChatScroll(
         messages,
         isInitialLoadDone,
-        () => loadPreviousMessages(sid, true, messages),
+        () => loadPreviousMessages(userSid, true, messages),
         (older: ChatMessage[]) => setMessages((prev) => [...older, ...prev])
     );
 
     // 첫 화면 최신 메시지 로딩
     useEffect(() => {
-        if (!sid) return;
+        if (!userSid) return;
 
-        loadMessages(sid, true).then((initialMessages) => {
+        loadMessages(userSid, true).then((initialMessages) => {
             if (initialMessages?.length) {
                 setMessages(initialMessages);
                 setIsInitialLoadDone(true);
             }
         });
-    }, [sid]);
+    }, [userSid]);
 
     const sendMessage = async () => {
         if (!input.trim()) return;
 
         const chatMessage: ChatMessage = {
-            sender: adminId,
-            receiver: sid,
+            senderSid: adminSid,
+            receiverSid: userSid,
             content: input.trim(),
             sendAt: new Date().toISOString(),
             type: CHAT_TYPE.ADMIN,
