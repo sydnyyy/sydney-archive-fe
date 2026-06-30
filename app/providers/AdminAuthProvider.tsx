@@ -5,7 +5,7 @@ import { Admin } from "@/types/domain/user/user";
 import { issueAccessTokenApi, logoutApi } from "@/lib/api/auth/admin.auth.command";
 import { fetchCurrentAdminApi } from "@/lib/api/user/admin.query";
 import {completeLoginSessionApi} from "@/lib/api/auth/admin.login.command";
-import {useAdminLoginStore} from "@/hooks/auth/useAdminLoginStore";
+import {useAdminLoginStore} from "@/store/useAdminLoginStore";
 
 interface AdminAuthContextValue {
     admin: Admin | null;
