@@ -6,7 +6,7 @@ import GuestAuthProvider from "@/app/providers/GuestAuthProvider";
 import { ChatProvider } from "@/app/(home)/context/ChatContext";
 
 export const metadata: Metadata = {
-    title: "tfl",
+    title: "sydney archive",
     icons: { icon: "/tags/tag_heart_pin_right.svg" },
 };
 
