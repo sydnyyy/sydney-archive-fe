@@ -21,11 +21,7 @@ export function createStompClient(options: CreateStompClientOptions): Client {
             console.log("STOMP DEBUG:", str);
         },
         onConnect: () => {
-            console.log(
-                options.role === "admin"
-                    ? "🟢 Admin STOMP 연결 성공"
-                    : "🟢 User STOMP 연결 성공"
-            );
+            console.log("[WS] connected");
 
             options.subscribePaths.forEach(({ path, onMessage }) => {
                 client.subscribe(path, (message) => {
@@ -37,21 +33,21 @@ export function createStompClient(options: CreateStompClientOptions): Client {
                 try {
                     options.fetchInitialSystemMessage();
                 } catch (err) {
-                    console.error("❗ 초기 시스템 메시지 요청 실패:", err);
+                    console.error("[WS] 초기 시스템 메시지 요청 실패:", err);
                 }
             }
         },
         onWebSocketError: (err) => {
-            console.error("🔴 WebSocket error:", err);
+            console.error("[WS] WebSocket error:", err);
         },
         onWebSocketClose: (evt) => {
-            console.warn("🟢 WebSocket closed:", evt);
+            console.warn("[WS] WebSocket closed:", evt);
         },
         onStompError: (frame) => {
             console.error(
                 options.role === "admin"
-                    ? `🔴 Admin STOMP 오류: ${frame.body}`
-                    : `🔴 User STOMP 오류: ${frame.body}`
+                    ? `[WS] Admin STOMP 오류: ${frame.body}`
+                    : `[WS] User STOMP 오류: ${frame.body}`
             );
         },
     });
