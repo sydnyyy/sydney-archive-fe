@@ -2,9 +2,11 @@ import React, {createContext, useCallback, useContext, useEffect, useRef, useSta
 import {Client} from "@stomp/stompjs";
 import {useAdminAuth} from "@/app/providers/AdminAuthProvider";
 import {createStompClient} from "@/lib/api/chat/socketClient";
+import {ChatMessage} from "@/types/domain/chat/chat";
 
 interface WebSocketContextValue {
     stompClient: Client | null;
+    chatMessage: ChatMessage | null;
 }
 
 const WebSocketContext = createContext<WebSocketContextValue | null>(null);
@@ -14,6 +16,8 @@ export default function WebSockerProvider({ children }: { children: React.ReactN
     const { admin } = useAdminAuth();
     const [stompClient, setStompClient] = useState<Client | null>(null);
     const stompClientRef = useRef<Client | null>(null);
+
+    const [chatMessage, setChatMessage] = useState<ChatMessage | null>(null);
 
     const disconnect = useCallback(async () => {
         if (stompClientRef.current) {
@@ -41,6 +45,9 @@ export default function WebSockerProvider({ children }: { children: React.ReactN
             subscribePaths: [
                 {
                     path: "/topic/admin.chat",
+                    onMessage: (msg: ChatMessage) => {
+                        setChatMessage(msg);
+                    },
                 },
             ],
             reconnectDelay: 5000,
@@ -60,7 +67,10 @@ export default function WebSockerProvider({ children }: { children: React.ReactN
 
     return (
         <WebSocketContext.Provider
-            value={{ stompClient }}
+            value={{
+                stompClient,
+                chatMessage
+            }}
         >
             {children}
         </WebSocketContext.Provider>
