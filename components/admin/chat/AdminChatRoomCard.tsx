@@ -40,14 +40,13 @@ export default function AdminChatRoomCard({ room, selected, onClick }: Props) {
                 }
             }}
         >
-
-        <p className="font-medium mb-2">
-            {room.userSid} 님
+            <p className="text-sm mb-2">
+                {room.chatRoomId}
             </p>
-            <p className="text-xs mb-1">
+            <p className="text-sm mb-1">
                 현재 문의 중인 상품 ID: {}
             </p>
-            <p className="text-xs">
+            <p className="text-sm">
                 마지막 채팅 시각 {formatKST(room.lastMessageAt)}
             </p>
         </div>

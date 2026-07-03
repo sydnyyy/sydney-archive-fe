@@ -1,13 +1,13 @@
 "use client";
 
-import { CHAT_TYPE, ChatMessage } from "@/types/domain/chat/chat";
+import {CHAT_TYPE, ChatMessage, ChatMessageRequest} from "@/types/domain/chat/chat";
 import { useState, useEffect } from "react";
 import AnimatedMessages from "@/components/chat/common/AnimatedMessages";
 import { useChatMessages } from "@/hooks/useChatMessages";
 import { useChatScroll } from "@/hooks/useChatScroll";
 
 interface AdminChatViewProps {
-    userSid: string;
+    chatRoomId: string;
     adminSid: string;
     stompClient: any;
     messages: ChatMessage[];
@@ -15,7 +15,7 @@ interface AdminChatViewProps {
 }
 
 export default function AdminChatView({
-                                          userSid,
+                                          chatRoomId,
                                           adminSid,
                                           stompClient,
                                           messages,
@@ -29,36 +29,35 @@ export default function AdminChatView({
     const { messagesContainerRef, messagesEndRef, handleScroll } = useChatScroll(
         messages,
         isInitialLoadDone,
-        () => loadPreviousMessages(userSid, true, messages),
+        () => loadPreviousMessages(chatRoomId, messages),
         (older: ChatMessage[]) => setMessages((prev) => [...older, ...prev])
     );
 
     // 첫 화면 최신 메시지 로딩
     useEffect(() => {
-        if (!userSid) return;
+        if (!chatRoomId) return;
 
-        loadMessages(userSid, true).then((initialMessages) => {
+        loadMessages(chatRoomId).then((initialMessages) => {
             if (initialMessages?.length) {
                 setMessages(initialMessages);
                 setIsInitialLoadDone(true);
             }
         });
-    }, [userSid]);
+    }, [chatRoomId]);
 
     const sendMessage = async () => {
         if (!input.trim()) return;
 
-        const chatMessage: ChatMessage = {
+        const chatMessageRequest: ChatMessageRequest = {
             senderSid: adminSid,
-            receiverSid: userSid,
+            receiverSid: chatRoomId,
             content: input.trim(),
-            sendAt: new Date().toISOString(),
             type: CHAT_TYPE.ADMIN,
         };
 
         stompClient?.publish({
             destination: "/app/chat.sendToUser",
-            body: JSON.stringify(chatMessage),
+            body: JSON.stringify(chatMessageRequest),
         });
 
         setInput("");

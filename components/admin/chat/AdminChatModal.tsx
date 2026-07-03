@@ -4,7 +4,7 @@ import { ChatMessage } from "@/types/domain/chat/chat";
 import AdminChatView from "./AdminChatView";
 
 interface Props {
-    userSid: string;
+    chatRoomId: string;
     adminSid: string;
     stompClient: any;
     messages: ChatMessage[];
@@ -13,7 +13,7 @@ interface Props {
 }
 
 export default function AdminChatModal({
-                                           userSid,
+                                           chatRoomId,
                                            adminSid,
                                            stompClient,
                                            messages,
@@ -33,7 +33,7 @@ export default function AdminChatModal({
                     className="flex justify-between items-center p-3 border-b"
                     style={{ borderColor: "var(--color-border-tab)" }}
                 >
-                    <h3 className="font-bold">{userSid}</h3>
+                    <h3 className="font-bold">{chatRoomId}</h3>
                     <button
                         onClick={onClose}
                         style={{
@@ -53,7 +53,7 @@ export default function AdminChatModal({
                 </div>
 
                 <AdminChatView
-                    userSid={userSid}
+                    chatRoomId={chatRoomId}
                     adminSid={adminSid}
                     stompClient={stompClient}
                     messages={messages}

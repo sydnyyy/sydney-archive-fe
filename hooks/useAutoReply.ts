@@ -1,26 +1,29 @@
 import { useEffect, useRef } from "react";
-import { ChatMessage } from "@/types/domain/chat/chat";
+import {CHAT_TYPE, ChatMessage} from "@/types/domain/chat/chat";
 import { v4 as uuidv4 } from "uuid";
 
 export default function useAutoReply(
+    uid: string,
     sendMessage: (message: ChatMessage) => void,
     isAdminJoinedRef: { current: boolean },
-    userSid: string
 ) {
+
     const timerRef = useRef<NodeJS.Timeout | null>(null);
-    const handleUserMessage = () => {
-        if (isAdminJoinedRef.current) return;
+
+    const addAutoReply = () => {
+        if (isAdminJoinedRef.current || uid == null) return;
         if (timerRef.current) clearTimeout(timerRef.current);
 
         timerRef.current = setTimeout(() => {
             if (!isAdminJoinedRef.current) {
                 sendMessage({
                     id: uuidv4(),
+                    chatRoomId: uid,
                     senderSid: "system",
-                    receiverSid: userSid,
-                    content: "문의 감사합니다. 곧 답변드리겠습니다 🙏",
-                    sendAt: new Date().toISOString(),
-                    type: "SYSTEM",
+                    receiverSid: uid,
+                    content: "곧 답변드리겠습니다 🙏",
+                    createdAt: new Date().toISOString(),
+                    type: CHAT_TYPE.SYSTEM,
                 });
             }
             timerRef.current = null;
@@ -33,5 +36,5 @@ export default function useAutoReply(
         };
     }, []);
 
-    return { handleUserMessage };
+    return { addAutoReply };
 }

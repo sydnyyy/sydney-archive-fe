@@ -8,7 +8,7 @@ interface MessageBubbleProps {
 }
 
 export default function MessageBubble({ msg, isMine, onOptionClick }: MessageBubbleProps) {
-    const time = formatKST(msg.sendAt)?.slice(13, 19);
+    const time = formatKST(msg.createdAt)?.slice(13, 19);
 
     if (msg.type === "SYSTEM") {
         return (
@@ -47,38 +47,38 @@ export default function MessageBubble({ msg, isMine, onOptionClick }: MessageBub
                     </span>
                     <div className="px-3 py-2 rounded-2xl break-words" style={bubbleStyle}>
                         {msg.content}
-                        {msg.options && onOptionClick && (
-                            <div className="mt-2 flex gap-2 justify-center">
-                                {msg.options.map(o => (
-                                    <button
-                                        key={o.value}
-                                        onClick={() => onOptionClick(o.value as "yes" | "no")}
-                                        className="px-3 py-1 rounded-lg border"
-                                    >
-                                        {o.label}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
+                        {/*{msg.options && onOptionClick && (*/}
+                        {/*    <div className="mt-2 flex gap-2 justify-center">*/}
+                        {/*        {msg.options.map(o => (*/}
+                        {/*            <button*/}
+                        {/*                key={o.value}*/}
+                        {/*                onClick={() => onOptionClick(o.value as "yes" | "no")}*/}
+                        {/*                className="px-3 py-1 rounded-lg border"*/}
+                        {/*            >*/}
+                        {/*                {o.label}*/}
+                        {/*            </button>*/}
+                        {/*        ))}*/}
+                        {/*    </div>*/}
+                        {/*)}*/}
                     </div>
                 </>
             ) : (
                 <>
                     <div className="px-3 py-2 rounded-2xl break-words" style={bubbleStyle}>
                         {msg.content}
-                        {msg.options && onOptionClick && (
-                            <div className="mt-2 flex gap-2 justify-center">
-                                {msg.options.map(o => (
-                                    <button
-                                        key={o.value}
-                                        onClick={() => onOptionClick(o.value as "yes" | "no")}
-                                        className="px-3 py-1 rounded-lg border"
-                                    >
-                                        {o.label}
-                                    </button>
-                                ))}
-                            </div>
-                        )}
+                        {/*{msg.options && onOptionClick && (*/}
+                        {/*    <div className="mt-2 flex gap-2 justify-center">*/}
+                        {/*        {msg.options.map(o => (*/}
+                        {/*            <button*/}
+                        {/*                key={o.value}*/}
+                        {/*                onClick={() => onOptionClick(o.value as "yes" | "no")}*/}
+                        {/*                className="px-3 py-1 rounded-lg border"*/}
+                        {/*            >*/}
+                        {/*                {o.label}*/}
+                        {/*            </button>*/}
+                        {/*        ))}*/}
+                        {/*    </div>*/}
+                        {/*)}*/}
                     </div>
                     <span className="text-xs"
                           style={{ color: "var(--color-chat-time)" }}
