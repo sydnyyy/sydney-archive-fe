@@ -3,9 +3,8 @@
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle, useLayoutEffect } from "react";
 import { Client } from "@stomp/stompjs";
 import { createStompClient } from "@/lib/api/chat/socketClient";
-import { CHAT_TYPE, ChatMessage } from "@/types/domain/chat/chat";
+import {CHAT_TYPE, ChatMessage, ChatMessageRequest} from "@/types/domain/chat/chat";
 import { SystemEvent } from "@/types/domain/chat/system";
-import { v4 as uuidv4 } from "uuid";
 import AnimatedMessages from "@/components/chat/common/AnimatedMessages";
 
 import ChatInput from "./ChatInput";
@@ -15,6 +14,7 @@ import useAutoReply from "@/hooks/useAutoReply";
 import { useChatMessages } from "@/hooks/useChatMessages";
 import { useChatScroll } from "@/hooks/useChatScroll";
 import { Item } from "@/types/domain/item/item";
+import {useGuestAuthStore} from "@/store/useGuestAuthStore";
 
 export interface UserChatViewRef {
     startItemChat: (itemName?: string) => void;
@@ -27,13 +27,12 @@ export interface UserChatViewRef {
 interface UserChatViewProps {
     isChatOpen: boolean;
     setIsChatOpen: (open: boolean) => void;
-    userSid: string;
     selectedItem?: Item | null;
 }
 
 const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>((
     {
-        isChatOpen, setIsChatOpen, userSid, selectedItem }, ref
+        isChatOpen, setIsChatOpen, selectedItem }, ref
     ) => {
 
     const [inputMessage, setInputMessage] = useState<string>("");
@@ -47,22 +46,23 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>((
     const keepConnectionRef = useRef(false);
     const isAdminJoined = useRef(false);
 
+    const { sid } = useGuestAuthStore();
     const { loadMessages, loadPreviousMessages } = useChatMessages();
     const { messagesContainerRef, messagesEndRef, handleScroll } = useChatScroll(
         messages,
         isInitialLoadDone,
         async () => {
-            if (!userSid) return [];
-            return await loadPreviousMessages(userSid, false, messages);
+            if (!sid) return [];
+            return await loadPreviousMessages(sid, messages);
         },
         (older) => setMessages(prev => [...older, ...prev]),
         () => setHasMoreMessages(false)
     );
 
-    const { handleUserMessage } = useAutoReply(
+    const { addAutoReply } = useAutoReply(
+        sid || "",
         (msg: ChatMessage) => setMessages(prev => [...prev, msg]),
         isAdminJoined,
-        userSid || ""
     );
 
     useLayoutEffect(() => {
@@ -90,12 +90,12 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>((
     };
 
     useEffect(() => {
-        if (isChatOpen && userSid && !stompClientRef.current) {
+        if (isChatOpen && sid && !stompClientRef.current) {
             const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
             // const tabId = getOrCreateTabId();
 
             stompClientRef.current = createStompClient({
-                url: `${baseUrl}/ws?sid=${userSid}`,
+                url: `${baseUrl}/ws?sid=${sid}`,
                 reconnectDelay: keepConnectionRef.current ? 5000 : 0,
                 role: "user",
                 subscribePaths: [
@@ -126,7 +126,7 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>((
             });
 
             // 첫 화면 최신 메시지 로딩
-            loadMessages(userSid, false).then((initialMessages) => {
+            loadMessages(sid).then((initialMessages) => {
                 if (initialMessages?.length) {
                     setMessages(initialMessages);
                     setIsInitialLoadDone(true);
@@ -139,17 +139,15 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>((
                 resetChatState();
             }
         };
-    }, [isChatOpen, userSid]);
+    }, [isChatOpen, sid]);
 
     const addSystemMessage = (content: string) => {
-        if (!userSid) return;
+        if (!sid) return;
 
-        const systemMessage: ChatMessage = {
-            id: uuidv4(),
+        const systemMessage: ChatMessageRequest = {
             senderSid: "system",
-            receiverSid: userSid,
+            receiverSid: sid,
             content,
-            sendAt: new Date().toISOString(),
             type: CHAT_TYPE.SYSTEM,
         };
 
@@ -161,38 +159,39 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>((
         }
     };
 
-    useImperativeHandle(ref, () => ({
-        // 채팅 open → 아이템 open
-        startItemChat(itemName?: string) {
-            setIsChatOpen(true);
-            if (itemName) {
-                addSystemMessage(`${itemName} 아이템 상담을 시작합니다 🤗`);
-            }
-        },
-        isOpen: () => isChatOpen,
-        removeLastOptionMessage() {
-            setMessages(prev => prev.filter(msg => !msg.options));
-        },
-        addSystemMessage,
-        handleChatToggle,
-    }));
+    // useImperativeHandle(ref, () => ({
+    //     // 채팅 open → 아이템 open
+    //     startItemChat(itemName?: string) {
+    //         setIsChatOpen(true);
+    //         if (itemName) {
+    //             addSystemMessage(`${itemName} 아이템 상담을 시작합니다 🤗`);
+    //         }
+    //     },
+    //     isOpen: () => isChatOpen,
+    //     removeLastOptionMessage() {
+    //         setMessages(prev => prev.filter(msg => !msg.options));
+    //     },
+    //     addSystemMessage,
+    //     handleChatToggle,
+    // }));
 
     const sendMessage = () => {
-        if (!stompClientRef.current || inputMessage.trim() === "" || !userSid) return;
+        if (!stompClientRef.current || inputMessage.trim() === "" || !sid) return;
 
-        const chatMessage: ChatMessage = {
-            senderSid: userSid,
+        const chatMessageRequest: ChatMessageRequest = {
+            senderSid: sid,
             receiverSid: "admin",
             content: inputMessage,
-            sendAt: new Date().toISOString(),
             type: CHAT_TYPE.USER,
         };
+
         stompClientRef.current.publish({
             destination: "/app/chat.send",
-            body: JSON.stringify(chatMessage),
+            body: JSON.stringify(chatMessageRequest),
         });
+
         setInputMessage("");
-        handleUserMessage();
+        addAutoReply();
     };
 
     const handleIncomingMessageWithAdminCheck = (message: ChatMessage) => {
@@ -203,13 +202,13 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>((
         setMessages(prev => [...prev, message]);
     };
 
-    const handleChatToggle = () => {
-        if (isChatOpen) {
-            setShowCloseDialog(true);
-        } else {
-            setIsChatOpen(true);
-        }
-    };
+    // const handleChatToggle = () => {
+    //     if (isChatOpen) {
+    //         setShowCloseDialog(true);
+    //     } else {
+    //         setIsChatOpen(true);
+    //     }
+    // };
 
     const handleChatCloseConfirm = (shouldClose: boolean) => {
         if (shouldClose) {
