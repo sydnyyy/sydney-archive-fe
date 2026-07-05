@@ -226,19 +226,13 @@ const UserChatView = forwardRef<UserChatViewRef, UserChatViewProps>((
         <>
             {isChatOpen && (
                 <div
-                    style={{
-                        position: "fixed",
-                        bottom: "110px",
-                        right: "25px",
-                        width: "350px",
-                        height: "450px",
-                        borderRadius: "12px",
-                        boxShadow: "0 8px 24px rgba(0,0,0,0.2)",
-                        display: "flex",
-                        flexDirection: "column",
-                        backgroundColor: "var(--color-chat-bg)",
-                        zIndex: 1000,
-                    }}>
+                    className="
+                        fixed top-1/2 -translate-y-1/2 right-[210px]
+                        w-[350px] min-h-[450px] max-h-[600px]
+                        flex flex-col
+                        rounded-xl shadow-2xl z-[1000] bg-[var(--color-chat-bg)]
+                        "
+                >
                     <div
                         ref={messagesContainerRef}
                         onScroll={handleScroll}
