@@ -1,6 +1,6 @@
 import {useEffect, useRef} from "react";
 import {SseEventType, SsePayload} from "@/types/domain/sse/SseEvent";
-import {useAdminAuth} from "@/app/providers/AdminAuthProvider";
+import {useAdminAuth} from "@/app/providers/admin/AdminAuthProvider";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 

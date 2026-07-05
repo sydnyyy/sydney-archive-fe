@@ -1,17 +1,17 @@
 import React, {createContext, useCallback, useContext, useEffect, useRef, useState} from "react";
 import {Client} from "@stomp/stompjs";
-import {useAdminAuth} from "@/app/providers/AdminAuthProvider";
+import {useAdminAuth} from "@/app/providers/admin/AdminAuthProvider";
 import {createStompClient} from "@/lib/api/chat/socketClient";
 import {ChatMessage} from "@/types/domain/chat/chat";
 
-interface WebSocketContextValue {
+interface AdminWebSocketContextValue {
     stompClient: Client | null;
     chatMessage: ChatMessage | null;
 }
 
-const WebSocketContext = createContext<WebSocketContextValue | null>(null);
+const AdminWebSocketContext = createContext<AdminWebSocketContextValue | null>(null);
 
-export default function WebSockerProvider({ children }: { children: React.ReactNode}) {
+export default function AdminWebSocketProvider({ children }: { children: React.ReactNode}) {
 
     const { admin } = useAdminAuth();
     const [stompClient, setStompClient] = useState<Client | null>(null);
@@ -66,23 +66,21 @@ export default function WebSockerProvider({ children }: { children: React.ReactN
     }, [admin, disconnect]);
 
     return (
-        <WebSocketContext.Provider
+        <AdminWebSocketContext.Provider
             value={{
                 stompClient,
                 chatMessage
             }}
         >
             {children}
-        </WebSocketContext.Provider>
+        </AdminWebSocketContext.Provider>
     );
 }
 
-export function useWebSocket() {
-    const ctx = useContext(WebSocketContext);
-
+export function useAdminWebSocket() {
+    const ctx = useContext(AdminWebSocketContext);
     if (!ctx) {
-        throw new Error("useWebSocket must be used inside WebSocketProvider");
+        throw new Error("useAdminWebSocket must be used inside AdminWebSocketProvider");
     }
-
     return ctx;
 }

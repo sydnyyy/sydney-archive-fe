@@ -1,6 +1,6 @@
 import ModalLayout from "@/components/common/ModalLayout";
 import { useState } from "react";
-import { useAdminAuth } from "@/app/providers/AdminAuthProvider";
+import { useAdminAuth } from "@/app/providers/admin/AdminAuthProvider";
 import {Spinner} from "@/components/common/Spinner";
 
 interface AdminLogoutModalProps {

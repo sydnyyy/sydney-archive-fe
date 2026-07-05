@@ -10,7 +10,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import AdminLoginModal from "@/components/admin/auth/AdminLoginModal";
-import { useAdminAuth } from "@/app/providers/AdminAuthProvider";
+import { useAdminAuth } from "@/app/providers/admin/AdminAuthProvider";
 import AdminLogoutModal from "@/components/admin/auth/AdminLogoutModal";
 
 export default function AdminMainNavigation() {

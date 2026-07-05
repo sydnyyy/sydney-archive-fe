@@ -4,7 +4,7 @@ import { AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Item } from "@/types/domain/item/item";
 import { fetchItemsApi } from "@/lib/api/item/item.query";
-import { useAdminAuth } from "@/app/providers/AdminAuthProvider";
+import { useAdminAuth } from "@/app/providers/admin/AdminAuthProvider";
 import AdminItemModal from "@/components/admin/item/AdminItemModal";
 import ItemCreateButton from "@/components/admin/item/button/ItemCreateButton";
 

@@ -113,7 +113,7 @@ export default function AdminAuthProvider({ children }: { children: React.ReactN
 export function useAdminAuth() {
     const ctx = useContext(AdminAuthContext);
     if (!ctx) {
-        throw new Error("useAuth must be used inside GuestAuthProvider");
+        throw new Error("useAuth must be used inside AdminAuthProvider");
     }
     return ctx;
 }

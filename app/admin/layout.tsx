@@ -3,12 +3,12 @@
 import "../globals.css";
 import { fontVariables } from "../_shared/fonts";
 import AdminMainNavigation from "@/components/admin/navigation/AdminMainNavigation";
-import AdminAuthProvider, {useAdminAuth} from "@/app/providers/AdminAuthProvider";
+import AdminAuthProvider, {useAdminAuth} from "@/app/providers/admin/AdminAuthProvider";
 import {usePathname, useRouter} from "next/navigation";
 import {useEffect, useState} from "react";
 import AdminLoginModal from "@/components/admin/auth/AdminLoginModal";
 import {Spinner} from "@/components/common/Spinner";
-import WebSockerProvider from "@/app/providers/AdminWebSocketProvider";
+import AdminWebSocketProvider from "@/app/providers/admin/AdminWebSocketProvider";
 
 export const dynamic = "force-dynamic";
 
@@ -48,12 +48,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     return (
         <div className={`${fontVariables} antialiased`}>
             <AdminAuthProvider>
-                <WebSockerProvider>
+                <AdminWebSocketProvider>
                     <AdminAuthGuard>
                         {children}
                         <AdminMainNavigation />
                     </AdminAuthGuard>
-                </WebSockerProvider>
+                </AdminWebSocketProvider>
             </AdminAuthProvider>
         </div>
     );

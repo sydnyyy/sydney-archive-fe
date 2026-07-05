@@ -1,7 +1,7 @@
 "use client";
 
-import {useAdminAuth} from "@/app/providers/AdminAuthProvider";
-import {useWebSocket} from "@/app/providers/AdminWebSocketProvider";
+import {useAdminAuth} from "@/app/providers/admin/AdminAuthProvider";
+import {useAdminWebSocket} from "@/app/providers/admin/AdminWebSocketProvider";
 import {useEffect, useState} from "react";
 import {AdminChatRoom, ChatMessage} from "@/types/domain/chat/chat";
 import {fetchChatUserListApi} from "@/lib/api/chat/chat.query";
@@ -11,7 +11,7 @@ import AdminChatModal from "@/components/admin/chat/AdminChatModal";
 export default function AdminChatPage() {
 
     const { admin, accessToken } = useAdminAuth();
-    const { stompClient, chatMessage } = useWebSocket();
+    const { stompClient, chatMessage } = useAdminWebSocket();
 
     const [chatRooms, setChatRooms] = useState<AdminChatRoom[]>([]);
     const [selectedChatRoomId, setSelectedChatRoomId] = useState<string | null>(null);
