@@ -5,7 +5,7 @@ import { sendAccessEvent } from "@/lib/api/accesslog/accessEventApi";
 import ModalLayout from "@/components/common/ModalLayout";
 import ModalActionBar from "@/components/guest/item/ModalActionBar";
 import ImageCarousel from "@/components/common/ImageCarousel";
-import { useGuestAuthStore } from "@/store/useGuestAuthStore";
+import { useAuthStore } from "@/store/useAuthStore";
 import { Item } from "@/types/domain/item/item";
 import CloseButton from "@/components/common/button/CloseButton";
 
@@ -14,7 +14,7 @@ interface ItemModalProps {
     onClose: () => void;
     likedSet: Set<string>;
     setLikedSet: React.Dispatch<React.SetStateAction<Set<string>>>;
-    onShare?: () => void;
+    onShare: () => void;
 }
 
 export default function ItemModal({
@@ -27,7 +27,7 @@ export default function ItemModal({
 
     if (!item) return null;
 
-    const { sid } = useGuestAuthStore();
+    const { sid } = useAuthStore();
     const hasSentLog = useRef(false);
 
     useEffect(() => {

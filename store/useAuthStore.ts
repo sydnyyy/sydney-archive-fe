@@ -9,9 +9,9 @@ interface AuthState {
     setHasHydrated: (state: boolean) => void;
 }
 
-export const GUEST_SID_KEY = "sid";
+export const USER_SID_KEY = "sid";
 
-export const useGuestAuthStore = create<AuthState>() (
+export const useAuthStore = create<AuthState>() (
     persist(
         (set) => ({
             sid: null,
@@ -21,7 +21,7 @@ export const useGuestAuthStore = create<AuthState>() (
             setHasHydrated: (state) => set({ _hasHydrated: state }),
         }),
         {
-            name: GUEST_SID_KEY,
+            name: USER_SID_KEY,
             partialize: (state) => ({
                 sid: state.sid
             }),
