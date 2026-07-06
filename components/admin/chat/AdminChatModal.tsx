@@ -1,7 +1,12 @@
 "use client";
 
-import { ChatMessage } from "@/types/domain/chat/chat";
-import AdminChatView from "./AdminChatView";
+import {CHAT_TYPE, ChatMessage, ChatMessageRequest} from "@/types/domain/chat/chat";
+import {XMarkIcon} from "@heroicons/react/24/outline";
+import React, {useEffect, useState} from "react";
+import {useChatMessages} from "@/hooks/useChatMessages";
+import {useChatScroll} from "@/hooks/useChatScroll";
+import AnimatedMessages from "@/components/common/chat/AnimatedMessages";
+import ChatInputButton from "@/components/common/chat/ChatInputButton";
 
 interface Props {
     chatRoomId: string;
@@ -20,45 +25,84 @@ export default function AdminChatModal({
                                            setMessages,
                                            onClose
 }: Props) {
+
+    const [inputMessage, setInputMessage] = useState("");
+    const { loadMessages, loadPreviousMessages } = useChatMessages();
+    const [isInitialLoadDone, setIsInitialLoadDone] = useState(false);
+
+    const { messagesContainerRef, messagesEndRef, handleScroll } = useChatScroll(
+        messages,
+        isInitialLoadDone,
+        () => loadPreviousMessages(chatRoomId, messages),
+        (older: ChatMessage[]) => setMessages((prev) => [...older, ...prev])
+    );
+
+    useEffect(() => {
+        if (!chatRoomId) return;
+
+        loadMessages(chatRoomId).then((initialMessages) => {
+            if (initialMessages?.length) {
+                setMessages(initialMessages);
+                setIsInitialLoadDone(true);
+            }
+        });
+    }, [chatRoomId]);
+
+    const sendMessage = async () => {
+        if (!inputMessage.trim()) return;
+
+        const chatMessageRequest: ChatMessageRequest = {
+            senderSid: adminSid,
+            receiverSid: chatRoomId,
+            content: inputMessage.trim(),
+            type: CHAT_TYPE.ADMIN,
+        };
+
+        stompClient?.publish({
+            destination: "/app/chat.sendToUser",
+            body: JSON.stringify(chatMessageRequest),
+        });
+
+        setInputMessage("");
+    };
+
     return (
-        <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
             <div
-                className="rounded-xl w-[600px] max-h-[80vh] flex flex-col overflow-hidden"
-                style={{
-                    backgroundColor: "var(--color-chat-bg)",
-                    border: "1px solid var(--color-admin-chat-border)",
-                }}
+                className="
+                    flex max-h-[80vh] w-[600px] flex-col overflow-hidden p-3
+                    rounded-md
+                    border border-[var(--color-admin-chat-border)]
+                    bg-[var(--color-chat-bg)]
+                "
             >
-                <div
-                    className="flex justify-between items-center p-3 border-b"
-                    style={{ borderColor: "var(--color-border-tab)" }}
-                >
+                <div className="flex items-center justify-between mb-2.5">
                     <h3 className="font-bold">{chatRoomId}</h3>
-                    <button
-                        onClick={onClose}
-                        style={{
-                            color: "var(--color-chat-close-text)",
-                        }}
-                        onMouseEnter={(e) => {
-                            (e.currentTarget as HTMLButtonElement).style.color =
-                                "var(--color-chat-close-text-hover)";
-                        }}
-                        onMouseLeave={(e) => {
-                            (e.currentTarget as HTMLButtonElement).style.color =
-                                "var(--color-chat-close-text)";
-                        }}
-                    >
-                        닫기
+
+                    <button onClick={onClose}>
+                        <XMarkIcon className="h-6 w-6"/>
                     </button>
                 </div>
 
-                <AdminChatView
-                    chatRoomId={chatRoomId}
-                    adminSid={adminSid}
-                    stompClient={stompClient}
-                    messages={messages}
-                    setMessages={setMessages}
-                />
+                <div
+                    className="flex-1 overflow-auto mb-2 hide-scrollbar"
+                    onScroll={handleScroll}
+                    ref={messagesContainerRef}
+                >
+                    <AnimatedMessages
+                        messages={messages}
+                        role="ADMIN"
+                    />
+                    <div ref={messagesEndRef} />
+                </div>
+
+                <div>
+                    <ChatInputButton
+                        inputMessage={inputMessage}
+                        onChange={setInputMessage}
+                        onSend={sendMessage}
+                    />
+                </div>
             </div>
         </div>
     );
