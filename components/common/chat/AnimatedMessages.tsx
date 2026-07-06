@@ -2,15 +2,12 @@ import MessageBubble from "./MessageBubble";
 import { ChatMessage } from "@/types/domain/chat/chat";
 import { AnimatePresence, motion } from "framer-motion";
 
-export default function AnimatedMessages({
-                                             messages,
-                                             myRole,
-                                             onOptionClick,
-                                         }: {
+interface AnimatedMessageProps {
     messages: ChatMessage[];
-    myRole: "USER" | "ADMIN";
-    onOptionClick?: (value: "yes" | "no") => void;
-}) {
+    role: "USER" | "ADMIN";
+}
+
+export default function AnimatedMessages({ messages, role }: AnimatedMessageProps) {
     return (
         <AnimatePresence initial={false} mode="sync">
             {messages.map(msg => (
@@ -23,8 +20,7 @@ export default function AnimatedMessages({
                 >
                     <MessageBubble
                         msg={msg}
-                        isMine={msg.type === myRole}
-                        onOptionClick={onOptionClick}
+                        isMine={msg.type === role}
                     />
                 </motion.div>
             ))}
