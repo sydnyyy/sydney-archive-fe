@@ -111,8 +111,10 @@ export default function ChatModal({
         <>
             <div
                 className="
-                    fixed top-1/2 -translate-y-1/2 right-[210px] p-3
-                    w-[350px] min-h-[450px] max-h-[600px]
+                    fixed top-1/2 -translate-y-1/2 p-3
+                    right-4 2xl:right-[310px]
+                    w-[350px]
+                    min-h-[450px] max-h-[600px]
                     flex flex-col
                     rounded-xl shadow-2xl z-[1000] bg-[var(--color-chat-bg)]
                 "
