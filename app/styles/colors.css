@@ -21,7 +21,6 @@
     --color-accent: #4A7B5A;
 
     /* 하단/웹 탭 경계선 */
-    --color-chat-border: #9CA3AF;
     --color-chat-bg: #EDEDF5;
 
     /* 채팅 시스템 메시지 */
@@ -38,10 +37,6 @@
 
     /* 채팅 시간 텍스트 색상 */
     --color-chat-time: #6B7280;
-
-    /* 채팅 전송 버튼 */
-    --color-chat-send-bg: #6CA67C;
-    --color-chat-send-text: #ffffff;
 
     /* 채팅방 상단 안내 문구 */
     --color-chat-top-text: #6C757D;
@@ -105,14 +100,6 @@
 
     /* 채팅 시간 텍스트 색상 */
     --color-chat-time: #6B7280;
-
-    /* 채팅 전송 버튼 */
-    --color-chat-send-bg: #74747A;
-    --color-chat-send-text: #D7D8E0;
-
-    /* 채팅 닫기 버튼 */
-    --color-chat-close-text: #D7D8E0;
-    --color-chat-close-text-hover: #74747A;
 
     /* 관리자 탭 배경 / 강조 */
     --color-admin-tab-bg-active: #C4C4CC;

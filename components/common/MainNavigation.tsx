@@ -7,16 +7,17 @@ import {
     ChatBubbleOvalLeftEllipsisIcon,
 } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
-import UserChatView from "@/components/chat/user/UserChatView";
-import { useChat } from "@/app/(home)/context/ChatContext";
-import { useGuestAuthStore } from "@/store/useGuestAuthStore";
+import ChatModal from "@/components/chat/ChatModal";
+import { useAuthStore } from "@/store/useAuthStore";
+import {useState} from "react";
+import WebSockerProvider from "@/app/providers/user/WebSocketProvider";
 
 export default function MainNavigation() {
 
     const router = useRouter();
 
-    const { isChatOpen, setIsChatOpen } = useChat();
-    const { sid } = useGuestAuthStore();
+    const [isChatOpen, setIsChatOpen] = useState(false);
+    const { sid } = useAuthStore();
 
     const navItems = [
         {
@@ -70,10 +71,11 @@ export default function MainNavigation() {
             </nav>
 
             {isChatOpen && sid && (
-                <UserChatView
-                    isChatOpen={isChatOpen}
-                    setIsChatOpen={setIsChatOpen}
-                />
+                <WebSockerProvider>
+                    <ChatModal
+                        setIsChatOpen={setIsChatOpen}
+                    />
+                </WebSockerProvider>
             )}
         </>
     );

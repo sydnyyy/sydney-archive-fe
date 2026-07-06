@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import ItemModal from "@/components/guest/item/ItemModal";
-import { UserChatViewRef } from "@/components/chat/user/UserChatView";
 import { fetchItemsApi } from "@/lib/api/item/item.query";
 import { Item } from "@/types/domain/item/item";
 
@@ -13,8 +12,6 @@ export default function ItemPage() {
     const [selectedItem, setSelectedItem] = useState<Item | null>(null);
     const [showSidebarText, setShowSidebarText] = useState(false);
     const [likedSet, setLikedSet] = useState<Set<string>>(new Set());
-
-    const chatRef = useRef<UserChatViewRef>(null);
 
     useEffect(() => {
         async function loadItems() {
@@ -31,7 +28,6 @@ export default function ItemPage() {
 
     const handleItemClick = (item: Item) => {
         setSelectedItem(item);
-        chatRef.current?.startItemChat(item.title);
     };
 
     const handleShare = () => {
