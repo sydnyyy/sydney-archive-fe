@@ -1,16 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 
 import ItemModal from "@/components/guest/item/ItemModal";
 import { fetchItemsApi } from "@/lib/api/item/item.query";
 import { Item } from "@/types/domain/item/item";
+import Header from "@/components/layout/Header";
 
 export default function ItemPage() {
     const [items, setItems] = useState<Item[]>([]);
     const [selectedItem, setSelectedItem] = useState<Item | null>(null);
-    const [showSidebarText, setShowSidebarText] = useState(false);
     const [likedSet, setLikedSet] = useState<Set<string>>(new Set());
 
     useEffect(() => {
@@ -34,77 +33,49 @@ export default function ItemPage() {
         // TODO: 공유 기능
     };
 
-    // 스크롤 감지 (사이드 문구)
-    useEffect(() => {
-        const handleScroll = () => setShowSidebarText(window.scrollY > 150);
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, []);
-
     return (
-        <div className="min-h-screen flex flex-col relative">
-            <main className="flex flex-1 justify-center items-start p-6 relative">
-                <AnimatePresence>
-                    {showSidebarText && (
-                        <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 10 }}
-                            transition={{ duration: 1.7, ease: "easeOut" }}
-                            className="
-                                fixed top-57 left-1/2 -translate-x-[610px] mr-10 w-65
-                                text-sm leading-relaxed text-right"
-                            style={{ color: "var(--color-text-tertiary)" }}
-                        >
-                            내 위시리스트야<br />
-                            네가 경험했으면 하는 내 위시리스트<br />
-                            네가 소소한 행복에도 잘 살아갔으면 좋겠어<br />
-                            그것 또한 내 위시리스트야
-                        </motion.div>
-                    )}
+        <div className="h-screen overflow-hidden">
+            <main className="h-full">
+                <div className="w-full max-w-[540px] h-full mx-auto flex flex-col p-3">
 
-                    {selectedItem && (
-                        <ItemModal
-                            item={selectedItem}
-                            onClose={() => setSelectedItem(null)}
-                            likedSet={likedSet}
-                            setLikedSet={setLikedSet}
-                            onShare={handleShare}
-                        />
-                    )}
-                </AnimatePresence>
-
-                <div className="w-full max-w-[540px] mx-auto">
-                    {/* 메인 문구 (스크롤되면서 사라짐) */}
-                    <div className="p-6 leading-relaxed text-sm text-right">
-                        내 위시리스트야<br />
-                        네가 경험했으면 하는 내 위시리스트<br />
-                        네가 소소한 행복에도 잘 살아갔으면 좋겠어<br />
-                        그것 또한 내 위시리스트야
+                    <div className="mt-5 mr-4 mb-5">
+                        <Header />
                     </div>
 
-                    {/* 아이템 리스트 */}
-                    <div className="w-full grid gap-1.5 grid-cols-4">
-                        {items.map((item) => {
-                            const thumbnailSrc = item.imageUrls?.[item.thumbnailIndex ?? 0] ?? "/placeholder.png";
+                    <div className="flex-1 overflow-y-auto">
+                        <div className="grid grid-cols-4 gap-1.5">
+                            {items.map((item) => {
+                                const thumbnailSrc = item.imageUrls?.[item.thumbnailIndex ?? 0] ?? "/placeholder.png";
 
-                            return (
-                                <div key={item.itemId} className="flex flex-col items-center">
-                                    <div
-                                        onClick={() => handleItemClick(item)}
-                                        className="w-full aspect-square rounded-xl overflow-hidden flex items-center justify-center"
-                                    >
-                                        <img
-                                            src={thumbnailSrc}
-                                            alt={item.title}
-                                            className="w-full h-full object-cover"
-                                        />
+                                return (
+                                    <div key={item.itemId} className="flex flex-col items-center">
+                                        <div
+                                            onClick={() => handleItemClick(item)}
+                                            className="w-full aspect-square rounded-xl overflow-hidden flex items-center justify-center"
+                                        >
+                                            <img
+                                                src={thumbnailSrc}
+                                                alt={item.title}
+                                                className="w-full h-full object-cover"
+                                            />
+                                        </div>
                                     </div>
-                                </div>
-                            );
-                        })}
+                                );
+                            })}
+                        </div>
                     </div>
                 </div>
+
+                {selectedItem && (
+                    <ItemModal
+                        item={selectedItem}
+                        onClose={() => setSelectedItem(null)}
+                        likedSet={likedSet}
+                        setLikedSet={setLikedSet}
+                        onShare={handleShare}
+                    />
+                )}
+
             </main>
         </div>
     );
