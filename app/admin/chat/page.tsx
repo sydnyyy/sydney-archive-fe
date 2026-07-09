@@ -7,7 +7,6 @@ import {AdminChatRoom, ChatMessage} from "@/types/domain/chat/chat";
 import {fetchChatUserListApi} from "@/lib/api/chat/chat.query";
 import AdminChatRoomCard from "@/components/admin/chat/AdminChatRoomCard";
 import AdminChatModal from "@/components/admin/chat/AdminChatModal";
-import Header from "@/components/layout/Header";
 
 export default function AdminChatPage() {
 
@@ -39,40 +38,30 @@ export default function AdminChatPage() {
     if (!admin) return;
 
     return (
-        <div className="h-screen overflow-hidden">
-            <main className="h-full">
-                <div className="w-full max-w-[540px] h-full mx-auto flex flex-col p-3">
-
-                    <div className="mt-5 mr-4 mb-5">
-                        <Header />
-                    </div>
-
-                    <div className="flex-1 overflow-y-auto">
-                        <div className="grid grid-cols-2 gap-3">
-                            {chatRooms.map((room) => (
-                                <AdminChatRoomCard
-                                    key={room.chatRoomId}
-                                    room={room}
-                                    selected={selectedChatRoomId === room.chatRoomId}
-                                    onClick={() => setSelectedChatRoomId(room.chatRoomId)}
-                                />
-                            ))}
-                        </div>
-                    </div>
+        <>
+            <div className="flex-1 overflow-y-auto">
+                <div className="grid grid-cols-2 gap-3">
+                    {chatRooms.map((room) => (
+                        <AdminChatRoomCard
+                            key={room.chatRoomId}
+                            room={room}
+                            selected={selectedChatRoomId === room.chatRoomId}
+                            onClick={() => setSelectedChatRoomId(room.chatRoomId)}
+                        />
+                    ))}
                 </div>
+            </div>
 
-                {selectedChatRoomId && (
-                    <AdminChatModal
-                        chatRoomId={selectedChatRoomId}
-                        adminSid={admin.sid}
-                        stompClient={stompClient}
-                        messages={messages}
-                        setMessages={setMessages}
-                        onClose={() => setSelectedChatRoomId(null)}
-                    />
-                )}
-
-            </main>
-        </div>
+            {selectedChatRoomId && (
+                <AdminChatModal
+                    chatRoomId={selectedChatRoomId}
+                    adminSid={admin.sid}
+                    stompClient={stompClient}
+                    messages={messages}
+                    setMessages={setMessages}
+                    onClose={() => setSelectedChatRoomId(null)}
+                />
+            )}
+        </>
     );
 }

@@ -7,7 +7,6 @@ import { fetchItemsApi } from "@/lib/api/item/item.query";
 import { useAdminAuth } from "@/app/providers/admin/AdminAuthProvider";
 import AdminItemModal from "@/components/admin/item/AdminItemModal";
 import ItemCreateButton from "@/components/admin/item/button/ItemCreateButton";
-import Header from "@/components/layout/Header";
 
 export default function AdminItemPage() {
     const [items, setItems] = useState<Item[]>([]);
@@ -45,42 +44,33 @@ export default function AdminItemPage() {
     };
 
     return (
-        <div className="h-screen overflow-hidden">
-            <main className="h-full">
-                <div className="w-full max-w-[540px] h-full mx-auto flex flex-col p-3">
+        <>
+            <div className="flex justify-end mr-4 mb-5">
+                <ItemCreateButton onCreate={handleItemCreate} />
+            </div>
 
-                    <div className="mt-5 mr-4 mb-5">
-                        <Header />
-                    </div>
+            <div className="flex-1 overflow-y-auto">
+                <div className="grid gap-1.5 grid-cols-4">
+                    {items.map((item) => {
+                        const thumbnailSrc = item.imageUrls?.[item.thumbnailIndex ?? 0] ?? "/placeholder.png";
 
-                    <div className="flex justify-end mr-4 mb-5">
-                        <ItemCreateButton onCreate={handleItemCreate} />
-                    </div>
-
-                    <div className="flex-1 overflow-y-auto">
-                        <div className="grid gap-1.5 grid-cols-4">
-                            {items.map((item) => {
-                                const thumbnailSrc = item.imageUrls?.[item.thumbnailIndex ?? 0] ?? "/placeholder.png";
-
-                                return (
-                                    <div key={item.itemId} className="flex flex-col items-center">
-                                        <div
-                                            onClick={() => handleItemClick(item)}
-                                            className="w-full aspect-square rounded-xl overflow-hidden flex items-center justify-center cursor-pointer hover:opacity-80 transition"
-                                        >
-                                            <img
-                                                src={thumbnailSrc}
-                                                alt={item.title}
-                                                className="w-full h-full object-cover"
-                                            />
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
+                        return (
+                            <div key={item.itemId} className="flex flex-col items-center">
+                                <div
+                                    onClick={() => handleItemClick(item)}
+                                    className="w-full aspect-square rounded-xl overflow-hidden flex items-center justify-center cursor-pointer hover:opacity-80 transition"
+                                >
+                                    <img
+                                        src={thumbnailSrc}
+                                        alt={item.title}
+                                        className="w-full h-full object-cover"
+                                    />
+                                </div>
+                            </div>
+                        );
+                    })}
                 </div>
-            </main>
+            </div>
 
             <AnimatePresence>
                 {isModalOpen && (
@@ -91,6 +81,6 @@ export default function AdminItemPage() {
                     />
                 )}
             </AnimatePresence>
-        </div>
+        </>
     );
 }

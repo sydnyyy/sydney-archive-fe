@@ -5,10 +5,11 @@ import { fontVariables } from "../_shared/fonts";
 import AdminMainNavigation from "@/components/admin/navigation/AdminMainNavigation";
 import AdminAuthProvider, {useAdminAuth} from "@/app/providers/admin/AdminAuthProvider";
 import {usePathname, useRouter} from "next/navigation";
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
 import AdminLoginModal from "@/components/admin/auth/AdminLoginModal";
 import {Spinner} from "@/components/common/Spinner";
 import AdminWebSocketProvider from "@/app/providers/admin/AdminWebSocketProvider";
+import Header from "@/components/layout/Header";
 
 export const dynamic = "force-dynamic";
 
@@ -50,8 +51,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <AdminAuthProvider>
                 <AdminWebSocketProvider>
                     <AdminAuthGuard>
-                        {children}
-                        <AdminMainNavigation />
+                        <div className="h-screen overflow-hidden">
+                            <main className="h-full">
+                                <div className="w-full max-w-[540px] h-full mx-auto flex flex-col p-3">
+                                    <div className="mt-5 mr-4 mb-5">
+                                        <Header />
+                                    </div>
+                                    {children}
+                                </div>
+                            </main>
+                            <AdminMainNavigation />
+                        </div>
                     </AdminAuthGuard>
                 </AdminWebSocketProvider>
             </AdminAuthProvider>
