@@ -1,12 +1,12 @@
 "use client";
 
 import {CHAT_TYPE, ChatMessage, ChatMessageRequest} from "@/types/domain/chat/chat";
-import {XMarkIcon} from "@heroicons/react/24/outline";
 import React, {useEffect, useState} from "react";
 import {useChatMessages} from "@/hooks/useChatMessages";
 import {useChatScroll} from "@/hooks/useChatScroll";
 import AnimatedMessages from "@/components/common/chat/AnimatedMessages";
 import ChatInputButton from "@/components/common/chat/ChatInputButton";
+import CloseButton from "@/components/common/button/CloseButton";
 
 interface Props {
     chatRoomId: string;
@@ -40,11 +40,12 @@ export default function AdminChatModal({
     useEffect(() => {
         if (!chatRoomId) return;
 
+        setMessages([]);
+        setIsInitialLoadDone(false);
+
         loadMessages(chatRoomId).then((initialMessages) => {
-            if (initialMessages?.length) {
-                setMessages(initialMessages);
-                setIsInitialLoadDone(true);
-            }
+            setMessages(initialMessages ?? []);
+            setIsInitialLoadDone(true);
         });
     }, [chatRoomId]);
 
@@ -67,42 +68,39 @@ export default function AdminChatModal({
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+        <div
+            className="
+                fixed top-1/2 -translate-y-1/2 p-3
+                right-5 xl:right-[210px]
+                w-[350px]
+                min-h-[450px] max-h-[600px]
+                flex flex-col
+                rounded-xl shadow-2xl z-[1000] bg-[var(--color-chat-bg)]
+            "
+        >
+            <header className="flex items-center justify-between mb-2">
+                <CloseButton onClose={onClose} />
+                <span>{chatRoomId}</span>
+            </header>
+
             <div
-                className="
-                    flex max-h-[80vh] w-[600px] flex-col overflow-hidden p-3
-                    rounded-md
-                    border border-[var(--color-admin-chat-border)]
-                    bg-[var(--color-chat-bg)]
-                "
+                className="flex-1 overflow-auto mb-2 hide-scrollbar"
+                onScroll={handleScroll}
+                ref={messagesContainerRef}
             >
-                <div className="flex items-center justify-between mb-2.5">
-                    <h3 className="font-bold">{chatRoomId}</h3>
+                <AnimatedMessages
+                    messages={messages}
+                    role="ADMIN"
+                />
+                <div ref={messagesEndRef} />
+            </div>
 
-                    <button onClick={onClose}>
-                        <XMarkIcon className="h-6 w-6"/>
-                    </button>
-                </div>
-
-                <div
-                    className="flex-1 overflow-auto mb-2 hide-scrollbar"
-                    onScroll={handleScroll}
-                    ref={messagesContainerRef}
-                >
-                    <AnimatedMessages
-                        messages={messages}
-                        role="ADMIN"
-                    />
-                    <div ref={messagesEndRef} />
-                </div>
-
-                <div>
-                    <ChatInputButton
-                        inputMessage={inputMessage}
-                        onChange={setInputMessage}
-                        onSend={sendMessage}
-                    />
-                </div>
+            <div>
+                <ChatInputButton
+                    inputMessage={inputMessage}
+                    onChange={setInputMessage}
+                    onSend={sendMessage}
+                />
             </div>
         </div>
     );
