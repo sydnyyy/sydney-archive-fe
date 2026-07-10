@@ -7,7 +7,7 @@ interface ItemCloseButtonProps {
 export default function CloseButton({ onClose }: ItemCloseButtonProps) {
     return (
         <button onClick={onClose}>
-            <ArrowLeftIcon className="h-5 w-5" />
+            <ArrowLeftIcon className="h-6 w-6" />
         </button>
     );
 }

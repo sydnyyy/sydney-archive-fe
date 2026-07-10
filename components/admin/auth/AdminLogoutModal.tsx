@@ -26,10 +26,11 @@ export default function AdminLogoutModal({ onClose }: AdminLogoutModalProps) {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
             <ModalLayout
+                onClose={onClose}
                 widthClass="w-[350px]"
                 scrollable={false}
             >
-                <div className="flex flex-col gap-5 p-6">
+                <div className="flex flex-col gap-5 p-3">
                     <h2 className="text-center text-lg font-bold">관리자 로그아웃</h2>
                     <div className="flex-1 flex flex-col justify-center items-center">
                         {isProcessing ? (
@@ -46,14 +47,6 @@ export default function AdminLogoutModal({ onClose }: AdminLogoutModalProps) {
                             </button>
                         )}
                     </div>
-
-                    <button
-                        onClick={onClose}
-                        disabled={isProcessing}
-                        className="text-sm text-[var(--color-text-secondary)] underline"
-                    >
-                        취소
-                    </button>
                 </div>
             </ModalLayout>
         </div>
