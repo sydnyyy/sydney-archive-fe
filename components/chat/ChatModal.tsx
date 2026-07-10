@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
 import {CHAT_TYPE, ChatMessage, ChatMessageRequest} from "@/types/domain/chat/chat";
 import AnimatedMessages from "@/components/common/chat/AnimatedMessages";
-import { XMarkIcon } from "@heroicons/react/24/outline"
 
 import ChatInputButton from "@/components/common/chat/ChatInputButton";
 import useAutoReply from "@/hooks/useAutoReply";
@@ -12,6 +11,7 @@ import { useChatScroll } from "@/hooks/useChatScroll";
 import { Item } from "@/types/domain/item/item";
 import {useAuthStore} from "@/store/useAuthStore";
 import {useWebSocket} from "@/app/providers/user/WebSocketProvider";
+import CloseButton from "@/components/common/button/CloseButton";
 
 interface UserChatViewProps {
     setIsChatOpen: (open: boolean) => void;
@@ -112,7 +112,7 @@ export default function ChatModal({
             <div
                 className="
                     fixed top-1/2 -translate-y-1/2 p-3
-                    right-4 2xl:right-[310px]
+                    right-5 xl:right-[210px]
                     w-[350px]
                     min-h-[450px] max-h-[600px]
                     flex flex-col
@@ -120,9 +120,7 @@ export default function ChatModal({
                 "
             >
                 <div>
-                    <button onClick={() => setIsChatOpen(false)} >
-                        <XMarkIcon className="h-6 w-6" />
-                    </button>
+                    <CloseButton onClose={() => setIsChatOpen(false)} />
                 </div>
 
                 <div
