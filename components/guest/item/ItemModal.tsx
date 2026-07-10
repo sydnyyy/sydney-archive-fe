@@ -7,7 +7,6 @@ import ModalActionBar from "@/components/guest/item/ModalActionBar";
 import ImageCarousel from "@/components/common/ImageCarousel";
 import { useAuthStore } from "@/store/useAuthStore";
 import { Item } from "@/types/domain/item/item";
-import CloseButton from "@/components/common/button/CloseButton";
 
 interface ItemModalProps {
     item: Item;
@@ -41,10 +40,6 @@ export default function ItemModal({
     return (
         <ModalLayout onClose={onClose}>
             <div className="flex flex-col gap-1.5 w-full">
-
-                <div className="flex flex-col pl-3 pt-3">
-                    <CloseButton onClose={onClose} />
-                </div>
 
                 {/* 설명 텍스트 */}
                 {item.description && (
