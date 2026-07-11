@@ -24,7 +24,7 @@ export default function ModalLayout({
         <div className="
                 fixed inset-0 z-50
                 flex justify-center items-center
-                bg-[var(--color-overlay)]
+                bg-black/30
             "
         >
             <motion.div
@@ -37,7 +37,7 @@ export default function ModalLayout({
                     ${heightClass}
                    
                     flex flex-col
-                    rounded-md p-2 gap-2
+                    rounded-xl p-2 gap-2
                     bg-[var(--color-bg-modal)]
                          
                     ${scrollable ? "overflow-auto hide-scrollbar" : "overflow-hidden"}
