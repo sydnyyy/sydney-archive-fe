@@ -5,7 +5,6 @@ import { useState } from "react";
 import {useAdminAuth} from "@/app/providers/admin/AdminAuthProvider";
 import {createItemApi, deleteItemApi, updateItemApi} from "@/lib/api/item/item.command";
 import {ItemCreateRequest, ItemUpdateRequest} from "@/types/dto/item/ItemRequest";
-import CloseButton from "@/components/common/button/CloseButton";
 import ItemSaveButton from "@/components/admin/item/button/ItemSaveButton";
 import ItemUpdateButton from "@/components/admin/item/button/ItemUpdateButton";
 import ItemDeleteButton from "@/components/admin/item/button/ItemDeleteButton";
@@ -137,10 +136,6 @@ export default function AdminItemModal({
     return (
         <ModalLayout onClose={onClose}>
             <div className="flex flex-col gap-1.5 w-full">
-
-                <div className="flex flex-col pl-3 pt-3">
-                    <CloseButton onClose={onClose} />
-                </div>
 
                 <div className="flex justify-end px-3 py-1">
                     <VisibilityToggleButton
