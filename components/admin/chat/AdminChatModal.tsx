@@ -4,8 +4,8 @@ import {CHAT_TYPE, ChatMessage, ChatMessageRequest} from "@/types/domain/chat/ch
 import React, {useEffect, useState} from "react";
 import {useChatMessages} from "@/hooks/useChatMessages";
 import {useChatScroll} from "@/hooks/useChatScroll";
-import AnimatedMessages from "@/components/common/chat/AnimatedMessages";
-import ChatInputButton from "@/components/common/chat/ChatInputButton";
+import AnimatedMessages from "@/components/chat/AnimatedMessages";
+import ChatInputButton from "@/components/chat/ChatInputButton";
 import CloseButton from "@/components/common/button/CloseButton";
 
 interface Props {

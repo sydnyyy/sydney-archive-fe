@@ -1,6 +1,6 @@
 import {Item} from "@/types/domain/item/item";
 import ModalLayout from "@/components/common/ModalLayout";
-import ImageCarousel from "@/components/common/ImageCarousel";
+import ImageCarousel from "@/components/item/ImageCarousel";
 import { useState } from "react";
 import {useAdminAuth} from "@/app/providers/admin/AdminAuthProvider";
 import {createItemApi, deleteItemApi, updateItemApi} from "@/lib/api/item/item.command";

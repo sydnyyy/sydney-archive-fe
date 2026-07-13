@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 
-import ItemModal from "@/components/guest/item/ItemModal";
+import ItemModal from "@/components/item/ItemModal";
 import { fetchItemsApi } from "@/lib/api/item/item.query";
 import { Item } from "@/types/domain/item/item";
 

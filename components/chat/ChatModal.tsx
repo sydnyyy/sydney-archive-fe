@@ -2,9 +2,9 @@
 
 import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
 import {CHAT_TYPE, ChatMessage, ChatMessageRequest} from "@/types/domain/chat/chat";
-import AnimatedMessages from "@/components/common/chat/AnimatedMessages";
+import AnimatedMessages from "@/components/chat/AnimatedMessages";
 
-import ChatInputButton from "@/components/common/chat/ChatInputButton";
+import ChatInputButton from "@/components/chat/ChatInputButton";
 import useAutoReply from "@/hooks/useAutoReply";
 import { useChatMessages } from "@/hooks/useChatMessages";
 import { useChatScroll } from "@/hooks/useChatScroll";

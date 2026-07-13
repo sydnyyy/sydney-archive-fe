@@ -3,8 +3,8 @@
 import { useEffect, useRef } from "react";
 import { sendAccessEvent } from "@/lib/api/accesslog/accessEventApi";
 import ModalLayout from "@/components/common/ModalLayout";
-import ModalActionBar from "@/components/guest/item/ModalActionBar";
-import ImageCarousel from "@/components/common/ImageCarousel";
+import ModalActionBar from "@/components/item/ModalActionBar";
+import ImageCarousel from "@/components/item/ImageCarousel";
 import { useAuthStore } from "@/store/useAuthStore";
 import { Item } from "@/types/domain/item/item";
 
