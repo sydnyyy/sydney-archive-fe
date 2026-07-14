@@ -5,12 +5,9 @@ import { useState } from "react";
 import {useAdminAuth} from "@/app/providers/admin/AdminAuthProvider";
 import {createItemApi, deleteItemApi, updateItemApi} from "@/lib/api/item/item.command";
 import {ItemCreateRequest, ItemUpdateRequest} from "@/types/dto/item/ItemRequest";
-import ItemSaveButton from "@/components/admin/item/button/ItemSaveButton";
-import ItemUpdateButton from "@/components/admin/item/button/ItemUpdateButton";
-import ItemDeleteButton from "@/components/admin/item/button/ItemDeleteButton";
-import ItemCancelButton from "@/components/admin/item/button/ItemCancelButton";
 import {VISIBILITY_STATUS} from "@/types/domain/common/VisibilityStatus";
 import VisibilityToggleButton from "@/components/common/button/VisibilityToggleButton";
+import {CheckIcon, PencilSquareIcon, TrashIcon, XMarkIcon} from "@heroicons/react/24/outline";
 
 interface AdminItemModalProps {
     item?: Item | null;
@@ -135,16 +132,22 @@ export default function AdminItemModal({
 
     return (
         <ModalLayout onClose={onClose}>
-            <div className="flex flex-col gap-1.5 w-full">
+            <div className="flex flex-col gap-3 w-full px-2 py-2">
 
-                <div className="flex justify-end px-3 py-1">
-                    <VisibilityToggleButton
-                        status={formData.visibilityStatus}
-                        onToggle={handleToggleVisibility}
-                    />
+                <div className="flex justify-end">
+                    {isEditMode ? (
+                        <VisibilityToggleButton
+                            status={formData.visibilityStatus}
+                            onToggle={handleToggleVisibility}
+                        />
+                    ) : (
+                        currentItem?.visibilityStatus && (
+                            <p> {currentItem.visibilityStatus} </p>
+                        )
+                    )}
                 </div>
 
-                <div className="flex flex-col gap-1 px-1.5 pt-2">
+                <div>
                     {isEditMode ? (
                         <textarea
                             name="description"
@@ -155,7 +158,7 @@ export default function AdminItemModal({
                         />
                     ) : (
                         currentItem?.description && (
-                            <div className="text-sm whitespace-pre-line py-1">
+                            <div className="whitespace-pre-line">
                                 {currentItem.description}
                             </div>
                         )
@@ -169,16 +172,40 @@ export default function AdminItemModal({
                     />
                 )}
 
-                <div className="mt-4 flex gap-2 justify-end p-2">
+                <div className="flex gap-2 justify-end">
                     {isEditMode ? (
                         <>
-                            {!isCreateMode && <ItemCancelButton onCancel={handleCancel} />}
-                            <ItemSaveButton onSave={handleSave} />
+                            {!isCreateMode && (
+                                <button
+                                    onClick={handleCancel}
+                                    className="flex items-center justify-center px-6 py-1.5 border rounded-xl"
+                                >
+                                    <XMarkIcon className="h-5 w-5" />
+                                </button>
+                            )}
+
+                            <button
+                                onClick={handleSave}
+                                className="flex items-center justify-center px-6 py-1.5 border rounded-xl"
+                            >
+                                <CheckIcon className="h-5 w-5" />
+                            </button>
                         </>
                     ) : (
                         <>
-                            <ItemUpdateButton onUpdate={() => {setIsEditMode(true)}}/>
-                            <ItemDeleteButton onDelete={handleDelete} />
+                            <button
+                                onClick={() => {setIsEditMode(true)}}
+                                className="flex items-center justify-center px-6 py-1.5 border rounded-xl"
+                            >
+                                <PencilSquareIcon className="h-5 w-5" />
+                            </button>
+
+                            <button
+                                onClick={handleDelete}
+                                className="flex items-center justify-center px-6 py-1.5 border rounded-xl"
+                            >
+                                <TrashIcon className="h-5 w-5" />
+                            </button>
                         </>
                     )}
                 </div>
