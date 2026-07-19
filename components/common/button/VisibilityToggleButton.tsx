@@ -1,4 +1,4 @@
-import {VisibilityStatus} from "@/types/domain/common/VisibilityStatus";
+import {VISIBILITY_STATUS, VisibilityStatus} from "@/types/domain/common/VisibilityStatus";
 import {Eye, EyeOff} from "lucide-react";
 
 interface VisibilityToggleButtonProps {
@@ -12,7 +12,7 @@ export default function VisibilityToggleButton({ status, onToggle }: VisibilityT
         <button
             onClick={onToggle}
             type="button"
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md font-medium text-xs transition-colors duration-200 border
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md font-medium text-sm transition-colors duration-200 border
                 ${isPublic 
                 ? 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100'
                 : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'
@@ -21,12 +21,12 @@ export default function VisibilityToggleButton({ status, onToggle }: VisibilityT
             {isPublic ? (
                 <>
                     <Eye className="w-3.5 h-3.5" />
-                    <span>공개</span>
+                    <span>{VISIBILITY_STATUS.PUBLIC}</span>
                 </>
             ) : (
                 <>
                     <EyeOff className="w-3.5 h-3.5" />
-                    <span>비공개</span>
+                    <span>{VISIBILITY_STATUS.PRIVATE}</span>
                 </>
             )}
         </button>

@@ -4,7 +4,7 @@ import {Suspense, useCallback, useEffect, useState} from "react";
 import OAuth2ProviderButton from "@/components/admin/auth/OAuth2ProviderButton";
 import {useRouter, useSearchParams} from "next/navigation";
 import {usePlatform} from "@/hooks/platform/usePlatform";
-import { fetchLoginSessionAvailabilityApi } from "@/lib/api/auth/admin.login.command";
+import { fetchLoginSessionAvailabilityApi } from "@/lib/api/admin/auth/login.command";
 import {Spinner} from "@/components/common/Spinner";
 
 function QrMobileGateContent() {

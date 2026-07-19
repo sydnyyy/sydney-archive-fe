@@ -1,17 +1,13 @@
 import {Item} from "@/types/domain/item/item";
 import ModalLayout from "@/components/common/ModalLayout";
-import ImageCarousel from "@/components/common/ImageCarousel";
+import ImageCarousel from "@/components/item/ImageCarousel";
 import { useState } from "react";
-import {useAdminAuth} from "@/app/providers/AdminAuthProvider";
-import {createItemApi, deleteItemApi, updateItemApi} from "@/lib/api/item/item.command";
+import {useAdminAuth} from "@/app/providers/admin/AdminAuthProvider";
+import {createItemApi, deleteItemApi, updateItemApi} from "@/lib/api/admin/item/item.command";
 import {ItemCreateRequest, ItemUpdateRequest} from "@/types/dto/item/ItemRequest";
-import CloseButton from "@/components/common/button/CloseButton";
-import ItemSaveButton from "@/components/admin/item/button/ItemSaveButton";
-import ItemUpdateButton from "@/components/admin/item/button/ItemUpdateButton";
-import ItemDeleteButton from "@/components/admin/item/button/ItemDeleteButton";
-import ItemCancelButton from "@/components/admin/item/button/ItemCancelButton";
 import {VISIBILITY_STATUS} from "@/types/domain/common/VisibilityStatus";
 import VisibilityToggleButton from "@/components/common/button/VisibilityToggleButton";
+import {CheckIcon, PencilSquareIcon, TrashIcon, XMarkIcon} from "@heroicons/react/24/outline";
 
 interface AdminItemModalProps {
     item?: Item | null;
@@ -40,7 +36,7 @@ export default function AdminItemModal({
         visibilityStatus: item?.visibilityStatus || VISIBILITY_STATUS.PRIVATE
     });
 
-    const { accessToken } = useAdminAuth();
+    const { accessToken, refreshAccessToken } = useAdminAuth();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -63,7 +59,7 @@ export default function AdminItemModal({
 
     const handleSave = async () => {
         if (!accessToken) {
-            alert("세션이 만료되었습니다. 재로그인이 필요합니다.");
+            console.error("Access token is missing. The operation failed.");
             return;
         }
 
@@ -79,7 +75,7 @@ export default function AdminItemModal({
                     visibilityStatus: formData.visibilityStatus
                 };
 
-                savedItem = await createItemApi(requestBody, accessToken);
+                savedItem = await createItemApi(requestBody, accessToken, refreshAccessToken);
             }
             else {
                 const requestBody: ItemUpdateRequest = {
@@ -90,7 +86,7 @@ export default function AdminItemModal({
                     visibilityStatus: formData.visibilityStatus
                 };
 
-                savedItem = await updateItemApi(currentItem.itemId, requestBody, accessToken);
+                savedItem = await updateItemApi(currentItem.itemId, requestBody, accessToken, refreshAccessToken);
             }
 
             setCurrentItem(savedItem);
@@ -100,14 +96,14 @@ export default function AdminItemModal({
             alert("아이템이 저장되었습니다");
             onDataChange?.();
         } catch (error) {
-            console.error("저장 실패:", error);
-            alert("저장 중 오류가 발생했습니다.");
+            console.error(error);
+            alert(error);
         }
     };
 
     const handleDelete = async () => {
         if (!accessToken) {
-            alert("세션이 만료되었습니다. 재로그인이 필요합니다.");
+            console.error("Access token is missing. The operation failed.");
             return;
         }
 
@@ -116,40 +112,39 @@ export default function AdminItemModal({
             return;
         }
 
-        const isConfirmed = confirm("아이템이 삭제됩니다.");
+        const isConfirmed = confirm("아이템울 삭제합니다.");
         if (isConfirmed) {
             try {
-                await deleteItemApi(currentItem?.itemId, accessToken);
+                await deleteItemApi(currentItem?.itemId, accessToken, refreshAccessToken);
                 alert("삭제되었습니다.");
                 onDataChange?.();
             } catch (error) {
-                console.error("삭제 실패:", error);
-                alert("삭제 중 오류가 발생했습니다.");
+                console.error(error);
+                alert(error);
             } finally {
                 onClose();
             }
-        } else {
-            alert("취소되었습니다.");
-            return;
         }
     };
 
     return (
         <ModalLayout onClose={onClose}>
-            <div className="flex flex-col gap-1.5 w-full">
+            <div className="flex flex-col gap-3 w-full px-2 py-2">
 
-                <div className="flex flex-col pl-3 pt-3">
-                    <CloseButton onClose={onClose} />
+                <div className="flex justify-end">
+                    {isEditMode ? (
+                        <VisibilityToggleButton
+                            status={formData.visibilityStatus}
+                            onToggle={handleToggleVisibility}
+                        />
+                    ) : (
+                        currentItem?.visibilityStatus && (
+                            <p> {currentItem.visibilityStatus} </p>
+                        )
+                    )}
                 </div>
 
-                <div className="flex justify-end px-3 py-1">
-                    <VisibilityToggleButton
-                        status={formData.visibilityStatus}
-                        onToggle={handleToggleVisibility}
-                    />
-                </div>
-
-                <div className="flex flex-col gap-1 px-1.5 pt-2">
+                <div>
                     {isEditMode ? (
                         <textarea
                             name="description"
@@ -160,7 +155,7 @@ export default function AdminItemModal({
                         />
                     ) : (
                         currentItem?.description && (
-                            <div className="text-sm whitespace-pre-line py-1">
+                            <div className="whitespace-pre-line">
                                 {currentItem.description}
                             </div>
                         )
@@ -174,16 +169,40 @@ export default function AdminItemModal({
                     />
                 )}
 
-                <div className="mt-4 flex gap-2 justify-end p-2">
+                <div className="flex gap-2 justify-end">
                     {isEditMode ? (
                         <>
-                            {!isCreateMode && <ItemCancelButton onCancel={handleCancel} />}
-                            <ItemSaveButton onSave={handleSave} />
+                            {!isCreateMode && (
+                                <button
+                                    onClick={handleCancel}
+                                    className="flex items-center justify-center px-6 py-1.5 border rounded-xl"
+                                >
+                                    <XMarkIcon className="h-5 w-5" />
+                                </button>
+                            )}
+
+                            <button
+                                onClick={handleSave}
+                                className="flex items-center justify-center px-6 py-1.5 border rounded-xl"
+                            >
+                                <CheckIcon className="h-5 w-5" />
+                            </button>
                         </>
                     ) : (
                         <>
-                            <ItemUpdateButton onUpdate={() => {setIsEditMode(true)}}/>
-                            <ItemDeleteButton onDelete={handleDelete} />
+                            <button
+                                onClick={() => {setIsEditMode(true)}}
+                                className="flex items-center justify-center px-6 py-1.5 border rounded-xl"
+                            >
+                                <PencilSquareIcon className="h-5 w-5" />
+                            </button>
+
+                            <button
+                                onClick={handleDelete}
+                                className="flex items-center justify-center px-6 py-1.5 border rounded-xl"
+                            >
+                                <TrashIcon className="h-5 w-5" />
+                            </button>
                         </>
                     )}
                 </div>

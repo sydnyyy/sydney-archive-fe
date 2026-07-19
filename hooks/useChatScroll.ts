@@ -1,14 +1,13 @@
 "use client";
 
 import { useRef, useLayoutEffect } from "react";
-import { ChatMessage } from "@/types/chat";
+import { ChatMessage } from "@/types/domain/chat/chat";
 
 export function useChatScroll(
     messages: ChatMessage[],
     isInitialLoadDone: boolean,
     loadPreviousMessages: () => Promise<ChatMessage[]>,
     onPrependMessages: (older: ChatMessage[]) => void,
-    onNoMoreMessages?: () => void
 ) {
 
     const messagesContainerRef = useRef<HTMLDivElement | null>(null);
@@ -28,7 +27,6 @@ export function useChatScroll(
             const prevHeight = container.scrollHeight;
             const older = await loadPreviousMessages();
             if (!older || older.length === 0) {
-                onNoMoreMessages?.();
                 return;
             }
 

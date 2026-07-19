@@ -1,70 +1,29 @@
 :root {
-    /* 메인 화면 */
     --color-bg-main: #6CA67C;
-
-    /* 모달 / 상품 상세 */
     --color-bg-modal: #EDF2EF;
-    --color-bg-hover: rgba(0, 0, 0, 0.5);
-    --color-overlay: rgba(0, 0, 0, 0.5);
+    --color-bg-hover: #222226;
 
     /* 텍스트(Text Colors) */
     --color-text-primary: #111111;
     --color-text-secondary: #444444;
     --color-text-tertiary: #777777;
+    --color-text-quaternary: #D7D8E0;
 
-    /* UI Colors */
-    --color-border: #9CA3AF;
-    --color-bg-soft: #F5F5F5;
-    --color-bg-hover: #EDEDED;
-
-    /* Accent */
-    --color-accent: #4A7B5A;
-
-    /* 하단/웹 탭 경계선 */
-    --color-chat-border: #9CA3AF;
+    /* 채팅 */
     --color-chat-bg: #EDEDF5;
-
-    /* 채팅 시스템 메시지 */
     --color-chat-system-bg: #E1E8E5;
     --color-chat-system-text: #6CA67C;
-
-    /* 내 메시지 */
     --color-chat-mine-bg: #6CA67C;
     --color-chat-mine-text: #ffffff;
-
-    /* 상대 메시지 */
     --color-chat-other-bg: #e6ebed;
     --color-chat-other-text: #111111;
-
-    /* 채팅 시간 텍스트 색상 */
     --color-chat-time: #6B7280;
-
-    /* 채팅 전송 버튼 */
-    --color-chat-send-bg: #6CA67C;
-    --color-chat-send-text: #ffffff;
-
-    /* 채팅방 상단 안내 문구 */
-    --color-chat-top-text: #6C757D;
-    --color-chat-top-border: #EEEEEE;
-
-    /* 관리자 탭 배경 / 강조 */
-    --admin-bg-active: #6CA67C;
-    --admin-bg-inactive: #E1E8E5;
-
-    /* Hover shadow */
-    --admin-shadow-active: rgba(0, 0, 0, 0.3);
-    --admin-shadow-inactive: rgba(0, 0, 0, 0.2);
-    --admin-shadow-hover: rgba(0, 0, 0, 0.35);
-
-    /* 텍스트 */
-    --color-text-active: #FFFFFF;
-    --color-text-inactive: #374151;
 }
 
 :root[data-theme="dark"] {
-    --color-bg-main: #1B1B1F;
+    --color-bg-main: #1A1E21;
+    --color-bg-modal: #0C0E0F;
     --color-bg-hover: #222226;
-    --color-bg-modal: #28292E;
 
     --color-border-primary: #9CA3AF;
     --color-border-secondary: #46484D;
@@ -79,53 +38,20 @@
     --color-btn-primary-text: #B0B2B8;
     --color-btn-primary-hover-bg: #3F3F46;
 
-    /* 채팅 배경 및 테두리 */
-    --color-chat-bg: #111111;
-    --color-admin-chat-border: #9CA3AF;
-
-    /* ChatRoomCard */
-    --admin-chatroom-bg: #4C4C4F;
-    --admin-chatroom-bg-hover: #C4C4CC;
-    --admin-chatroom-text: #FFFFFF;
-    --admin-chatroom-text-selected: #111111;
-    --admin-chatroom-shadow: rgba(0, 0, 0, 0.2);
-
-    /* 채팅 시스템 메시지 */
+    /* 채팅 */
+    --color-chat-bg: #0C0E0F;
     --color-chat-system-bg: #C4C4CC;
     --color-chat-system-text: #45454A;
-    --chat-input-placeholder-text: #9CA3AF;
-
-    /* 내 메시지 */
     --color-chat-mine-bg: #74747A;
     --color-chat-mine-text: #D7D8E0;
-
-    /* 상대 메시지 */
     --color-chat-other-bg: #4C4C4F;
     --color-chat-other-text: #D7D8E0;
-
-    /* 채팅 시간 텍스트 색상 */
     --color-chat-time: #6B7280;
 
-    /* 채팅 전송 버튼 */
-    --color-chat-send-bg: #74747A;
-    --color-chat-send-text: #D7D8E0;
-
-    /* 채팅 닫기 버튼 */
-    --color-chat-close-text: #D7D8E0;
-    --color-chat-close-text-hover: #74747A;
-
-    /* 관리자 탭 배경 / 강조 */
-    --color-admin-tab-bg-active: #C4C4CC;
-    --color-admin-tab-bg-inactive: #4C4C4F;
-
-    /* Hover shadow */
-    --admin-shadow-active: rgba(0, 0, 0, 0.3);
-    --admin-shadow-inactive: rgba(0, 0, 0, 0.2);
-    --admin-shadow-hover: rgba(0, 0, 0, 0.35);
-
-    /* 텍스트 */
-    --color-admin-tab-text-active: #1B1B1F;
-    --color-admin-tab-text-inactive: #D7D8E0;
+    --admin-chatroom-bg: #28292E;
+    --admin-chatroom-bg-hover: #85AED4;
+    --admin-chatroom-text: #D7D8E0;
+    --admin-chatroom-text-selected: #1B1B1F;
 
     /* 캘린더 세션 마킹 */
     --color-calendar-accent: #4f46e5;

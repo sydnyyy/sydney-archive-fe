@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "../globals.css";
 import { fontVariables } from "../_shared/fonts";
 import MainNavigation from "@/components/common/MainNavigation";
-import GuestAuthProvider from "@/app/providers/GuestAuthProvider";
-import { ChatProvider } from "@/app/(home)/context/ChatContext";
+import AuthProvider from "@/app/providers/user/AuthProvider";
+import Header from "@/components/layout/Header";
 
 export const metadata: Metadata = {
     title: "sydney archive",
@@ -13,12 +13,19 @@ export const metadata: Metadata = {
 export default function HomeLayout({ children }: { children: React.ReactNode }) {
     return (
         <div className={`${fontVariables} antialiased`}>
-            <GuestAuthProvider>
-                <ChatProvider>
-                    {children}
+            <AuthProvider>
+                <div className="h-screen overflow-hidden">
+                    <main className="h-full">
+                        <div className="w-full max-w-[540px] h-full mx-auto flex flex-col p-3">
+                            <div className="mt-5 mr-4 mb-5">
+                                <Header />
+                            </div>
+                            {children}
+                        </div>
+                    </main>
                     <MainNavigation />
-                </ChatProvider>
-            </GuestAuthProvider>
+                </div>
+            </AuthProvider>
         </div>
     );
 }

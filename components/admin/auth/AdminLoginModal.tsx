@@ -2,7 +2,7 @@
 
 import ModalLayout from "@/components/common/ModalLayout";
 import OAuth2ProviderButton from "@/components/admin/auth/OAuth2ProviderButton";
-import {useAdminLoginStore} from "@/hooks/auth/useAdminLoginStore";
+import {useAdminLoginStore} from "@/store/useAdminLoginStore";
 import {usePlatform} from "@/hooks/platform/usePlatform";
 import {useEffect} from "react";
 import {Spinner} from "@/components/common/Spinner";

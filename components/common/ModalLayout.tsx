@@ -2,6 +2,7 @@
 
 import { ReactNode } from "react";
 import { motion } from "framer-motion";
+import CloseButton from "@/components/common/button/CloseButton";
 
 interface ModalLayoutProps {
     children: ReactNode;
@@ -20,10 +21,11 @@ export default function ModalLayout({
                                     }: ModalLayoutProps) {
 
     return (
-        <div
-            className="fixed inset-0 flex justify-center items-center z-50"
-            style={{ backgroundColor: "var(--color-overlay)" }}
-            onClick={onClose}
+        <div className="
+                fixed inset-0 z-50
+                flex justify-center items-center
+                bg-black/30
+            "
         >
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -31,15 +33,29 @@ export default function ModalLayout({
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.18, ease: "easeOut" }}
                 className={`
-                    rounded-xl p-1
                     ${widthClass} max-w-[95vw]
                     ${heightClass}
+                   
+                    flex flex-col
+                    rounded-xl p-2 gap-2
+                    bg-[var(--color-bg-modal)]
+                         
                     ${scrollable ? "overflow-auto hide-scrollbar" : "overflow-hidden"}
                 `}
-                style={{ backgroundColor: "var(--color-bg-modal)" }}
                 onClick={(e) => e.stopPropagation()}
             >
-                {children}
+
+                {onClose && (
+                    <header>
+                        <div className="flex flex-col ml-1">
+                            <CloseButton onClose={onClose} />
+                        </div>
+                    </header>
+                )}
+
+                <main className="flex-1 overflow-y-auto hide-scrollbar">
+                    {children}
+                </main>
             </motion.div>
         </div>
     );
