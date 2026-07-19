@@ -33,7 +33,7 @@ export default function AdminChatModal({
     const { loadMessages, loadPreviousMessages } = useChatMessages();
     const [isInitialLoadDone, setIsInitialLoadDone] = useState(false);
 
-    const { accessToken } = useAdminAuth();
+    const { accessToken, refreshAccessToken } = useAdminAuth();
 
     const { messagesContainerRef, messagesEndRef, handleScroll } = useChatScroll(
         messages,
@@ -86,7 +86,7 @@ export default function AdminChatModal({
         const isConfirmed = confirm("채팅방을 삭제합니다.");
         if (isConfirmed) {
             try {
-                await deleteChatRoomApi(chatRoomId, accessToken);
+                await deleteChatRoomApi(chatRoomId, accessToken, refreshAccessToken);
                 alert("삭제되었습니다.");
             } catch (error) {
                 console.error(error);
