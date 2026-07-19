@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { addLikeApi, deleteLikeApi } from "@/lib/api/like/likeApi";
+import { addLikeApi, deleteLikeApi } from "@/lib/api/user/like/likeApi";
 
 interface LikeButtonProps {
     sid?: string | null;

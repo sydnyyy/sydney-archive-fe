@@ -1,4 +1,4 @@
-import {AdminChatRoom, ChatMessage} from "@/types/domain/chat/chat";
+import {ChatMessage} from "@/types/domain/chat/chat";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -13,10 +13,16 @@ export async function fetchMessagesApi(
         url.searchParams.append("cursorId", cursorId);
     }
 
-    const res = await fetch(url.toString());
+    const res = await fetch(
+        url.toString(),
+        {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        });
+
     if (!res.ok) {
         const errorData: ApiErrorResponse = await res.json();
-        const error = new Error(errorData.message || "채팅 메시지 조회 실패");
+        const error = new Error(errorData.message || "Failed to fetch messages.");
         (error as any).code = errorData.code;
         (error as any).status = errorData.status;
         throw error;

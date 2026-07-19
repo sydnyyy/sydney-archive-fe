@@ -2,9 +2,9 @@
 
 import React, {createContext, useCallback, useContext, useEffect, useState} from "react";
 import { Admin } from "@/types/domain/user/user";
-import { issueAccessTokenApi, logoutApi } from "@/lib/api/auth/admin.auth.command";
-import { fetchCurrentAdminApi } from "@/lib/api/admin/user/admin.query";
-import {completeLoginSessionApi} from "@/lib/api/auth/admin.login.command";
+import { issueAccessTokenApi, logoutApi } from "@/lib/api/admin/auth/auth.command";
+import { fetchCurrentAdminApi } from "@/lib/api/admin/auth/auth.query";
+import {completeLoginSessionApi} from "@/lib/api/admin/auth/login.command";
 import {useAdminLoginStore} from "@/store/useAdminLoginStore";
 
 interface AdminAuthContextValue {

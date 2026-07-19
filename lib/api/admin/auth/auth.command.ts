@@ -1,7 +1,7 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export async function issueAccessTokenApi(
-    loginSessionSid: string | null
+    loginSessionSid?: string | null,
 ): Promise<string> {
     const res = await fetch(
         `${API_BASE_URL}/api/admin/auth/token/issue`,
@@ -11,15 +11,16 @@ export async function issueAccessTokenApi(
             headers: {
                 "Content-Type": "application/json",
             },
-            ...(loginSessionSid !== null && {
-                body: JSON.stringify({ loginSessionSid })
-            })
+            ...(loginSessionSid !== null &&
+                loginSessionSid !== undefined && {
+                    body: JSON.stringify({ loginSessionSid }),
+                }),
         }
     );
 
     if (!res.ok) {
         const errorData: ApiErrorResponse = await res.json();
-        const error = new Error(errorData.message || "액세스 토큰 생성에 실패했습니다.");
+        const error = new Error(errorData.message || "Failed to issue access token.");
         (error as any).code = errorData.code;
         (error as any).status = errorData.status;
         throw error;
@@ -40,6 +41,6 @@ export async function logoutApi(): Promise<void> {
     );
 
     if (!res.ok) {
-        throw new Error("logout failed");
+        console.error("Failed to logout");
     }
 }

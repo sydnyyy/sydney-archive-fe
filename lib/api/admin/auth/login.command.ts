@@ -19,7 +19,7 @@ export async function fetchLoginSessionApi(
 
     if (!response.ok) {
         const errorData: ApiErrorResponse = await response.json();
-        const error = new Error(errorData.message || "로그인 세션 생성을 실패했습니다.");
+        const error = new Error(errorData.message || "Failed to fetch login session.");
         (error as any).code = errorData.code;
         (error as any).status = errorData.status;
         throw error;
@@ -39,7 +39,7 @@ export async function fetchLoginSessionAvailabilityApi(sid: string): Promise<boo
 
     if (!response.ok) {
         const errorData: ApiErrorResponse = await response.json();
-        const error = new Error(errorData.message || "로그인 세션 상태 조회를 실패했습니다.");
+        const error = new Error(errorData.message || "Failed to fetch login session status.");
         (error as any).code = errorData.code;
         (error as any).status = errorData.status;
         throw error;
@@ -66,7 +66,7 @@ export async function completeLoginSessionApi(
 
     if (!response.ok) {
         const errorData: ApiErrorResponse = await response.json();
-        const error = new Error(errorData.message || "로그인을 실패했습니다.");
+        const error = new Error(errorData.message || "Failed to login.");
         (error as any).code = errorData.code;
         (error as any).status = errorData.status;
         throw error;
