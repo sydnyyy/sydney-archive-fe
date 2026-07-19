@@ -3,7 +3,7 @@
 import React, {createContext, useCallback, useContext, useEffect, useState} from "react";
 import { Admin } from "@/types/domain/user/user";
 import { issueAccessTokenApi, logoutApi } from "@/lib/api/auth/admin.auth.command";
-import { fetchCurrentAdminApi } from "@/lib/api/user/admin.query";
+import { fetchCurrentAdminApi } from "@/lib/api/admin/user/admin.query";
 import {completeLoginSessionApi} from "@/lib/api/auth/admin.login.command";
 import {useAdminLoginStore} from "@/store/useAdminLoginStore";
 
@@ -11,6 +11,7 @@ interface AdminAuthContextValue {
     admin: Admin | null;
     loading: boolean;
     accessToken: string | null;
+    refreshAccessToken: () => Promise<string>;
     loginSync: () => Promise<void>;
     completeLoginSessionAndLoginSync: (sid: string, version: number) => Promise<void>;
     logout: () => void;
@@ -35,6 +36,18 @@ export default function AdminAuthProvider({ children }: { children: React.ReactN
         setAccessToken(null);
     }, []);
 
+    const refreshAccessToken = useCallback(async() => {
+        try {
+            const newAccessToken = await issueAccessTokenApi();
+            setAccessToken(newAccessToken);
+            return newAccessToken;
+        } catch (error) {
+            console.error(error);
+            await logout();
+            throw error;
+        }
+    }, [clearAuth]);
+
     const loginSync = useCallback(async() => {
         try {
             setLoading(true);
@@ -42,7 +55,7 @@ export default function AdminAuthProvider({ children }: { children: React.ReactN
             const newAccessToken = await issueAccessTokenApi(alsid);
             setAccessToken(newAccessToken);
 
-            const fetchedAdmin = await fetchCurrentAdminApi(newAccessToken);
+            const fetchedAdmin = await fetchCurrentAdminApi(newAccessToken, refreshAccessToken);
             setAdmin(fetchedAdmin);
 
             if (fetchedAdmin) {
@@ -67,7 +80,7 @@ export default function AdminAuthProvider({ children }: { children: React.ReactN
             const newAccessToken = await issueAccessTokenApi(sid);
             setAccessToken(newAccessToken);
 
-            const fetchedAdmin = await fetchCurrentAdminApi(newAccessToken);
+            const fetchedAdmin = await fetchCurrentAdminApi(newAccessToken, refreshAccessToken);
             setAdmin(fetchedAdmin);
 
             if (fetchedAdmin) {
@@ -100,6 +113,7 @@ export default function AdminAuthProvider({ children }: { children: React.ReactN
                 admin,
                 loading,
                 accessToken,
+                refreshAccessToken,
                 loginSync,
                 completeLoginSessionAndLoginSync,
                 logout

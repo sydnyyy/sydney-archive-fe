@@ -4,13 +4,13 @@ import {useAdminAuth} from "@/app/providers/admin/AdminAuthProvider";
 import {useAdminWebSocket} from "@/app/providers/admin/AdminWebSocketProvider";
 import {useEffect, useState} from "react";
 import {AdminChatRoom, ChatMessage} from "@/types/domain/chat/chat";
-import {fetchChatUserListApi} from "@/lib/api/chat/chat.query";
+import {fetchChatUserListApi} from "@/lib/api/admin/chat/chat.query";
 import AdminChatRoomCard from "@/components/admin/chat/AdminChatRoomCard";
 import AdminChatModal from "@/components/admin/chat/AdminChatModal";
 
 export default function AdminChatPage() {
 
-    const { admin, accessToken } = useAdminAuth();
+    const { admin, accessToken, refreshAccessToken } = useAdminAuth();
     const { stompClient, chatMessage } = useAdminWebSocket();
 
     const [chatRooms, setChatRooms] = useState<AdminChatRoom[]>([]);
@@ -18,11 +18,14 @@ export default function AdminChatPage() {
     const [messages, setMessages] = useState<ChatMessage[]>([]);
 
     useEffect(() => {
-        if (!accessToken) return;
+        if (!accessToken) {
+            console.error("Access token is missing. The operation failed.");
+            return;
+        }
 
         const fetchChatRooms = async() => {
             try {
-                const res = await fetchChatUserListApi(accessToken);
+                const res = await fetchChatUserListApi(accessToken, refreshAccessToken);
                 setChatRooms(res);
 
                 if (selectedChatRoomId !== null && selectedChatRoomId === chatMessage?.chatRoomId) {
