@@ -7,6 +7,9 @@ import {useChatScroll} from "@/hooks/useChatScroll";
 import AnimatedMessages from "@/components/chat/AnimatedMessages";
 import ChatInputButton from "@/components/chat/ChatInputButton";
 import CloseButton from "@/components/common/button/CloseButton";
+import {TrashIcon} from "@heroicons/react/24/outline";
+import {useAdminAuth} from "@/app/providers/admin/AdminAuthProvider";
+import {deleteChatRoomApi} from "@/lib/api/admin/chat/chat.command";
 
 interface Props {
     chatRoomId: string;
@@ -29,6 +32,8 @@ export default function AdminChatModal({
     const [inputMessage, setInputMessage] = useState("");
     const { loadMessages, loadPreviousMessages } = useChatMessages();
     const [isInitialLoadDone, setIsInitialLoadDone] = useState(false);
+
+    const { accessToken } = useAdminAuth();
 
     const { messagesContainerRef, messagesEndRef, handleScroll } = useChatScroll(
         messages,
@@ -67,6 +72,30 @@ export default function AdminChatModal({
         setInputMessage("");
     };
 
+    const handleDelete = async () => {
+        if (!accessToken) {
+            console.error("Access token is missing. The operation failed.");
+            return;
+        }
+
+        if (!chatRoomId) {
+            alert("삭제할 chatRoomId 값은 필수입니다.");
+            return;
+        }
+
+        const isConfirmed = confirm("채팅방을 삭제합니다.");
+        if (isConfirmed) {
+            try {
+                await deleteChatRoomApi(chatRoomId, accessToken);
+                alert("삭제되었습니다.");
+            } catch (error) {
+                console.error(error);
+            } finally {
+                onClose();
+            }
+        }
+    };
+
     return (
         <div
             className="
@@ -80,7 +109,15 @@ export default function AdminChatModal({
         >
             <header className="flex items-center justify-between mb-2">
                 <CloseButton onClose={onClose} />
-                <span>{chatRoomId}</span>
+                <div className="flex items-center gap-3">
+                    <span>{chatRoomId}</span>
+                    <button
+                        onClick={handleDelete}
+                        className="flex items-center justify-center px-4.5 py-1.5 border rounded-xl"
+                    >
+                        <TrashIcon className="h-5 w-5" />
+                    </button>
+                </div>
             </header>
 
             <div
