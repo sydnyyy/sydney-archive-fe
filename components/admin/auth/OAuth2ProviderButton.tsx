@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import {Platform} from "@/hooks/platform/usePlatform";
-import {fetchLoginSessionAvailabilityApi} from "@/lib/api/auth/admin.login.command";
+import {fetchLoginSessionAvailabilityApi} from "@/lib/api/admin/auth/login.command";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 

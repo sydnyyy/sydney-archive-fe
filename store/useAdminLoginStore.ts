@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import {LoginSession} from "@/types/domain/auth/Auth";
-import {fetchLoginSessionApi} from "@/lib/api/auth/admin.login.command";
+import {fetchLoginSessionApi} from "@/lib/api/admin/auth/login.command";
 
 interface LoginState {
     loginSession: LoginSession | null;

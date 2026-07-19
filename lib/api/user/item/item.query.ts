@@ -17,7 +17,11 @@ export async function fetchItemsApi(
         });
 
     if (!res.ok) {
-        throw new Error("아이템 목록 불러오기 실패");
+        const errorData: ApiErrorResponse = await res.json();
+        const error = new Error(errorData.message || "Failed to fetch items.");
+        (error as any).code = errorData.code;
+        (error as any).status = errorData.status;
+        throw error;
     }
 
     return res.json();

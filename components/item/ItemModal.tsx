@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { sendAccessEvent } from "@/lib/api/accesslog/accessEventApi";
+import { sendAccessEvent } from "@/lib/api/user/accesslog/accessEvent";
 import ModalLayout from "@/components/common/ModalLayout";
 import ModalActionBar from "@/components/item/ModalActionBar";
 import ImageCarousel from "@/components/item/ImageCarousel";

@@ -5,15 +5,13 @@ export async function fetchGuestSid(): Promise<string> {
         `${API_BASE_URL}/api/auth/sid`,
         {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            }
+            headers: { "Content-Type": "application/json" }
         }
     );
 
     if (!res.ok) {
         const errorData: ApiErrorResponse = await res.json();
-        const error = new Error(errorData.message || "SID 생성 중 오류가 발생했습니다.");
+        const error = new Error(errorData.message || "Failed to fetch Guest SID.");
         (error as any).code = errorData.code;
         (error as any).status = errorData.status;
         throw error;

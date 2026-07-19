@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
-import { fetchGuestSid } from "@/lib/api/auth/guest.auth.command";
+import { fetchGuestSid } from "@/lib/api/user/auth/auth.command";
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
     const { sid, setSid, _hasHydrated } = useAuthStore();

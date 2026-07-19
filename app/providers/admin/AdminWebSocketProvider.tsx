@@ -1,7 +1,7 @@
 import React, {createContext, useCallback, useContext, useEffect, useRef, useState} from "react";
 import {Client} from "@stomp/stompjs";
 import {useAdminAuth} from "@/app/providers/admin/AdminAuthProvider";
-import {createStompClient} from "@/lib/api/chat/socketClient";
+import {createStompClient} from "@/lib/api/admin/chat/socketClient";
 import {ChatMessage} from "@/types/domain/chat/chat";
 
 interface AdminWebSocketContextValue {

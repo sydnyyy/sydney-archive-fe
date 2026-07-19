@@ -4,8 +4,9 @@ export async function sendAccessEvent(
     sid: string,
     itemId: string
 ): Promise<void> {
-    try {
-        await fetch(`${API_BASE_URL}/api/access`, {
+    const res = await fetch(
+        `${API_BASE_URL}/api/access`,
+        {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -14,7 +15,8 @@ export async function sendAccessEvent(
                 accessTime: new Date().toISOString(),
             }),
         });
-    } catch (error) {
-        console.error("Access event 전송 실패:", error);
+
+    if (!res.ok) {
+        console.error("Failed to send access event.");
     }
 }

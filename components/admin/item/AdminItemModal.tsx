@@ -3,7 +3,7 @@ import ModalLayout from "@/components/common/ModalLayout";
 import ImageCarousel from "@/components/item/ImageCarousel";
 import { useState } from "react";
 import {useAdminAuth} from "@/app/providers/admin/AdminAuthProvider";
-import {createItemApi, deleteItemApi, updateItemApi} from "@/lib/api/item/item.command";
+import {createItemApi, deleteItemApi, updateItemApi} from "@/lib/api/admin/item/item.command";
 import {ItemCreateRequest, ItemUpdateRequest} from "@/types/dto/item/ItemRequest";
 import {VISIBILITY_STATUS} from "@/types/domain/common/VisibilityStatus";
 import VisibilityToggleButton from "@/components/common/button/VisibilityToggleButton";
@@ -36,7 +36,7 @@ export default function AdminItemModal({
         visibilityStatus: item?.visibilityStatus || VISIBILITY_STATUS.PRIVATE
     });
 
-    const { accessToken } = useAdminAuth();
+    const { accessToken, refreshAccessToken } = useAdminAuth();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -59,7 +59,7 @@ export default function AdminItemModal({
 
     const handleSave = async () => {
         if (!accessToken) {
-            alert("세션이 만료되었습니다. 재로그인이 필요합니다.");
+            console.error("Access token is missing. The operation failed.");
             return;
         }
 
@@ -75,7 +75,7 @@ export default function AdminItemModal({
                     visibilityStatus: formData.visibilityStatus
                 };
 
-                savedItem = await createItemApi(requestBody, accessToken);
+                savedItem = await createItemApi(requestBody, accessToken, refreshAccessToken);
             }
             else {
                 const requestBody: ItemUpdateRequest = {
@@ -86,7 +86,7 @@ export default function AdminItemModal({
                     visibilityStatus: formData.visibilityStatus
                 };
 
-                savedItem = await updateItemApi(currentItem.itemId, requestBody, accessToken);
+                savedItem = await updateItemApi(currentItem.itemId, requestBody, accessToken, refreshAccessToken);
             }
 
             setCurrentItem(savedItem);
@@ -96,14 +96,14 @@ export default function AdminItemModal({
             alert("아이템이 저장되었습니다");
             onDataChange?.();
         } catch (error) {
-            console.error("저장 실패:", error);
-            alert("저장 중 오류가 발생했습니다.");
+            console.error(error);
+            alert(error);
         }
     };
 
     const handleDelete = async () => {
         if (!accessToken) {
-            alert("세션이 만료되었습니다. 재로그인이 필요합니다.");
+            console.error("Access token is missing. The operation failed.");
             return;
         }
 
@@ -112,21 +112,18 @@ export default function AdminItemModal({
             return;
         }
 
-        const isConfirmed = confirm("아이템이 삭제됩니다.");
+        const isConfirmed = confirm("아이템울 삭제합니다.");
         if (isConfirmed) {
             try {
-                await deleteItemApi(currentItem?.itemId, accessToken);
+                await deleteItemApi(currentItem?.itemId, accessToken, refreshAccessToken);
                 alert("삭제되었습니다.");
                 onDataChange?.();
             } catch (error) {
-                console.error("삭제 실패:", error);
-                alert("삭제 중 오류가 발생했습니다.");
+                console.error(error);
+                alert(error);
             } finally {
                 onClose();
             }
-        } else {
-            alert("취소되었습니다.");
-            return;
         }
     };
 

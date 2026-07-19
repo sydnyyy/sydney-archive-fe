@@ -3,24 +3,29 @@
 import { AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Item } from "@/types/domain/item/item";
-import { fetchItemsApi } from "@/lib/api/item/item.query";
 import { useAdminAuth } from "@/app/providers/admin/AdminAuthProvider";
 import AdminItemModal from "@/components/admin/item/AdminItemModal";
 import ItemCreateButton from "@/components/admin/item/button/ItemCreateButton";
+import {fetchItemsApi} from "@/lib/api/admin/item/item.query";
 
 export default function AdminItemPage() {
     const [items, setItems] = useState<Item[]>([]);
     const [selectedItem, setSelectedItem] = useState<Item | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const { accessToken } = useAdminAuth();
+    const { accessToken, refreshAccessToken } = useAdminAuth();
 
     const loadItems = async () => {
+        if (!accessToken) {
+            console.error("Access token is missing. The operation failed.");
+            return;
+        }
+
         try {
-            const fetched = await fetchItemsApi(accessToken);
+            const fetched = await fetchItemsApi(accessToken, refreshAccessToken);
             setItems(fetched);
-        } catch (err) {
-            console.error("아이템 목록 갱신 실패: ", err);
+        } catch (error) {
+            console.error(error);
         }
     };
 
