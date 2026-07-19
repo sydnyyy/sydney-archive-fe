@@ -4,7 +4,7 @@ import {Client} from "@stomp/stompjs";
 import {ChatMessage} from "@/types/domain/chat/chat";
 import React, {createContext, useCallback, useContext, useEffect, useRef, useState} from "react";
 import {useAuthStore} from "@/store/useAuthStore";
-import {createStompClient} from "@/lib/api/chat/socketClient";
+import {createStompClient} from "@/lib/api/admin/chat/socketClient";
 
 interface WebSocketContextValue {
     stompClient: Client | null;
