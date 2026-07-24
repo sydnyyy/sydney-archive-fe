@@ -8,7 +8,7 @@ export async function deleteChatRoomApi(
     refreshAccessToken: () => Promise<string>
 ): Promise<void> {
     httpRequestWithAuth(
-        `${API_BASE_URL}/api/admin/chat/${chatRoomId}`,
+        `${API_BASE_URL}/api/chat/rooms/${chatRoomId}`,
         {
             method: "DELETE",
             credentials: "include",

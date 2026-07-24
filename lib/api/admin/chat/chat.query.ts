@@ -8,7 +8,7 @@ export async function fetchChatUserListApi(
     refreshAccessToken: () => Promise<string>
 ): Promise<AdminChatRoom[]> {
     return httpRequestWithAuth(
-        `${API_BASE_URL}/api/admin/chat/rooms`,
+        `${API_BASE_URL}/api/chat/rooms`,
         {
             method: "GET",
             credentials: "include",
