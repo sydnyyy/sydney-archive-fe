@@ -1,11 +1,14 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export async function fetchGuestSid(): Promise<string> {
+export async function fetchGuestSid(
+    sid?: string | null
+): Promise<string> {
     const res = await fetch(
         `${API_BASE_URL}/api/auth/sid`,
         {
             method: "POST",
-            headers: { "Content-Type": "application/json" }
+            headers: { "Content-Type": "application/json" },
+            body: sid ? JSON.stringify({ sid }) : undefined
         }
     );
 
