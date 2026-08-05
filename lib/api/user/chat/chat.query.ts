@@ -3,12 +3,12 @@ import {ChatMessage} from "@/types/domain/chat/chat";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export async function fetchMessagesApi(
-    sid: string,
+    uid: string,
     cursorId?: string
 ): Promise<ChatMessage[]> {
 
     const url = new URL(`${API_BASE_URL}/api/chat/messages`);
-    url.searchParams.append("sid", sid);
+    url.searchParams.append("uid", uid);
     if (cursorId) {
         url.searchParams.append("cursorId", cursorId);
     }

@@ -1,38 +1,38 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { fetchGuestSid } from "@/lib/api/user/auth/auth.command";
+import { fetchUid } from "@/lib/api/user/auth/auth.command";
 
 interface AuthState {
-    sid: string | null;
-    setSid: (sid: string) => void;
-    refreshSid: () => void;
-    clearSid: () => void;
+    uid: string | null;
+    setUid: (uid: string) => void;
+    refreshUid: () => void;
+    clearUid: () => void;
     _hasHydrated: boolean;
     setHasHydrated: (state: boolean) => void;
 }
 
-export const USER_SID_KEY = "sid";
+export const UID_KEY = "uid";
 
 export const useAuthStore = create<AuthState>() (
     persist(
         (set, get) => ({
-            sid: null,
-            setSid: (sid) => set({ sid: sid }),
-            refreshSid: async () => {
+            uid: null,
+            setUid: (uid) => set({ uid: uid }),
+            refreshUid: async () => {
                 try {
-                    set({ sid: await fetchGuestSid(get().sid) })
+                    set({ uid: await fetchUid(get().uid) })
                 } catch (error) {
                     console.log(error);
                 }
             },
-            clearSid: () => set({ sid: null }),
+            clearUid: () => set({ uid: null }),
             _hasHydrated: false,
             setHasHydrated: (state) => set({ _hasHydrated: state }),
         }),
         {
-            name: USER_SID_KEY,
+            name: UID_KEY,
             partialize: (state) => ({
-                sid: state.sid
+                sid: state.uid
             }),
             onRehydrateStorage: () => (state) => {
                 state?.setHasHydrated(true);

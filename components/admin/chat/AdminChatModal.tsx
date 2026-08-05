@@ -13,7 +13,7 @@ import {deleteChatRoomApi} from "@/lib/api/admin/chat/chat.command";
 
 interface Props {
     chatRoomId: string;
-    adminSid: string;
+    adminUid: string;
     stompClient: any;
     messages: ChatMessage[];
     setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
@@ -22,7 +22,7 @@ interface Props {
 
 export default function AdminChatModal({
                                            chatRoomId,
-                                           adminSid,
+                                           adminUid,
                                            stompClient,
                                            messages,
                                            setMessages,
@@ -58,8 +58,8 @@ export default function AdminChatModal({
         if (!inputMessage.trim()) return;
 
         const chatMessageRequest: ChatMessageRequest = {
-            senderSid: adminSid,
-            receiverSid: chatRoomId,
+            senderUid: adminUid,
+            receiverUid: chatRoomId,
             content: inputMessage.trim(),
             type: CHAT_TYPE.ADMIN,
         };

@@ -1,7 +1,7 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export async function sendAccessEvent(
-    sid: string,
+    uid: string,
     itemId: string
 ): Promise<void> {
     const res = await fetch(
@@ -10,7 +10,7 @@ export async function sendAccessEvent(
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                sid,
+                uid,
                 itemId,
                 accessTime: new Date().toISOString(),
             }),

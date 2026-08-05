@@ -26,13 +26,13 @@ export default function ItemModal({
 
     if (!item) return null;
 
-    const { sid } = useAuthStore();
+    const { uid } = useAuthStore();
     const hasSentLog = useRef(false);
 
     useEffect(() => {
         if (!item) return;
-        if (!hasSentLog.current && sid) {
-            sendAccessEvent(sid, item.itemId);
+        if (!hasSentLog.current && uid) {
+            sendAccessEvent(uid, item.itemId);
             hasSentLog.current = true;
         }
     }, [item.itemId]);

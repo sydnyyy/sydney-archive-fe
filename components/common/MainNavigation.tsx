@@ -17,7 +17,7 @@ export default function MainNavigation() {
     const router = useRouter();
 
     const [isChatOpen, setIsChatOpen] = useState(false);
-    const { sid } = useAuthStore();
+    const { uid } = useAuthStore();
 
     const navItems = [
         {
@@ -70,7 +70,7 @@ export default function MainNavigation() {
                 {renderNavButtons(true)}
             </nav>
 
-            {isChatOpen && sid && (
+            {isChatOpen && uid && (
                 <WebSockerProvider>
                     <ChatModal
                         setIsChatOpen={setIsChatOpen}

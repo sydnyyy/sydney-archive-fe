@@ -15,7 +15,7 @@ const WebSocketContext = createContext<WebSocketContextValue | null>(null);
 
 export default function WebSockerProvider({ children }: { children: React.ReactNode}) {
 
-    const { sid } = useAuthStore();
+    const { uid } = useAuthStore();
 
     const [stompClient, setStompClient] = useState<Client | null>(null);
     const stompClientRef = useRef<Client | null>(null);
@@ -32,7 +32,7 @@ export default function WebSockerProvider({ children }: { children: React.ReactN
     }, []);
 
     useEffect(() => {
-        if (!sid) {
+        if (!uid) {
             disconnect();
             return;
         }
@@ -43,7 +43,7 @@ export default function WebSockerProvider({ children }: { children: React.ReactN
 
         const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
         const client = createStompClient({
-            url: `${API_BASE_URL}/ws?sid=${sid}`,
+            url: `${API_BASE_URL}/ws?sid=${uid}`,
             role: "user",
             subscribePaths: [
                 {
@@ -66,7 +66,7 @@ export default function WebSockerProvider({ children }: { children: React.ReactN
             setStompClient(null);
         };
 
-    }, [sid, disconnect]);
+    }, [uid, disconnect]);
 
     return (
         <WebSocketContext.Provider

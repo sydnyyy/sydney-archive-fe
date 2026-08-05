@@ -19,8 +19,8 @@ export default function useAutoReply(
                 sendMessage({
                     id: uuidv4(),
                     chatRoomId: uid,
-                    senderSid: "system",
-                    receiverSid: uid,
+                    senderUid: "system",
+                    receiverUid: uid,
                     content: "곧 답변드리겠습니다 🙏",
                     createdAt: new Date().toISOString(),
                     type: CHAT_TYPE.SYSTEM,

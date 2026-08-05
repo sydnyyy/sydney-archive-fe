@@ -4,11 +4,11 @@ import React, { useEffect } from "react";
 import { useAuthStore } from "@/store/useAuthStore";
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
-    const { refreshSid, _hasHydrated } = useAuthStore();
+    const { refreshUid, _hasHydrated } = useAuthStore();
 
     useEffect(() => {
         if (!_hasHydrated) return;
-        refreshSid();
+        refreshUid();
     }, [_hasHydrated]);
 
     return <>{children}</>;

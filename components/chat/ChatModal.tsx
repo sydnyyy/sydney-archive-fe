@@ -30,20 +30,20 @@ export default function ChatModal({
     const { stompClient, chatMessage } = useWebSocket();
     const isAdminJoined = useRef(false);
 
-    const { sid } = useAuthStore();
+    const { uid } = useAuthStore();
     const { loadMessages, loadPreviousMessages } = useChatMessages();
     const { messagesContainerRef, messagesEndRef, handleScroll } = useChatScroll(
         messages,
         isInitialLoadDone,
         async () => {
-            if (!sid) return [];
-            return await loadPreviousMessages(sid, messages);
+            if (!uid) return [];
+            return await loadPreviousMessages(uid, messages);
         },
         (older) => setMessages(prev => [...older, ...prev]),
     );
 
     const { addAutoReply } = useAutoReply(
-        sid || "",
+        uid || "",
         (msg: ChatMessage) => setMessages(prev => [...prev, msg]),
         isAdminJoined,
     );
@@ -64,8 +64,8 @@ export default function ChatModal({
     };
 
     useEffect(() => {
-        if (sid && stompClient) {
-            loadMessages(sid).then((initialMessages) => {
+        if (uid && stompClient) {
+            loadMessages(uid).then((initialMessages) => {
                 if (initialMessages?.length) {
                     setMessages(initialMessages);
                     setIsInitialLoadDone(true);
@@ -76,12 +76,12 @@ export default function ChatModal({
         return () => {
             clearChatState();
         };
-    }, [sid, stompClient]);
+    }, [uid, stompClient]);
 
     useEffect(() => {
         if (chatMessage == null) return;
 
-        if (chatMessage.senderSid === "admin") {
+        if (chatMessage.senderUid === "admin") {
             isAdminJoined.current = true;
         }
 
@@ -89,11 +89,11 @@ export default function ChatModal({
     }, [chatMessage]);
 
     const sendMessage = () => {
-        if (!stompClient?.active || inputMessage.trim() === "" || !sid) return;
+        if (!stompClient?.active || inputMessage.trim() === "" || !uid) return;
 
         const chatMessageRequest: ChatMessageRequest = {
-            senderSid: sid,
-            receiverSid: "admin",
+            senderUid: uid,
+            receiverUid: "admin",
             content: inputMessage,
             type: CHAT_TYPE.USER,
         };

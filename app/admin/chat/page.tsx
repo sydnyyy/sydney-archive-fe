@@ -59,7 +59,7 @@ export default function AdminChatPage() {
                 <AdminChatModal
                     key={selectedChatRoomId}
                     chatRoomId={selectedChatRoomId}
-                    adminSid={admin.sid}
+                    adminUid={admin.uid}
                     stompClient={stompClient}
                     messages={messages}
                     setMessages={setMessages}

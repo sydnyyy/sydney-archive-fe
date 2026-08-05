@@ -1,11 +1,11 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export async function addLikeApi(
-    sid: string,
+    uid: string,
     itemId: string
 ): Promise<void> {
      const res = await fetch(
-        `${API_BASE_URL}/api/like/${sid}/${itemId}`,
+        `${API_BASE_URL}/api/like/${uid}/${itemId}`,
         {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -21,11 +21,11 @@ export async function addLikeApi(
 }
 
 export async function deleteLikeApi(
-    sid: string,
+    uid: string,
     itemId: string
 ): Promise<void> {
     const res = await fetch(
-        `${API_BASE_URL}/api/like/${sid}/${itemId}`,
+        `${API_BASE_URL}/api/like/${uid}/${itemId}`,
         {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
@@ -40,9 +40,9 @@ export async function deleteLikeApi(
     }
 }
 
-export async function fetchLikeListApi(sid: string): Promise<Set<string>> {
+export async function fetchLikeListApi(uid: string): Promise<Set<string>> {
     const res = await fetch(
-        `${API_BASE_URL}/api/users/${sid}/likes`,
+        `${API_BASE_URL}/api/users/${uid}/likes`,
         {
             method: "GET",
             headers: { "Content-Type": "application/json" },

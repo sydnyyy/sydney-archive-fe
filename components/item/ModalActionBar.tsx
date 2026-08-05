@@ -13,11 +13,12 @@ interface ModalActionBarProps {
 
 export default function ModalActionBar({
                                            itemId,
-                                           likedSet, setLikedSet,
+                                           likedSet,
+                                           setLikedSet,
                                            onShare,
                                        }: ModalActionBarProps) {
 
-    const { sid } = useAuthStore();
+    const { uid } = useAuthStore();
 
     return (
         <div
@@ -26,7 +27,7 @@ export default function ModalActionBar({
         >
             <div className="w-8 h-8 flex items-center justify-center">
                 <LikeButton
-                    sid={sid}
+                    uid={uid}
                     itemId={itemId}
                     likedSet={likedSet}
                     setLikedSet={setLikedSet}
