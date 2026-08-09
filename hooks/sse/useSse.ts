@@ -19,11 +19,6 @@ export const useSse = (
 
         switch (eventType) {
             case SseEventType.CONNECTED:
-                if (data.version > 0 && sid) {
-                    completeLoginSessionAndLoginSync(sid, data.version);
-                }
-                break;
-
             case SseEventType.LOGIN_SUCCEEDED:
                 if (data.version > 0 && sid) {
                     completeLoginSessionAndLoginSync(sid, data.version);
