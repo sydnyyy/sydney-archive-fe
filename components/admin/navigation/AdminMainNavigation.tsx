@@ -9,9 +9,9 @@ import {
 } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import AdminLoginModal from "@/components/admin/auth/AdminLoginModal";
 import { useAdminAuth } from "@/app/providers/admin/AdminAuthProvider";
 import AdminLogoutModal from "@/components/admin/auth/AdminLogoutModal";
+import AdminLoginModalContainer from "@/components/admin/auth/AdminLoginModalContainer";
 
 export default function AdminMainNavigation() {
 
@@ -80,7 +80,7 @@ export default function AdminMainNavigation() {
 
             {isAuthModalOpen && (
                 (!admin) ? (
-                    <AdminLoginModal />
+                    <AdminLoginModalContainer />
                     ) : (
                     <AdminLogoutModal
                         onClose={() => {

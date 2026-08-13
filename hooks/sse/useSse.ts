@@ -5,7 +5,7 @@ import {useAdminAuth} from "@/app/providers/admin/AdminAuthProvider";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export const useSse = (
-    sid: string | undefined
+    sid: string, secret: string
 ) => {
 
     const eventSourceRef = useRef<EventSource | null>(null);
@@ -21,7 +21,7 @@ export const useSse = (
             case SseEventType.CONNECTED:
             case SseEventType.LOGIN_SUCCEEDED:
                 if (data.version > 0 && sid) {
-                    completeLoginSessionAndLoginSync(sid, data.version);
+                    completeLoginSessionAndLoginSync(sid, data.version, secret);
                 }
                 break;
         }

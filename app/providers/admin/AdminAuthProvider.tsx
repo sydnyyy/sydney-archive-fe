@@ -13,7 +13,7 @@ interface AdminAuthContextValue {
     accessToken: string | null;
     refreshAccessToken: () => Promise<string>;
     loginSync: () => Promise<void>;
-    completeLoginSessionAndLoginSync: (sid: string, version: number) => Promise<void>;
+    completeLoginSessionAndLoginSync: (sid: string, version: number, secret: string) => Promise<void>;
     logout: () => void;
 }
 
@@ -25,7 +25,7 @@ export default function AdminAuthProvider({ children }: { children: React.ReactN
     const [accessToken, setAccessToken] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
-    const { alsid, clearSession, removeSessionSid } = useAdminLoginStore();
+    const { loginSessionId, clearSession, removeSessionSid } = useAdminLoginStore();
 
     useEffect(() => {
         loginSync();
@@ -52,7 +52,7 @@ export default function AdminAuthProvider({ children }: { children: React.ReactN
         try {
             setLoading(true);
 
-            const newAccessToken = await issueAccessTokenApi(alsid);
+            const newAccessToken = await issueAccessTokenApi(loginSessionId);
             setAccessToken(newAccessToken);
 
             const fetchedAdmin = await fetchCurrentAdminApi(newAccessToken, refreshAccessToken);
@@ -71,30 +71,31 @@ export default function AdminAuthProvider({ children }: { children: React.ReactN
         }
     }, [clearAuth]);
 
-    const completeLoginSessionAndLoginSync = useCallback(async(sid: string, version: number) => {
-        try {
-            setLoading(true);
+    const completeLoginSessionAndLoginSync
+        = useCallback(async(sid: string, version: number, secret: string) => {
+            try {
+                setLoading(true);
 
-            await completeLoginSessionApi(sid, version);
+                await completeLoginSessionApi(sid, version, secret);
 
-            const newAccessToken = await issueAccessTokenApi(sid);
-            setAccessToken(newAccessToken);
+                const newAccessToken = await issueAccessTokenApi(sid);
+                setAccessToken(newAccessToken);
 
-            const fetchedAdmin = await fetchCurrentAdminApi(newAccessToken, refreshAccessToken);
-            setAdmin(fetchedAdmin);
+                const fetchedAdmin = await fetchCurrentAdminApi(newAccessToken, refreshAccessToken);
+                setAdmin(fetchedAdmin);
 
-            if (fetchedAdmin) {
-                removeSessionSid();
+                if (fetchedAdmin) {
+                    removeSessionSid();
+                }
+
+
+            } catch (error) {
+                console.error("Auth synchronization failed: ", error);
+                clearAuth();
+                clearSession();
+            } finally {
+                setLoading(false);
             }
-
-
-        } catch (error) {
-            console.error("Auth synchronization failed: ", error);
-            clearAuth();
-            clearSession();
-        } finally {
-            setLoading(false);
-        }
     }, [clearAuth]);
 
     const logout = useCallback(async () => {
