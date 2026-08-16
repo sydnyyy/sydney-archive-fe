@@ -1,5 +1,8 @@
-export interface Admin {
-    uid: string;
-    username: string;
-    email: string;
+export enum UserRole {
+    GUEST = 'guest',
+    ADMIN = 'admin'
+}
+
+export interface User {
+    userId: string;
 }

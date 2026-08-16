@@ -8,16 +8,16 @@ import {
 } from "@heroicons/react/24/outline";
 import { useRouter } from "next/navigation";
 import ChatModal from "@/components/chat/ChatModal";
-import { useAuthStore } from "@/store/useAuthStore";
 import {useState} from "react";
 import WebSockerProvider from "@/app/providers/user/WebSocketProvider";
+import {useUserAuth} from "@/app/providers/user/AuthProvider";
 
 export default function MainNavigation() {
 
     const router = useRouter();
 
     const [isChatOpen, setIsChatOpen] = useState(false);
-    const { uid } = useAuthStore();
+    const { user } = useUserAuth();
 
     const navItems = [
         {
@@ -70,7 +70,7 @@ export default function MainNavigation() {
                 {renderNavButtons(true)}
             </nav>
 
-            {isChatOpen && uid && (
+            {isChatOpen && user && (
                 <WebSockerProvider>
                     <ChatModal
                         setIsChatOpen={setIsChatOpen}

@@ -7,8 +7,8 @@ export const CHAT_TYPE = {
 export type ChatType = typeof CHAT_TYPE[keyof typeof CHAT_TYPE];
 
 export interface ChatMessageRequest {
-    senderUid: string;
-    receiverUid: string;
+    senderUserId: string;
+    receiverUserId: string;
     content: string;
     type: ChatType;
 }
@@ -16,8 +16,8 @@ export interface ChatMessageRequest {
 export interface ChatMessage {
     id: string;
     chatRoomId: string;
-    senderUid: string;
-    receiverUid: string;
+    senderUserId: string;
+    receiverUserId: string;
     content: string;
     createdAt: string;
     type: ChatType;

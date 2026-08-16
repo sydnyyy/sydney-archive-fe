@@ -1,15 +1,16 @@
 "use client";
 
 import React, {createContext, useCallback, useContext, useEffect, useState} from "react";
-import { Admin } from "@/types/domain/user/user";
+import {User} from "@/types/domain/user/user";
 import { issueAccessTokenApi, logoutApi } from "@/lib/api/admin/auth/auth.command";
 import { fetchCurrentAdminApi } from "@/lib/api/admin/auth/auth.query";
 import {completeLoginSessionApi} from "@/lib/api/admin/auth/login.command";
 import {useAdminLoginStore} from "@/store/useAdminLoginStore";
+import {usePatternStore} from "@/store/usePatternStore";
 
 interface AdminAuthContextValue {
-    admin: Admin | null;
     loading: boolean;
+    admin: User | null;
     accessToken: string | null;
     refreshAccessToken: () => Promise<string>;
     loginSync: () => Promise<void>;
@@ -21,7 +22,7 @@ const AdminAuthContext = createContext<AdminAuthContextValue | null>(null);
 
 export default function AdminAuthProvider({ children }: { children: React.ReactNode }) {
 
-    const [admin, setAdmin] = useState<Admin | null>(null);
+    const [admin, setAdmin] = useState<User | null>(null);
     const [accessToken, setAccessToken] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
@@ -38,6 +39,7 @@ export default function AdminAuthProvider({ children }: { children: React.ReactN
 
     const refreshAccessToken = useCallback(async() => {
         try {
+            setLoading(true);
             const newAccessToken = await issueAccessTokenApi();
             setAccessToken(newAccessToken);
             return newAccessToken;
@@ -45,6 +47,8 @@ export default function AdminAuthProvider({ children }: { children: React.ReactN
             console.error(error);
             await logout();
             throw error;
+        } finally {
+            setLoading(false);
         }
     }, [clearAuth]);
 
@@ -111,8 +115,8 @@ export default function AdminAuthProvider({ children }: { children: React.ReactN
     return (
         <AdminAuthContext.Provider
             value={{
-                admin,
                 loading,
+                admin,
                 accessToken,
                 refreshAccessToken,
                 loginSync,
