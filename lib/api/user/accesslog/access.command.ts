@@ -1,22 +1,20 @@
-import { Item } from "@/types/domain/item/item";
 import {httpRequestWithAuth} from "@/lib/api/apiClient";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export async function fetchItemsApi(
+export async function sendAccessEventApi(
+    itemId: string,
     accessToken: string,
     refreshAccessToken: () => Promise<string>
-): Promise<Item[]> {
+): Promise<void> {
 
-    return httpRequestWithAuth(
-        `${API_BASE_URL}/api/c/items`,
+    await httpRequestWithAuth(
+        `${API_BASE_URL}/api/g/access/${itemId}`,
         {
-            method: "GET",
+            method: "POST",
             credentials: "include"
         },
         accessToken,
         refreshAccessToken
-    ).then(res => {
-        return res.json() as Promise<Item[]>
-    });
+    );
 }

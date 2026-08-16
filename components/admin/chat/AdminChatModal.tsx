@@ -10,10 +10,11 @@ import CloseButton from "@/components/common/button/CloseButton";
 import {TrashIcon} from "@heroicons/react/24/outline";
 import {useAdminAuth} from "@/app/providers/admin/AdminAuthProvider";
 import {deleteChatRoomApi} from "@/lib/api/admin/chat/chat.command";
+import {UserRole} from "@/types/domain/user/user";
 
 interface Props {
     chatRoomId: string;
-    adminUid: string;
+    adminUserId: string;
     stompClient: any;
     messages: ChatMessage[];
     setMessages: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
@@ -22,7 +23,7 @@ interface Props {
 
 export default function AdminChatModal({
                                            chatRoomId,
-                                           adminUid,
+                                           adminUserId,
                                            stompClient,
                                            messages,
                                            setMessages,
@@ -38,28 +39,35 @@ export default function AdminChatModal({
     const { messagesContainerRef, messagesEndRef, handleScroll } = useChatScroll(
         messages,
         isInitialLoadDone,
-        () => loadPreviousMessages(chatRoomId, messages),
+        () => {
+            if (!accessToken) {
+                return Promise.resolve([]);
+            }
+
+            return loadPreviousMessages(chatRoomId, accessToken, refreshAccessToken, UserRole.ADMIN, messages);
+        },
         (older: ChatMessage[]) => setMessages((prev) => [...older, ...prev])
     );
 
     useEffect(() => {
-        if (!chatRoomId) return;
+        if (!chatRoomId || !accessToken) return;
 
         setMessages([]);
         setIsInitialLoadDone(false);
 
-        loadMessages(chatRoomId).then((initialMessages) => {
-            setMessages(initialMessages ?? []);
-            setIsInitialLoadDone(true);
-        });
-    }, [chatRoomId]);
+        loadMessages(chatRoomId, accessToken, refreshAccessToken, UserRole.ADMIN)
+            .then((initialMessages) => {
+                setMessages(initialMessages ?? []);
+                setIsInitialLoadDone(true);
+            });
+    }, [chatRoomId, accessToken]);
 
     const sendMessage = async () => {
         if (!inputMessage.trim()) return;
 
         const chatMessageRequest: ChatMessageRequest = {
-            senderUid: adminUid,
-            receiverUid: chatRoomId,
+            senderUserId: adminUserId,
+            receiverUserId: chatRoomId,
             content: inputMessage.trim(),
             type: CHAT_TYPE.ADMIN,
         };
