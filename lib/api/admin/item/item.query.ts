@@ -1,5 +1,5 @@
 import {Item} from "@/types/domain/item/item";
-import {httpRequestWithAuth} from "@/lib/api/admin/apiClient";
+import {httpRequestWithAuth} from "@/lib/api/apiClient";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -8,7 +8,7 @@ export async function fetchItemsApi(
     refreshAccessToken: () => Promise<string>
 ): Promise<Item[]> {
     return httpRequestWithAuth(
-        `${API_BASE_URL}/api/items`,
+        `${API_BASE_URL}/api/c/items`,
         {
             method: "GET",
             credentials: "include",

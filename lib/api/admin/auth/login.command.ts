@@ -8,10 +8,9 @@ export async function fetchLoginSessionApi(
 ): Promise<LoginSession> {
 
     const response = await fetch(
-        `${API_BASE_URL}/api/admin/login/sessions`,
+        `${API_BASE_URL}/api/a/login/sessions`,
         {
             method: "POST",
-            credentials: "include",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ previousSid, secretHash }),
         }
@@ -30,7 +29,7 @@ export async function fetchLoginSessionApi(
 
 export async function fetchLoginSessionAvailabilityApi(sid: string): Promise<boolean> {
     const response = await fetch(
-        `${API_BASE_URL}/api/admin/login/sessions/status?sid=${encodeURIComponent(sid)}`,
+        `${API_BASE_URL}/api/a/login/sessions/status?sid=${encodeURIComponent(sid)}`,
         {
             method: "GET",
             headers: { "Content-Type": "application/json" },
@@ -57,10 +56,9 @@ export async function completeLoginSessionApi(
 ): Promise<void> {
 
     const response = await fetch(
-        `${API_BASE_URL}/api/admin/login/sessions/complete`,
+        `${API_BASE_URL}/api/a/login/sessions/complete`,
         {
             method: "POST",
-            credentials: "include",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ sid, version, secret })
         }

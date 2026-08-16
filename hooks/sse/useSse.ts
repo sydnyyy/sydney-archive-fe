@@ -41,7 +41,7 @@ export const useSse = (
             return;
         }
 
-        const eventSource = new EventSource(`${API_BASE_URL}/api/sse/connect?sid=` + sid);
+        const eventSource = new EventSource(`${API_BASE_URL}/api/p/sse/connect?sid=` + sid);
         eventSourceRef.current = eventSource;
 
         eventSource.onopen = () => {
