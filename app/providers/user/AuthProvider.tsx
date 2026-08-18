@@ -1,28 +1,63 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { useAuthStore } from "@/store/useAuthStore";
-import { fetchGuestSid } from "@/lib/api/user/auth/auth.command";
+import React, {createContext, useCallback, useContext, useEffect, useState} from "react";
+import {User} from "@/types/domain/user/user";
+import {fetchCurrentGuestApi} from "@/lib/api/user/auth/auth.query";
+import {fetchGuestToken} from "@/lib/api/user/auth/auth.command";
+
+interface AuthContextValue {
+    loading: boolean;
+    user: User | null;
+    accessToken: string | null;
+    refreshAccessToken: () => Promise<string>;
+}
+
+const AuthContext = createContext<AuthContextValue | null>(null);
 
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
-    const { sid, setSid, _hasHydrated } = useAuthStore();
+    const [user, setUser] = useState<User | null>(null);
+    const [accessToken, setAccessToken] = useState<string | null>(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (!_hasHydrated) return;
+        refreshAccessToken();
+    }, []);
 
-        const initGuestSession = async () => {
-            if (sid) return;
+    const refreshAccessToken = useCallback(async() => {
+        try {
+            setLoading(true);
+            const newAccessToken = await fetchGuestToken();
+            setAccessToken(newAccessToken);
 
-            try {
-                const newSid = await fetchGuestSid();
-                setSid(newSid);
-            } catch (error) {
-                console.error(error);
-            }
-        };
+            setUser(await fetchCurrentGuestApi(newAccessToken));
 
-        initGuestSession();
-    }, [_hasHydrated]);
+            return newAccessToken;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        } finally {
+            setLoading(false);
+        }
+    }, []);
 
-    return <>{children}</>;
+    return (
+        <AuthContext.Provider
+            value={{
+                loading,
+                user,
+                accessToken,
+                refreshAccessToken
+            }}
+        >
+            {children}
+        </AuthContext.Provider>
+    );
+}
+
+export function useUserAuth() {
+    const ctx = useContext(AuthContext);
+    if (!ctx) {
+        throw new Error("useAuth must be used inside AuthProvider");
+    }
+    return ctx;
 }

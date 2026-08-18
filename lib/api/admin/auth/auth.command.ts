@@ -4,7 +4,7 @@ export async function issueAccessTokenApi(
     loginSessionSid?: string | null,
 ): Promise<string> {
     const res = await fetch(
-        `${API_BASE_URL}/api/admin/auth/token/issue`,
+        `${API_BASE_URL}/api/a/auth/token/issue`,
         {
             method: "POST",
             credentials: "include",
@@ -32,7 +32,7 @@ export async function issueAccessTokenApi(
 
 export async function logoutApi(): Promise<void> {
     const res = await fetch(
-        `${API_BASE_URL}/api/admin/auth/logout`,
+        `${API_BASE_URL}/api/a/auth/logout`,
         {
             method: "POST",
             credentials: "include",

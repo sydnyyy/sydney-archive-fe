@@ -1,27 +1,25 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
+import React, {useEffect, useLayoutEffect, useRef, useState} from "react";
 import {CHAT_TYPE, ChatMessage, ChatMessageRequest} from "@/types/domain/chat/chat";
 import AnimatedMessages from "@/components/chat/AnimatedMessages";
 
 import ChatInputButton from "@/components/chat/ChatInputButton";
 import useAutoReply from "@/hooks/useAutoReply";
-import { useChatMessages } from "@/hooks/useChatMessages";
-import { useChatScroll } from "@/hooks/useChatScroll";
-import { Item } from "@/types/domain/item/item";
-import {useAuthStore} from "@/store/useAuthStore";
+import {useChatMessages} from "@/hooks/useChatMessages";
+import {useChatScroll} from "@/hooks/useChatScroll";
 import {useWebSocket} from "@/app/providers/user/WebSocketProvider";
 import CloseButton from "@/components/common/button/CloseButton";
+import {UserRole} from "@/types/domain/user/user";
+import {useUserAuth} from "@/app/providers/user/AuthProvider";
 
 interface UserChatViewProps {
     setIsChatOpen: (open: boolean) => void;
-    selectedItem?: Item | null;
 }
 
 export default function ChatModal({
-                                         setIsChatOpen,
-                                         selectedItem
-                                     }: UserChatViewProps) {
+                                      setIsChatOpen
+}: UserChatViewProps) {
 
     const [inputMessage, setInputMessage] = useState<string>("");
     const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -30,20 +28,20 @@ export default function ChatModal({
     const { stompClient, chatMessage } = useWebSocket();
     const isAdminJoined = useRef(false);
 
-    const { sid } = useAuthStore();
+    const { user, accessToken, refreshAccessToken } = useUserAuth();
     const { loadMessages, loadPreviousMessages } = useChatMessages();
     const { messagesContainerRef, messagesEndRef, handleScroll } = useChatScroll(
         messages,
         isInitialLoadDone,
         async () => {
-            if (!sid) return [];
-            return await loadPreviousMessages(sid, messages);
+            if (!user?.userId || !accessToken) return [];
+            return await loadPreviousMessages(user.userId, accessToken, refreshAccessToken, UserRole.GUEST, messages);
         },
         (older) => setMessages(prev => [...older, ...prev]),
     );
 
     const { addAutoReply } = useAutoReply(
-        sid || "",
+        user?.userId || "",
         (msg: ChatMessage) => setMessages(prev => [...prev, msg]),
         isAdminJoined,
     );
@@ -64,24 +62,25 @@ export default function ChatModal({
     };
 
     useEffect(() => {
-        if (sid && stompClient) {
-            loadMessages(sid).then((initialMessages) => {
-                if (initialMessages?.length) {
-                    setMessages(initialMessages);
-                    setIsInitialLoadDone(true);
-                }
-            });
+        if (user?.userId && accessToken && stompClient) {
+            loadMessages(user.userId, accessToken, refreshAccessToken, UserRole.GUEST)
+                .then((initialMessages) => {
+                    if (initialMessages?.length) {
+                        setMessages(initialMessages);
+                        setIsInitialLoadDone(true);
+                    }
+                });
         }
 
         return () => {
             clearChatState();
         };
-    }, [sid, stompClient]);
+    }, [accessToken, stompClient]);
 
     useEffect(() => {
         if (chatMessage == null) return;
 
-        if (chatMessage.senderSid === "admin") {
+        if (chatMessage.senderUserId === "admin") {
             isAdminJoined.current = true;
         }
 
@@ -89,11 +88,15 @@ export default function ChatModal({
     }, [chatMessage]);
 
     const sendMessage = () => {
-        if (!stompClient?.active || inputMessage.trim() === "" || !sid) return;
+        if (!stompClient?.active
+            || inputMessage.trim() === ""
+            || !accessToken
+            || !user?.userId
+        ) return;
 
         const chatMessageRequest: ChatMessageRequest = {
-            senderSid: sid,
-            receiverSid: "admin",
+            senderUserId: user.userId,
+            receiverUserId: "admin",
             content: inputMessage,
             type: CHAT_TYPE.USER,
         };

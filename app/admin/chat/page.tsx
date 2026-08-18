@@ -4,7 +4,7 @@ import {useAdminAuth} from "@/app/providers/admin/AdminAuthProvider";
 import {useAdminWebSocket} from "@/app/providers/admin/AdminWebSocketProvider";
 import {useEffect, useState} from "react";
 import {AdminChatRoom, ChatMessage} from "@/types/domain/chat/chat";
-import {fetchChatUserListApi} from "@/lib/api/admin/chat/chat.query";
+import {fetchChatRoomListApi} from "@/lib/api/admin/chat/chat.query";
 import AdminChatRoomCard from "@/components/admin/chat/AdminChatRoomCard";
 import AdminChatModal from "@/components/admin/chat/AdminChatModal";
 
@@ -25,7 +25,7 @@ export default function AdminChatPage() {
 
         const fetchChatRooms = async() => {
             try {
-                const res = await fetchChatUserListApi(accessToken, refreshAccessToken);
+                const res = await fetchChatRoomListApi(accessToken, refreshAccessToken);
                 setChatRooms(res);
 
                 if (selectedChatRoomId !== null && selectedChatRoomId === chatMessage?.chatRoomId) {
@@ -59,7 +59,7 @@ export default function AdminChatPage() {
                 <AdminChatModal
                     key={selectedChatRoomId}
                     chatRoomId={selectedChatRoomId}
-                    adminSid={admin.sid}
+                    adminUserId={admin.userId}
                     stompClient={stompClient}
                     messages={messages}
                     setMessages={setMessages}

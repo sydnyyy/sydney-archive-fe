@@ -1,62 +1,57 @@
+import {httpRequestWithAuth} from "@/lib/api/apiClient";
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
+export async function fetchLikeListApi(
+    accessToken: string,
+    refreshAccessToken: () => Promise<string>
+): Promise<Set<string>> {
+
+    return httpRequestWithAuth(
+        `${API_BASE_URL}/api/g/likes`,
+        {
+            method: "GET",
+            credentials: "include",
+            cache: "no-store",
+        },
+        accessToken,
+        refreshAccessToken
+    ).then(async res => {
+        const json = await res.json() as string[];
+        return new Set(json);
+    });
+}
+
 export async function addLikeApi(
-    sid: string,
-    itemId: string
+    itemId: string,
+    accessToken: string,
+    refreshAccessToken: () => Promise<string>
 ): Promise<void> {
-     const res = await fetch(
-        `${API_BASE_URL}/api/like/${sid}/${itemId}`,
+
+    await httpRequestWithAuth(
+        `${API_BASE_URL}/api/g/likes/${itemId}`,
         {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-        });
-
-    if (!res.ok) {
-        const errorData: ApiErrorResponse = await res.json();
-        const error = new Error(errorData.message || "Failed to like the item.");
-        (error as any).code = errorData.code;
-        (error as any).status = errorData.status;
-        throw error;
-    }
+            credentials: "include",
+        },
+        accessToken,
+        refreshAccessToken
+    );
 }
 
 export async function deleteLikeApi(
-    sid: string,
-    itemId: string
+    itemId: string,
+    accessToken: string,
+    refreshAccessToken: () => Promise<string>
 ): Promise<void> {
-    const res = await fetch(
-        `${API_BASE_URL}/api/like/${sid}/${itemId}`,
+
+    await httpRequestWithAuth(
+        `${API_BASE_URL}/api/g/likes/${itemId}`,
         {
             method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-        });
-
-    if (!res.ok) {
-        const errorData: ApiErrorResponse = await res.json();
-        const error = new Error(errorData.message || "Failed to unlike the item.");
-        (error as any).code = errorData.code;
-        (error as any).status = errorData.status;
-        throw error;
-    }
-}
-
-export async function fetchLikeListApi(sid: string): Promise<Set<string>> {
-    const res = await fetch(
-        `${API_BASE_URL}/api/users/${sid}/likes`,
-        {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
-            cache: "no-store",
-        });
-
-    if (!res.ok) {
-        const errorData: ApiErrorResponse = await res.json();
-        const error = new Error(errorData.message || "Failed to fetch likes.");
-        (error as any).code = errorData.code;
-        (error as any).status = errorData.status;
-        throw error;
-    }
-
-    const json: string[] = await res.json();
-    return new Set(json);
+            credentials: "include",
+        },
+        accessToken,
+        refreshAccessToken
+    );
 }

@@ -2,10 +2,12 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import {LoginSession} from "@/types/domain/auth/Auth";
 import {fetchLoginSessionApi} from "@/lib/api/admin/auth/login.command";
+import {hashSecret} from "@/utils/secret";
 
 interface LoginState {
     loginSession: LoginSession | null;
-    alsid: string | null;
+    loginSessionId: string | null;
+    secret: string | null;
     isLoading: boolean;
     _hasHydrated: boolean;
 
@@ -15,13 +17,14 @@ interface LoginState {
     setHasHydrated: (state: boolean) => void;
 }
 
-const ADMIN_LOGIN_SESSION_SID_STORAGE_KEY = "ALSID";
+const ADMIN_LOGIN_SESSION_SID_STORAGE_KEY = "ALSSID";
 
 export const useAdminLoginStore = create<LoginState>() (
     persist(
         (set, get) => ({
             loginSession: null,
-            alsid: null,
+            loginSessionId: null,
+            secret: null,
             isLoading: false,
             _hasHydrated: false,
 
@@ -31,10 +34,26 @@ export const useAdminLoginStore = create<LoginState>() (
                 set({ isLoading: true });
 
                 try {
-                    const newLoginSession = await fetchLoginSessionApi(get().alsid);
+                    const previousLoginSessionId = get().loginSessionId;
+
+                    const bytes = new Uint8Array(32);
+                    crypto.getRandomValues(bytes);
+
+                    const secret = Array.from(bytes, byte =>
+                        byte.toString(16).padStart(2, '0')
+                    ).join('');
+
+                    const secretHash = await hashSecret(secret);
+
+                    const newLoginSession = await fetchLoginSessionApi(
+                        previousLoginSessionId,
+                        secretHash
+                    );
+
                     set({
+                        secret,
                         loginSession: newLoginSession,
-                        alsid: newLoginSession.sid
+                        loginSessionId: newLoginSession.sid
                     });
                 } catch (error) {
                     console.error(error);
@@ -57,7 +76,7 @@ export const useAdminLoginStore = create<LoginState>() (
         {
             name: ADMIN_LOGIN_SESSION_SID_STORAGE_KEY,
             partialize: (state) => ({
-                alsid: state.alsid,
+                sid: state.loginSessionId,
             }),
             onRehydrateStorage: () => (state) => {
                 state?.setHasHydrated(true);

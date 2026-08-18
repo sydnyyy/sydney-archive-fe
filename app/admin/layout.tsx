@@ -6,10 +6,10 @@ import AdminMainNavigation from "@/components/admin/navigation/AdminMainNavigati
 import AdminAuthProvider, {useAdminAuth} from "@/app/providers/admin/AdminAuthProvider";
 import {usePathname, useRouter} from "next/navigation";
 import {useEffect} from "react";
-import AdminLoginModal from "@/components/admin/auth/AdminLoginModal";
 import {Spinner} from "@/components/common/Spinner";
 import AdminWebSocketProvider from "@/app/providers/admin/AdminWebSocketProvider";
 import Header from "@/components/layout/Header";
+import AdminLoginModalContainer from "@/components/admin/auth/AdminLoginModalContainer";
 
 export const dynamic = "force-dynamic";
 
@@ -38,7 +38,7 @@ function AdminAuthGuard({ children }: { children: React.ReactNode }) {
 
     if (!admin) {
         return (
-            <AdminLoginModal />
+            <AdminLoginModalContainer />
         );
     }
 

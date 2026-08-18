@@ -40,7 +40,7 @@ export default function AdminWebSocketProvider({ children }: { children: React.R
 
         const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
         const client = createStompClient({
-            url: `${API_BASE_URL}/ws?sid=${admin.sid}`,
+            url: `${API_BASE_URL}/ws?sid=${admin.userId}`,
             role: "admin",
             subscribePaths: [
                 {

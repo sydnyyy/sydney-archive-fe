@@ -1,19 +1,20 @@
 "use client";
 
 import React, {createContext, useCallback, useContext, useEffect, useState} from "react";
-import { Admin } from "@/types/domain/user/user";
+import {User} from "@/types/domain/user/user";
 import { issueAccessTokenApi, logoutApi } from "@/lib/api/admin/auth/auth.command";
 import { fetchCurrentAdminApi } from "@/lib/api/admin/auth/auth.query";
 import {completeLoginSessionApi} from "@/lib/api/admin/auth/login.command";
 import {useAdminLoginStore} from "@/store/useAdminLoginStore";
+import {usePatternStore} from "@/store/usePatternStore";
 
 interface AdminAuthContextValue {
-    admin: Admin | null;
     loading: boolean;
+    admin: User | null;
     accessToken: string | null;
     refreshAccessToken: () => Promise<string>;
     loginSync: () => Promise<void>;
-    completeLoginSessionAndLoginSync: (sid: string, version: number) => Promise<void>;
+    completeLoginSessionAndLoginSync: (sid: string, version: number, secret: string) => Promise<void>;
     logout: () => void;
 }
 
@@ -21,11 +22,11 @@ const AdminAuthContext = createContext<AdminAuthContextValue | null>(null);
 
 export default function AdminAuthProvider({ children }: { children: React.ReactNode }) {
 
-    const [admin, setAdmin] = useState<Admin | null>(null);
+    const [admin, setAdmin] = useState<User | null>(null);
     const [accessToken, setAccessToken] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
-    const { alsid, clearSession, removeSessionSid } = useAdminLoginStore();
+    const { loginSessionId, clearSession, removeSessionSid } = useAdminLoginStore();
 
     useEffect(() => {
         loginSync();
@@ -38,6 +39,7 @@ export default function AdminAuthProvider({ children }: { children: React.ReactN
 
     const refreshAccessToken = useCallback(async() => {
         try {
+            setLoading(true);
             const newAccessToken = await issueAccessTokenApi();
             setAccessToken(newAccessToken);
             return newAccessToken;
@@ -45,6 +47,8 @@ export default function AdminAuthProvider({ children }: { children: React.ReactN
             console.error(error);
             await logout();
             throw error;
+        } finally {
+            setLoading(false);
         }
     }, [clearAuth]);
 
@@ -52,7 +56,7 @@ export default function AdminAuthProvider({ children }: { children: React.ReactN
         try {
             setLoading(true);
 
-            const newAccessToken = await issueAccessTokenApi(alsid);
+            const newAccessToken = await issueAccessTokenApi(loginSessionId);
             setAccessToken(newAccessToken);
 
             const fetchedAdmin = await fetchCurrentAdminApi(newAccessToken, refreshAccessToken);
@@ -71,30 +75,31 @@ export default function AdminAuthProvider({ children }: { children: React.ReactN
         }
     }, [clearAuth]);
 
-    const completeLoginSessionAndLoginSync = useCallback(async(sid: string, version: number) => {
-        try {
-            setLoading(true);
+    const completeLoginSessionAndLoginSync
+        = useCallback(async(sid: string, version: number, secret: string) => {
+            try {
+                setLoading(true);
 
-            await completeLoginSessionApi(sid, version);
+                await completeLoginSessionApi(sid, version, secret);
 
-            const newAccessToken = await issueAccessTokenApi(sid);
-            setAccessToken(newAccessToken);
+                const newAccessToken = await issueAccessTokenApi(sid);
+                setAccessToken(newAccessToken);
 
-            const fetchedAdmin = await fetchCurrentAdminApi(newAccessToken, refreshAccessToken);
-            setAdmin(fetchedAdmin);
+                const fetchedAdmin = await fetchCurrentAdminApi(newAccessToken, refreshAccessToken);
+                setAdmin(fetchedAdmin);
 
-            if (fetchedAdmin) {
-                removeSessionSid();
+                if (fetchedAdmin) {
+                    removeSessionSid();
+                }
+
+
+            } catch (error) {
+                console.error("Auth synchronization failed: ", error);
+                clearAuth();
+                clearSession();
+            } finally {
+                setLoading(false);
             }
-
-
-        } catch (error) {
-            console.error("Auth synchronization failed: ", error);
-            clearAuth();
-            clearSession();
-        } finally {
-            setLoading(false);
-        }
     }, [clearAuth]);
 
     const logout = useCallback(async () => {
@@ -110,8 +115,8 @@ export default function AdminAuthProvider({ children }: { children: React.ReactN
     return (
         <AdminAuthContext.Provider
             value={{
-                admin,
                 loading,
+                admin,
                 accessToken,
                 refreshAccessToken,
                 loginSync,

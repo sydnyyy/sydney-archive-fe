@@ -1,30 +1,24 @@
-"use client";
-
 import ModalLayout from "@/components/common/ModalLayout";
 import OAuth2ProviderButton from "@/components/admin/auth/OAuth2ProviderButton";
-import {useAdminLoginStore} from "@/store/useAdminLoginStore";
-import {usePlatform} from "@/hooks/platform/usePlatform";
-import {useEffect} from "react";
-import {Spinner} from "@/components/common/Spinner";
+import {Platform, usePlatform} from "@/hooks/platform/usePlatform";
 import {useSse} from "@/hooks/sse/useSse";
+import {LoginSession} from "@/types/domain/auth/Auth";
 
-export default function AdminLoginModal() {
+interface AdminLoginModalProps {
+    loginSession: LoginSession;
+    secret: string;
+    platform: Platform;
+}
 
-    const { loginSession, isLoading, refreshSession, _hasHydrated } = useAdminLoginStore();
-    const { platform } = usePlatform();
+export default function AdminLoginModal({
+                                            loginSession,
+                                            secret,
+                                            platform
+                                        }: AdminLoginModalProps) {
 
-    useSse(loginSession?.sid);
+    useSse(loginSession.sid, secret);
 
-    useEffect(() => {
-        if (!platform) return;
-        if (!_hasHydrated) return;
-
-        refreshSession();
-    }, [platform, _hasHydrated]);
-
-    if (platform === undefined) return null;
-
-    const showQrCode = !isLoading && (platform === "web") && loginSession;
+    const showQrCode = (platform === "web") && loginSession.qrCodeBase64;
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -38,11 +32,7 @@ export default function AdminLoginModal() {
                     </div>
 
                     <div className="flex-1 flex flex-col justify-center items-center">
-                        {isLoading ? (
-                            <div className="flex items-center justify-center">
-                                <Spinner />
-                            </div>
-                        ) : loginSession ? (
+                        {loginSession ? (
                             <div className="w-full flex flex-col gap-5">
                                 {showQrCode && (
                                     <div className="flex flex-col items-center justify-between gap-2 p-3 border rounded-xl border-[var(--color-border-primary)]">

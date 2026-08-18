@@ -1,6 +1,6 @@
 import { Item } from "@/types/domain/item/item";
 import {ItemCreateRequest, ItemUpdateRequest} from "@/types/dto/item/ItemRequest";
-import {httpRequestWithAuth} from "@/lib/api/admin/apiClient";
+import {httpRequestWithAuth} from "@/lib/api/apiClient";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -10,7 +10,7 @@ export async function createItemApi(
     refreshAccessToken: () => Promise<string>
 ): Promise<Item> {
     return await httpRequestWithAuth(
-        `${API_BASE_URL}/api/items`,
+        `${API_BASE_URL}/api/a/items`,
         {
             method: "POST",
             credentials: "include",
@@ -30,7 +30,7 @@ export async function updateItemApi(
     refreshAccessToken: () => Promise<string>
 ): Promise<Item> {
     return await httpRequestWithAuth(
-        `${API_BASE_URL}/api/items/${itemId}`,
+        `${API_BASE_URL}/api/a/items/${itemId}`,
         {
             method: "PUT",
             credentials: "include",
@@ -49,7 +49,7 @@ export async function deleteItemApi(
     refreshAccessToken: () => Promise<string>
 ): Promise<void> {
     await httpRequestWithAuth(
-        `${API_BASE_URL}/api/items/${itemId}`,
+        `${API_BASE_URL}/api/a/items/${itemId}`,
         {
             method: "DELETE",
             credentials: "include"

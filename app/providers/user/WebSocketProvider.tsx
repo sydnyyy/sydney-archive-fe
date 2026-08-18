@@ -3,8 +3,8 @@
 import {Client} from "@stomp/stompjs";
 import {ChatMessage} from "@/types/domain/chat/chat";
 import React, {createContext, useCallback, useContext, useEffect, useRef, useState} from "react";
-import {useAuthStore} from "@/store/useAuthStore";
 import {createStompClient} from "@/lib/api/admin/chat/socketClient";
+import {useUserAuth} from "@/app/providers/user/AuthProvider";
 
 interface WebSocketContextValue {
     stompClient: Client | null;
@@ -15,7 +15,7 @@ const WebSocketContext = createContext<WebSocketContextValue | null>(null);
 
 export default function WebSockerProvider({ children }: { children: React.ReactNode}) {
 
-    const { sid } = useAuthStore();
+    const { user } = useUserAuth();
 
     const [stompClient, setStompClient] = useState<Client | null>(null);
     const stompClientRef = useRef<Client | null>(null);
@@ -32,7 +32,7 @@ export default function WebSockerProvider({ children }: { children: React.ReactN
     }, []);
 
     useEffect(() => {
-        if (!sid) {
+        if (!user?.userId) {
             disconnect();
             return;
         }
@@ -43,7 +43,7 @@ export default function WebSockerProvider({ children }: { children: React.ReactN
 
         const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
         const client = createStompClient({
-            url: `${API_BASE_URL}/ws?sid=${sid}`,
+            url: `${API_BASE_URL}/ws?sid=${user.userId}`,
             role: "user",
             subscribePaths: [
                 {
@@ -66,7 +66,7 @@ export default function WebSockerProvider({ children }: { children: React.ReactN
             setStompClient(null);
         };
 
-    }, [sid, disconnect]);
+    }, [user, disconnect]);
 
     return (
         <WebSocketContext.Provider

@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { sendAccessEvent } from "@/lib/api/user/accesslog/accessEvent";
+import { sendAccessEventApi } from "@/lib/api/user/accesslog/access.command";
 import ModalLayout from "@/components/common/ModalLayout";
 import ModalActionBar from "@/components/item/ModalActionBar";
 import ImageCarousel from "@/components/item/ImageCarousel";
-import { useAuthStore } from "@/store/useAuthStore";
 import { Item } from "@/types/domain/item/item";
+import {useUserAuth} from "@/app/providers/user/AuthProvider";
 
 interface ItemModalProps {
     item: Item;
@@ -26,13 +26,13 @@ export default function ItemModal({
 
     if (!item) return null;
 
-    const { sid } = useAuthStore();
+    const { accessToken, refreshAccessToken } = useUserAuth();
     const hasSentLog = useRef(false);
 
     useEffect(() => {
         if (!item) return;
-        if (!hasSentLog.current && sid) {
-            sendAccessEvent(sid, item.itemId);
+        if (!hasSentLog.current && accessToken) {
+            sendAccessEventApi(item.itemId, accessToken, refreshAccessToken);
             hasSentLog.current = true;
         }
     }, [item.itemId]);

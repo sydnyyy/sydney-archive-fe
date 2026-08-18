@@ -5,16 +5,21 @@ import { useState, useEffect } from "react";
 import ItemModal from "@/components/item/ItemModal";
 import { fetchItemsApi } from "@/lib/api/user/item/item.query";
 import { Item } from "@/types/domain/item/item";
+import {useUserAuth} from "@/app/providers/user/AuthProvider";
 
 export default function ItemPage() {
     const [items, setItems] = useState<Item[]>([]);
     const [selectedItem, setSelectedItem] = useState<Item | null>(null);
     const [likedSet, setLikedSet] = useState<Set<string>>(new Set());
 
+    const { accessToken, refreshAccessToken } = useUserAuth();
+
     useEffect(() => {
         async function loadItems() {
+            if (!accessToken) return;
+
             try {
-                const fetched = await fetchItemsApi();
+                const fetched = await fetchItemsApi(accessToken, refreshAccessToken);
                 setItems(fetched);
             } catch (err) {
                 console.error(err);

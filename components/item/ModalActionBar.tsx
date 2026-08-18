@@ -2,7 +2,7 @@
 
 import { ShareIcon } from "@heroicons/react/24/outline";
 import LikeButton from "./LikeButton";
-import { useAuthStore } from "@/store/useAuthStore";
+import {useUserAuth} from "@/app/providers/user/AuthProvider";
 
 interface ModalActionBarProps {
     itemId: string;
@@ -13,11 +13,12 @@ interface ModalActionBarProps {
 
 export default function ModalActionBar({
                                            itemId,
-                                           likedSet, setLikedSet,
+                                           likedSet,
+                                           setLikedSet,
                                            onShare,
                                        }: ModalActionBarProps) {
 
-    const { sid } = useAuthStore();
+    const { accessToken, refreshAccessToken } = useUserAuth();
 
     return (
         <div
@@ -26,10 +27,11 @@ export default function ModalActionBar({
         >
             <div className="w-8 h-8 flex items-center justify-center">
                 <LikeButton
-                    sid={sid}
                     itemId={itemId}
                     likedSet={likedSet}
                     setLikedSet={setLikedSet}
+                    accessToken={accessToken}
+                    refreshAccessToken={refreshAccessToken}
                 />
             </div>
 
